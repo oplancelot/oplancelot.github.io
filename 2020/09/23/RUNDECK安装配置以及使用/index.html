@@ -20,15 +20,19 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta property="og:type" content="website">
+  <meta name="description" content="RUNDECK安装配置以及使用 1.运维、发布管理自动化2.根据权限授权3.行为审计 分为企业版和免费版    rpm -Uvh http:&#x2F;&#x2F;repo.rundeck.org&#x2F;latest.rpm    sudo yum install rundeck java    sudo yum update rundeck    sudo rpm -i rundeck-3.3.3-20200910-1.">
+<meta property="og:type" content="article">
 <meta property="og:title" content="oplancelot">
-<meta property="og:url" content="http://example.com/archives/2020/10/index.html">
+<meta property="og:url" content="http://example.com/2020/09/23/RUNDECK%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/index.html">
 <meta property="og:site_name" content="oplancelot">
+<meta property="og:description" content="RUNDECK安装配置以及使用 1.运维、发布管理自动化2.根据权限授权3.行为审计 分为企业版和免费版    rpm -Uvh http:&#x2F;&#x2F;repo.rundeck.org&#x2F;latest.rpm    sudo yum install rundeck java    sudo yum update rundeck    sudo rpm -i rundeck-3.3.3-20200910-1.">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-23T09:34:39.662Z">
+<meta property="article:modified_time" content="2020-09-23T09:34:39.662Z">
 <meta property="article:author" content="oplancelot">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://example.com/archives/2020/10/">
+<link rel="canonical" href="http://example.com/2020/09/23/RUNDECK%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/">
 
 
 <script id="page-configurations">
@@ -36,12 +40,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh_cn'
   };
 </script>
 
-  <title>Archive | oplancelot</title>
+  <title> | oplancelot</title>
   
 
 
@@ -140,190 +144,123 @@
         <div class="content-wrap">
           
 
-          <div class="content archive">
+          <div class="content post posts-expand">
             
 
+    
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <span class="collection-header">Um..! 21 posts in total. Keep on posting.</span>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/23/RUNDECK%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="oplancelot">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="oplancelot">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-09-23 17:34:39" itemprop="dateCreated datePublished" datetime="2020-09-23T17:34:39+08:00">2020-09-23</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2020</span>
-    </div>
+        <p>RUNDECK安装配置以及使用</p>
+<p>1.运维、发布管理自动化<br>2.根据权限授权<br>3.行为审计</p>
+<p>分为企业版和免费版<br>    rpm -Uvh <a target="_blank" rel="noopener" href="http://repo.rundeck.org/latest.rpm">http://repo.rundeck.org/latest.rpm</a><br>    sudo yum install rundeck java<br>    sudo yum update rundeck<br>    sudo rpm -i rundeck-3.3.3-20200910-1.noarch.rpm<br>    sudo service rundeckd start<br>    tail -f /var/log/rundeck/service.log<br>    出现<br>    Grails application running at <a target="_blank" rel="noopener" href="http://localhost:4440/">http://localhost:4440</a> in environment: production</p>
+<p>只能本地访问<br>    admin admin<br>    vim /etc/rundeck/rundeck-config.properties<br>    vim /etc/rundeck/framework.properties</p>
+<pre><code>$ vim /etc/rundeck/rundeck-config.properties
+grails.serverURL=http://localhost:4440
+改成
+grails.serverURL=http://192.168.1.222:4440
+# service rundeckd restart</code></pre>
+<p>可以局域网访问了</p>
+<p>创建mysql数据库替换本地数据库<br>    mysql&gt; create user ‘rundeck’@’%’;<br>    Query OK, 0 rows affected (0.00 sec)</p>
+<pre><code>mysql&gt; set password for &#39;rundeck&#39;@&#39;%&#39;=password(&#39;rundeck&#39;);
+Query OK, 0 rows affected, 1 warning (0.00 sec)
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+mysql&gt; create database rundeck;
+Query OK, 1 row affected (0.02 sec)
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-09T10:41:24+08:00"
-              content="2020-10-09">
-          10-09
-        </time>
-      </div>
+mysql&gt; grant all privileges on rundeck.* to &#39;rundeck&#39;@&#39;%&#39; identified by &#39;rundeck&#39; with grant option;
+Query OK, 0 rows affected, 1 warning (0.01 sec)
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/09/WSL%E4%BF%AE%E6%94%B9root%E5%AF%86%E7%A0%81/" itemprop="url">
-            <span itemprop="name">Untitled</span>
-          </a>
-      </div>
+mysql&gt; grant all privileges on rundeck.* to &#39;rundeck&#39;@&#39;localhost&#39; identified by &#39;rundeck&#39; with grant option;
+Query OK, 0 rows affected, 2 warnings (0.00 sec)
+mysql&gt; FLUSH PRIVILEGES;
+Query OK, 0 rows affected (0.00 sec)</code></pre>
+<p>Update your rundeck-config.properties and configure the datasource:</p>
+<pre><code>RPM/Debian location: /etc/rundeck/rundeck-config.properties
+Launcher location: $RDECK_BASE/server/config/rundeck-config.properties
+Contents:
 
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-09T10:34:43+08:00"
-              content="2020-10-09">
-          10-09
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/09/%E6%96%87%E6%A1%A3/" itemprop="url">
-            <span itemprop="name">Untitled</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-09T10:34:43+08:00"
-              content="2020-10-09">
-          10-09
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/09/systemctl%E5%91%BD%E4%BB%A4%E5%88%9D%E6%AD%A5%E8%AF%B4%E6%98%8E/" itemprop="url">
-            <span itemprop="name">Untitled</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-09T10:34:42+08:00"
-              content="2020-10-09">
-          10-09
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/09/mysql%205.7%E9%85%8D%E7%BD%AE%E9%A1%B9%E6%9C%80%E8%AF%A6%E7%BB%86%E7%9A%84%E8%A7%A3%E9%87%8A/" itemprop="url">
-            <span itemprop="name">Untitled</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-09T10:34:42+08:00"
-              content="2020-10-09">
-          10-09
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/09/DELL%E6%96%B9%E6%A1%88%E9%A2%84%E5%A4%87/" itemprop="url">
-            <span itemprop="name">Untitled</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-09T10:34:42+08:00"
-              content="2020-10-09">
-          10-09
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/09/CentOS%E9%85%8D%E7%BD%AEiptables%E8%A7%84%E5%88%99%E5%B9%B6%E4%BD%BF%E5%85%B6%E6%B0%B8%E4%B9%85%E7%94%9F%E6%95%88/" itemprop="url">
-            <span itemprop="name">Untitled</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-09T10:34:42+08:00"
-              content="2020-10-09">
-          10-09
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/09/Centos7%E6%9C%80%E5%B0%8F%E5%8C%96%E5%AE%89%E8%A3%85/" itemprop="url">
-            <span itemprop="name">Untitled</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-09T10:34:42+08:00"
-              content="2020-10-09">
-          10-09
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/09/centos7%E9%85%8D%E7%BD%AE%E6%9C%AC%E5%9C%B0yum%E6%BA%90%E3%80%81%E4%BD%BF%E7%94%A8yum%E6%BA%90/" itemprop="url">
-            <span itemprop="name">Untitled</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
+dataSource.url = jdbc:mysql://192.168.1.222/rundeck?autoReconnect=true&amp;useSSL=false
+dataSource.username=rundeck
+dataSource.password=rundeck
+dataSource.driverClassName=com.mysql.cj.jdbc.Driver//官网有点旧了，多加cj</code></pre>
+<p>   #rundeck add my.cnf<br>    innodb_file_format=barracuda<br>    innodb_file_per_table=true<br>    innodb_large_prefix=true<br>然后从本地可以登陆rundeck了；其他电脑则报错；token问题<br>清除cookie<br>日志查看<br>     tail -f /var/log/rundeck/rundeck.access.log</p>
+<p>project文件路径查看<br>    /etc/rundeck/project.properties</p>
+<pre><code># The base directory for this project&#39;s instances
+#
+project.dir = /var/lib/rundeck/projects/$&#123;project.name&#125;
+#
+# The base directory of project specific configuration files
+#
+project.etc.dir = /var/lib/rundeck/projects/$&#123;project.name&#125;/etc</code></pre>
+<p>nodes添加在project settings<br>edit nodes 里指定路径，会生成配置文件</p>
+<p>证书认证<br>管理员文档<a target="_blank" rel="noopener" href="https://docs.rundeck.com/docs/administration/configuration/database/mysql.html">https://docs.rundeck.com/docs/administration/configuration/database/mysql.html</a></p>
+<p>官网<a target="_blank" rel="noopener" href="https://docs.rundeck.com/docs/manual/01-introduction.html">https://docs.rundeck.com/docs/manual/01-introduction.html</a><br>参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/liumiaocn/article/details/89135773">https://blog.csdn.net/liumiaocn/article/details/89135773</a></p>
 
     </div>
-  </div>
-  
-  
-  
 
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/22/mysql%E8%B0%83%E4%BC%98/" rel="prev" title="">
+      <i class="fa fa-chevron-left"></i> 
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/09/24/my.cnf-master/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
   
 
 

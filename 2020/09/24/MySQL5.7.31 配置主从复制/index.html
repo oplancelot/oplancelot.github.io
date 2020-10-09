@@ -20,15 +20,19 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta property="og:type" content="website">
+  <meta name="description" content="CentOS-7 MySQL5.7.31 配置主从复制 1、环境准备 　　两台CentOS-7主机：node1(主)：192.168.1.220，node2(从)：192.168.2.221  　　两台主机均已安装MySQL5.7.31 ，且网络互通  2、配置过程 主从原理大致有三个步骤：  在主库上把数据更改记录到二进制日志中（Binary Log）中，这些记录称为二进制日志事件。 从库通过I">
+<meta property="og:type" content="article">
 <meta property="og:title" content="oplancelot">
-<meta property="og:url" content="http://example.com/archives/2020/10/index.html">
+<meta property="og:url" content="http://example.com/2020/09/24/MySQL5.7.31%20%E9%85%8D%E7%BD%AE%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/index.html">
 <meta property="og:site_name" content="oplancelot">
+<meta property="og:description" content="CentOS-7 MySQL5.7.31 配置主从复制 1、环境准备 　　两台CentOS-7主机：node1(主)：192.168.1.220，node2(从)：192.168.2.221  　　两台主机均已安装MySQL5.7.31 ，且网络互通  2、配置过程 主从原理大致有三个步骤：  在主库上把数据更改记录到二进制日志中（Binary Log）中，这些记录称为二进制日志事件。 从库通过I">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-24T07:32:37.293Z">
+<meta property="article:modified_time" content="2020-09-24T07:32:37.293Z">
 <meta property="article:author" content="oplancelot">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://example.com/archives/2020/10/">
+<link rel="canonical" href="http://example.com/2020/09/24/MySQL5.7.31%20%E9%85%8D%E7%BD%AE%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">
 
 
 <script id="page-configurations">
@@ -36,12 +40,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh_cn'
   };
 </script>
 
-  <title>Archive | oplancelot</title>
+  <title> | oplancelot</title>
   
 
 
@@ -140,190 +144,205 @@
         <div class="content-wrap">
           
 
-          <div class="content archive">
+          <div class="content post posts-expand">
             
 
+    
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <span class="collection-header">Um..! 21 posts in total. Keep on posting.</span>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/24/MySQL5.7.31%20%E9%85%8D%E7%BD%AE%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="oplancelot">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="oplancelot">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-09-24 15:32:37" itemprop="dateCreated datePublished" datetime="2020-09-24T15:32:37+08:00">2020-09-24</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2020</span>
-    </div>
+        <pre><code>CentOS-7 MySQL5.7.31 配置主从复制
+1、环境准备
+　　两台CentOS-7主机：node1(主)：192.168.1.220，node2(从)：192.168.2.221
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+　　两台主机均已安装MySQL5.7.31 ，且网络互通
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-09T10:41:24+08:00"
-              content="2020-10-09">
-          10-09
-        </time>
-      </div>
+2、配置过程
+主从原理大致有三个步骤：
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/09/WSL%E4%BF%AE%E6%94%B9root%E5%AF%86%E7%A0%81/" itemprop="url">
-            <span itemprop="name">Untitled</span>
-          </a>
-      </div>
+在主库上把数据更改记录到二进制日志中（Binary Log）中，这些记录称为二进制日志事件。
+从库通过IO线程将主库上的日志复制到自己的中继日志（Relay Log）中。
+从库通过SQL线程读取中继日志中的事件，将其重放到自己数据上。
+　　配置文件确定
 
-    </header>
-  </article>
+配置主库：
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+修改my.cnf 文件，在[mysqld] 段下添加：
+#master----------begin
+sync_binlog=1
+#server ID
+server-id=10
+#enable mysql binlog
+log-bin= /data/mysql/logs/binlog/mysql-bin
+#innodb---#
+#flush every log write
+#0 redologbuff 1write+fsync 2wrie
+innodb_support_xa=1
+#master-----------end
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-09T10:34:43+08:00"
-              content="2020-10-09">
-          10-09
-        </time>
-      </div>
+配置好后重启mysql服务
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/09/%E6%96%87%E6%A1%A3/" itemprop="url">
-            <span itemprop="name">Untitled</span>
-          </a>
-      </div>
+检查data目录是否有binlog日志生成
 
-    </header>
-  </article>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-09T10:34:43+08:00"
-              content="2020-10-09">
-          10-09
-        </time>
-      </div>
+登录主数据库，新建一个复制账号
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/09/systemctl%E5%91%BD%E4%BB%A4%E5%88%9D%E6%AD%A5%E8%AF%B4%E6%98%8E/" itemprop="url">
-            <span itemprop="name">Untitled</span>
-          </a>
-      </div>
+mysql&gt; CREATE USER &#39;repl&#39;@&#39;%&#39; IDENTIFIED BY &#39;repl&#39;;
+mysql&gt; GRANT REPLICATION SLAVE ON *.* TO &#39;repl&#39;@&#39;%&#39;;
 
-    </header>
-  </article>
+https://dev.mysql.com/doc/refman/5.7/en/replication-howto-repuser.html
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-09T10:34:42+08:00"
-              content="2020-10-09">
-          10-09
-        </time>
-      </div>
+mysql&gt;  FLUSH TABLES WITH READ LOCK;  //锁表做备份
+UNLOCK TABLES;//做完解锁
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/09/mysql%205.7%E9%85%8D%E7%BD%AE%E9%A1%B9%E6%9C%80%E8%AF%A6%E7%BB%86%E7%9A%84%E8%A7%A3%E9%87%8A/" itemprop="url">
-            <span itemprop="name">Untitled</span>
-          </a>
-      </div>
 
-    </header>
-  </article>
+Query OK, 0 rows affected (0.00 sec)
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+mysql&gt;  SHOW MASTER STATUS;
++------------------+----------+--------------+------------------+-------------------+
+| File | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
++------------------+----------+--------------+------------------+-------------------+
+| mysql-bin.000004 |  596 |  |  |   |
+mysql-bin.000008 |  605 //记住这两个值
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-09T10:34:42+08:00"
-              content="2020-10-09">
-          10-09
-        </time>
-      </div>
+;
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/09/DELL%E6%96%B9%E6%A1%88%E9%A2%84%E5%A4%87/" itemprop="url">
-            <span itemprop="name">Untitled</span>
-          </a>
-      </div>
 
-    </header>
-  </article>
+ #做备份
+mysqldump -uroot -p --all-databases --master-data &gt; dbdump.db
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+添加set-gtid-purged=off参数，免得导入提示：
+    ERROR 1840 (HY000) at line 24: @@GLOBAL.GTID_PURGED can only be set when @@GLOBAL.GTID_EXECUTED is empty.
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-09T10:34:42+08:00"
-              content="2020-10-09">
-          10-09
-        </time>
-      </div>
+mysqldump -uroot -p --set-gtid-purged=off --master-data &gt; dbdump.db
+配置从库：
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/09/CentOS%E9%85%8D%E7%BD%AEiptables%E8%A7%84%E5%88%99%E5%B9%B6%E4%BD%BF%E5%85%B6%E6%B0%B8%E4%B9%85%E7%94%9F%E6%95%88/" itemprop="url">
-            <span itemprop="name">Untitled</span>
-          </a>
-      </div>
+修改my.cnf 文件，在[mysqld] 段下添加：
 
-    </header>
-  </article>
+#slave-----------beign
+server-id=20
+relay_log=/data/mysql/logs/relaylog/relay-bin
+#skip_slave_start //复制是否随mysql启动进行，需要同步时关闭
+read_only =1 //限制普通用户是否可以写入数据库，root不限制
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+#slave-end
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-09T10:34:42+08:00"
-              content="2020-10-09">
-          10-09
-        </time>
-      </div>
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/09/Centos7%E6%9C%80%E5%B0%8F%E5%8C%96%E5%AE%89%E8%A3%85/" itemprop="url">
-            <span itemprop="name">Untitled</span>
-          </a>
-      </div>
 
-    </header>
-  </article>
+修改完后重启MySQL
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+导入dump备份
+scp root@192.168.1.200:/root/dbdump.db ./
+mysql -uroot -p  &lt; dbdump.db
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-09T10:34:42+08:00"
-              content="2020-10-09">
-          10-09
-        </time>
-      </div>
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/09/centos7%E9%85%8D%E7%BD%AE%E6%9C%AC%E5%9C%B0yum%E6%BA%90%E3%80%81%E4%BD%BF%E7%94%A8yum%E6%BA%90/" itemprop="url">
-            <span itemprop="name">Untitled</span>
-          </a>
-      </div>
+登录从数据库，配置主从
 
-    </header>
-  </article>
+在从库上指定主库地址，以及 同步账号、密码，并启动同步
+mysql&gt; CHANGE MASTER TO   MASTER_HOST=&#39;192.168.0.136&#39;,MASTER_USER=&#39;repl&#39;,MASTER_PASSWORD=&#39;repl&#39;,MASTER_LOG_FILE=&#39;mysqlbin.000003&#39;,MASTER_LOG_POS=635;
 
+mysql&gt; START SLAVE;
+mysql&gt; STOP SLAVE;
+mysql&gt; SHOW SLAVE STATUS\G； //查看复制状态
+
+
+show slave status;
+show processlist;
+查看从库状态，查看Slave_IO_Running: Yes和 Slave_SQL_Running: Yes 为yes主从配置完成
+如果启动同步后，第一个为Connecting，第二个为Yes，大部分为连接问题，请检查网络是否通，配置的用户名密码是否正确
+
+主库建库，建表，插入
+create database newpay;
+create table newpay_user(id int,name char(10));
+
+
+mysql&gt; select id,name from newpay_user;
++------+------+
+| id   | name |
++------+------+
+|   10 | TOM  |
++------+------+
+1 row in set (0.00 sec)
+
+mysql&gt; exit;
+Bye
+
+
+
+
+ CREATE USER &#39;test&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;test&#39;;
+ CREATE USER &#39;test&#39;@&#39;%&#39; IDENTIFIED BY &#39;test&#39;;
+SET PASSWORD FOR &#39;test&#39;@&#39;localhost&#39; = PASSWORD(&quot;test&quot;);
+SET PASSWORD FOR &#39;test&#39;@&#39;%&#39; = PASSWORD(&quot;test&quot;);
+
+GRANT ALL PRIVILEGES ON test.* TO &#39;test&#39;@&#39;%&#39; IDENTIFIED BY &#39;test&#39; WITH GRANT OPTION;</code></pre>
 
     </div>
-  </div>
-  
-  
-  
 
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/24/mysql-source-install/" rel="prev" title="">
+      <i class="fa fa-chevron-left"></i> 
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/09/24/ansible/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
   
 
 

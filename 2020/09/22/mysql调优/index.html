@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh_cn">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="cat &#x2F;sys&#x2F;block&#x2F;sda&#x2F;queue&#x2F;schedulernoop deadline [cfq]noop 适合raid控制器和sanecho noop &gt; &#x2F;sys&#x2F;block&#x2F;sda&#x2F;queue&#x2F;scheduler即使生效 禁用交换 echo 0 &gt; &#x2F;proc&#x2F;sys&#x2F;vm&#x2F;swappinessdirect i&#x2F;o不做缓存#innodb_flush_method&#x3D;0_DI">
+<meta property="og:type" content="article">
+<meta property="og:title" content="oplancelot">
+<meta property="og:url" content="http://example.com/2020/09/22/mysql%E8%B0%83%E4%BC%98/index.html">
+<meta property="og:site_name" content="oplancelot">
+<meta property="og:description" content="cat &#x2F;sys&#x2F;block&#x2F;sda&#x2F;queue&#x2F;schedulernoop deadline [cfq]noop 适合raid控制器和sanecho noop &gt; &#x2F;sys&#x2F;block&#x2F;sda&#x2F;queue&#x2F;scheduler即使生效 禁用交换 echo 0 &gt; &#x2F;proc&#x2F;sys&#x2F;vm&#x2F;swappinessdirect i&#x2F;o不做缓存#innodb_flush_method&#x3D;0_DI">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-22T09:50:06.484Z">
+<meta property="article:modified_time" content="2020-09-22T09:50:06.484Z">
+<meta property="article:author" content="oplancelot">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/09/22/mysql%E8%B0%83%E4%BC%98/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh_cn'
+  };
+</script>
+
+  <title> | oplancelot</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">oplancelot</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">keep going and move on</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/22/mysql%E8%B0%83%E4%BC%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="oplancelot">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="oplancelot">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-09-22 17:50:06" itemprop="dateCreated datePublished" datetime="2020-09-22T17:50:06+08:00">2020-09-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="cat-sys-block-sda-queue-scheduler"><a href="#cat-sys-block-sda-queue-scheduler" class="headerlink" title="cat /sys/block/sda/queue/scheduler"></a>cat /sys/block/sda/queue/scheduler</h1><p>noop deadline [cfq]<br>noop 适合raid控制器和san<br>echo noop &gt; /sys/block/sda/queue/scheduler<br>即使生效</p>
+<p>禁用交换</p>
+<h1 id="echo-0-gt-proc-sys-vm-swappiness"><a href="#echo-0-gt-proc-sys-vm-swappiness" class="headerlink" title="echo 0 &gt; /proc/sys/vm/swappiness"></a>echo 0 &gt; /proc/sys/vm/swappiness</h1><p>direct i/o不做缓存<br>#innodb_flush_method=0_DIRECT</p>
+<p>查看报告 proc 等待cpu,memory<br>#vmstat 5<br>#iostat -dx 5</p>
+<p>my.cnf 配置<br>    [client]<br>    port = 3306<br>    socket = /data/mysql/tmp/mysql.sock</p>
+<pre><code>#The MySQL server
+[mysqld_safe]
+#优化内存管理是否使用jemalloc
+#malloc-lib=/usr/local/lib/libjemalloc.so 
+
+[mysqld]
+#主从复制事务复制
+#GTID config
+gtid_mode=ON
+log-slave-updates=1
+enforce-gtid-consistency=1
+
+port = 3306
+socket = /data/mysql/tmp/mysql.sock
+datadir = /data/mysql/data
+basedir = /usr/local/mysql
+
+skip-name-resolve 
+#连接不按域名解析
+
+#character-set-server=utf8 
+#服务器安装时指定的默认编码格式，这个变量建议由系统自己管理，不要人为定义
+
+
+long_query_time = 1     #慢查询开启参数
+transaction-isolation = READ-COMMITTED #事务隔离类型
+slow_query_log_file = /data/mysql/logs/slowlog/slow.log
+
+query_cache_size=0
+query_cache_type = 0
+
+
+thread_cache_size=16384    #线程池缓存大小
+
+table_open_cache=10000 #高速缓存的大小4G-&gt;2048
+
+log_warnings=2#表示&quot;失败的连接&quot;的信息和创建新连接时&quot;拒绝访问&quot;类的错误信息也会被记录到错误日志中。</code></pre>
+<h1 id="log-bin-trust-function-creators-1-主从复制开启会关闭这个参数"><a href="#log-bin-trust-function-creators-1-主从复制开启会关闭这个参数" class="headerlink" title="log_bin_trust_function_creators=1 #主从复制开启会关闭这个参数"></a>log_bin_trust_function_creators=1 #主从复制开启会关闭这个参数</h1><pre><code>back_log = 1000 #back_log值指出在MySQL暂时停止回答新请求之前的短时间内多少个请求可以被存在堆栈中
+key_buffer_size = 128M #1G内存的机器，如果不使用MyISAM表，推荐值是16M（8-64M），针对myisam临时表
+max_allowed_packet = 256M #最大1G
+
+read_buffer_size = 2M #16G=1M
+myisam_sort_buffer_size = 8M
+expire_logs_days = 10 #binlog过期时间10天
+wait_timeout = 28800 #8小时
+max_connections=2000 #最大连接数
+
+default-storage-engine = InnoDB
+
+
+sync_binlog=1
+tmp_table_size = 32M  #　tmp_table_size参数配置内部内存临时表的大小。 此参数不适用用户创建的MEMORY表，用户创建的MEMORY表用max_heap_table_size参数配置
+join_buffer_size=2m #join 表
+sort_buffer_size=8M
+read_rnd_buffer_size=4M
+max_heap_table_size=32M
+binlog_cache_size=16M # 为每个session 分配的内存，在事务过程中用来存储二进制日志的缓存
+relay_log_recovery=1 #影响从库突然宕机，此参数会影响是否讲未完成的relaylog执行
+tmpdir = /data/tmp
+log-bin = /data/mysql/logs/binlog/mysqlbin.log
+relay_log = /data/mysql/logs/relaylog/relay-bin.log
+log_slave_updates=1 #从库生成binlog时需要开启
+
+# binary logging format - mixed recommended
+binlog_format=row #复制来说是最安全可靠的
+
+# INNODB config
+#innodb_file_per_table=1
+innodb_flush_method = O_DIRECT #性能稳定性最好
+innodb_read_io_threads = 16 #异步IO线程数
+innodb_write_io_threads = 16
+innodb_thread_concurrency=0
+innodb_log_buffer_size=16m #设置为 64-512MB
+innodb_log_file_size=1G
+innodb_data_file_path = ibdata1:512M:autoextend
+innodb_log_files_in_group=3
+innodb_buffer_pool_instances=8 #
+innodb_buffer_pool_size = 583M #60~80%总内存，51.2G
+#innodb_additional_mem_pool_size=64M
+innodb_flush_neighbors=0 #附近脏页是否刷新,SSD关闭
+innodb_io_capacity_max=4000 #2 SASRAID10 2000 SSD 5000
+
+innodb_flush_log_at_trx_commit=1 #提交事务的时候就写入redolog
+
+# required unique id between 1 and 2^32 - 1
+# defaults to 1 if master-host is not set
+# but will not function as a master if omitted
+server-id = 1
+slave-skip-errors = 1062,1053 #1062的错误是指一些主键重复的错误</code></pre>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2020/09/23/RUNDECK%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#cat-sys-block-sda-queue-scheduler"><span class="nav-number">1.</span> <span class="nav-text">cat &#x2F;sys&#x2F;block&#x2F;sda&#x2F;queue&#x2F;scheduler</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#echo-0-gt-proc-sys-vm-swappiness"><span class="nav-number">2.</span> <span class="nav-text">echo 0 &gt; &#x2F;proc&#x2F;sys&#x2F;vm&#x2F;swappiness</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#log-bin-trust-function-creators-1-%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%BC%80%E5%90%AF%E4%BC%9A%E5%85%B3%E9%97%AD%E8%BF%99%E4%B8%AA%E5%8F%82%E6%95%B0"><span class="nav-number">3.</span> <span class="nav-text">log_bin_trust_function_creators&#x3D;1 #主从复制开启会关闭这个参数</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">oplancelot</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">oplancelot</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

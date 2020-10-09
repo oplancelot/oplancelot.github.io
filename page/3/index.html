@@ -22,26 +22,26 @@
 
   <meta property="og:type" content="website">
 <meta property="og:title" content="oplancelot">
-<meta property="og:url" content="http://example.com/archives/2020/10/index.html">
+<meta property="og:url" content="http://example.com/page/3/index.html">
 <meta property="og:site_name" content="oplancelot">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:author" content="oplancelot">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://example.com/archives/2020/10/">
+<link rel="canonical" href="http://example.com/page/3/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : false,
+    isHome : true,
     isPost : false,
     lang   : 'zh_cn'
   };
 </script>
 
-  <title>Archive | oplancelot</title>
+  <title>oplancelot</title>
   
 
 
@@ -140,191 +140,164 @@
         <div class="content-wrap">
           
 
-          <div class="content archive">
+          <div class="content index posts-expand">
             
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/22/mysql%E8%B0%83%E4%BC%98/">
 
-  
-  
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <span class="collection-header">Um..! 21 posts in total. Keep on posting.</span>
-      </div>
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="oplancelot">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="oplancelot">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/09/22/mysql%E8%B0%83%E4%BC%98/" class="post-title-link" itemprop="url">Untitled</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-09-22 17:50:06" itemprop="dateCreated datePublished" datetime="2020-09-22T17:50:06+08:00">2020-09-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2020</span>
+          <h1 id="cat-sys-block-sda-queue-scheduler"><a href="#cat-sys-block-sda-queue-scheduler" class="headerlink" title="cat /sys/block/sda/queue/scheduler"></a>cat /sys/block/sda/queue/scheduler</h1><p>noop deadline [cfq]<br>noop 适合raid控制器和san<br>echo noop &gt; /sys/block/sda/queue/scheduler<br>即使生效</p>
+<p>禁用交换</p>
+<h1 id="echo-0-gt-proc-sys-vm-swappiness"><a href="#echo-0-gt-proc-sys-vm-swappiness" class="headerlink" title="echo 0 &gt; /proc/sys/vm/swappiness"></a>echo 0 &gt; /proc/sys/vm/swappiness</h1><p>direct i/o不做缓存<br>#innodb_flush_method=0_DIRECT</p>
+<p>查看报告 proc 等待cpu,memory<br>#vmstat 5<br>#iostat -dx 5</p>
+<p>my.cnf 配置<br>    [client]<br>    port = 3306<br>    socket = /data/mysql/tmp/mysql.sock</p>
+<pre><code>#The MySQL server
+[mysqld_safe]
+#优化内存管理是否使用jemalloc
+#malloc-lib=/usr/local/lib/libjemalloc.so 
+
+[mysqld]
+#主从复制事务复制
+#GTID config
+gtid_mode=ON
+log-slave-updates=1
+enforce-gtid-consistency=1
+
+port = 3306
+socket = /data/mysql/tmp/mysql.sock
+datadir = /data/mysql/data
+basedir = /usr/local/mysql
+
+skip-name-resolve 
+#连接不按域名解析
+
+#character-set-server=utf8 
+#服务器安装时指定的默认编码格式，这个变量建议由系统自己管理，不要人为定义
+
+
+long_query_time = 1     #慢查询开启参数
+transaction-isolation = READ-COMMITTED #事务隔离类型
+slow_query_log_file = /data/mysql/logs/slowlog/slow.log
+
+query_cache_size=0
+query_cache_type = 0
+
+
+thread_cache_size=16384    #线程池缓存大小
+
+table_open_cache=10000 #高速缓存的大小4G-&gt;2048
+
+log_warnings=2#表示&quot;失败的连接&quot;的信息和创建新连接时&quot;拒绝访问&quot;类的错误信息也会被记录到错误日志中。</code></pre>
+<h1 id="log-bin-trust-function-creators-1-主从复制开启会关闭这个参数"><a href="#log-bin-trust-function-creators-1-主从复制开启会关闭这个参数" class="headerlink" title="log_bin_trust_function_creators=1 #主从复制开启会关闭这个参数"></a>log_bin_trust_function_creators=1 #主从复制开启会关闭这个参数</h1><pre><code>back_log = 1000 #back_log值指出在MySQL暂时停止回答新请求之前的短时间内多少个请求可以被存在堆栈中
+key_buffer_size = 128M #1G内存的机器，如果不使用MyISAM表，推荐值是16M（8-64M），针对myisam临时表
+max_allowed_packet = 256M #最大1G
+
+read_buffer_size = 2M #16G=1M
+myisam_sort_buffer_size = 8M
+expire_logs_days = 10 #binlog过期时间10天
+wait_timeout = 28800 #8小时
+max_connections=2000 #最大连接数
+
+default-storage-engine = InnoDB
+
+
+sync_binlog=1
+tmp_table_size = 32M  #　tmp_table_size参数配置内部内存临时表的大小。 此参数不适用用户创建的MEMORY表，用户创建的MEMORY表用max_heap_table_size参数配置
+join_buffer_size=2m #join 表
+sort_buffer_size=8M
+read_rnd_buffer_size=4M
+max_heap_table_size=32M
+binlog_cache_size=16M # 为每个session 分配的内存，在事务过程中用来存储二进制日志的缓存
+relay_log_recovery=1 #影响从库突然宕机，此参数会影响是否讲未完成的relaylog执行
+tmpdir = /data/tmp
+log-bin = /data/mysql/logs/binlog/mysqlbin.log
+relay_log = /data/mysql/logs/relaylog/relay-bin.log
+log_slave_updates=1 #从库生成binlog时需要开启
+
+# binary logging format - mixed recommended
+binlog_format=row #复制来说是最安全可靠的
+
+# INNODB config
+#innodb_file_per_table=1
+innodb_flush_method = O_DIRECT #性能稳定性最好
+innodb_read_io_threads = 16 #异步IO线程数
+innodb_write_io_threads = 16
+innodb_thread_concurrency=0
+innodb_log_buffer_size=16m #设置为 64-512MB
+innodb_log_file_size=1G
+innodb_data_file_path = ibdata1:512M:autoextend
+innodb_log_files_in_group=3
+innodb_buffer_pool_instances=8 #
+innodb_buffer_pool_size = 583M #60~80%总内存，51.2G
+#innodb_additional_mem_pool_size=64M
+innodb_flush_neighbors=0 #附近脏页是否刷新,SSD关闭
+innodb_io_capacity_max=4000 #2 SASRAID10 2000 SSD 5000
+
+innodb_flush_log_at_trx_commit=1 #提交事务的时候就写入redolog
+
+# required unique id between 1 and 2^32 - 1
+# defaults to 1 if master-host is not set
+# but will not function as a master if omitted
+server-id = 1
+slave-skip-errors = 1062,1053 #1062的错误是指一些主键重复的错误</code></pre>
+
+      
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-09T10:41:24+08:00"
-              content="2020-10-09">
-          10-09
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/09/WSL%E4%BF%AE%E6%94%B9root%E5%AF%86%E7%A0%81/" itemprop="url">
-            <span itemprop="name">Untitled</span>
-          </a>
-      </div>
-
-    </header>
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
   </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-09T10:34:43+08:00"
-              content="2020-10-09">
-          10-09
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/09/%E6%96%87%E6%A1%A3/" itemprop="url">
-            <span itemprop="name">Untitled</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-09T10:34:43+08:00"
-              content="2020-10-09">
-          10-09
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/09/systemctl%E5%91%BD%E4%BB%A4%E5%88%9D%E6%AD%A5%E8%AF%B4%E6%98%8E/" itemprop="url">
-            <span itemprop="name">Untitled</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-09T10:34:42+08:00"
-              content="2020-10-09">
-          10-09
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/09/mysql%205.7%E9%85%8D%E7%BD%AE%E9%A1%B9%E6%9C%80%E8%AF%A6%E7%BB%86%E7%9A%84%E8%A7%A3%E9%87%8A/" itemprop="url">
-            <span itemprop="name">Untitled</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-09T10:34:42+08:00"
-              content="2020-10-09">
-          10-09
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/09/DELL%E6%96%B9%E6%A1%88%E9%A2%84%E5%A4%87/" itemprop="url">
-            <span itemprop="name">Untitled</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-09T10:34:42+08:00"
-              content="2020-10-09">
-          10-09
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/09/CentOS%E9%85%8D%E7%BD%AEiptables%E8%A7%84%E5%88%99%E5%B9%B6%E4%BD%BF%E5%85%B6%E6%B0%B8%E4%B9%85%E7%94%9F%E6%95%88/" itemprop="url">
-            <span itemprop="name">Untitled</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-09T10:34:42+08:00"
-              content="2020-10-09">
-          10-09
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/09/Centos7%E6%9C%80%E5%B0%8F%E5%8C%96%E5%AE%89%E8%A3%85/" itemprop="url">
-            <span itemprop="name">Untitled</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-09T10:34:42+08:00"
-              content="2020-10-09">
-          10-09
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/09/centos7%E9%85%8D%E7%BD%AE%E6%9C%AC%E5%9C%B0yum%E6%BA%90%E3%80%81%E4%BD%BF%E7%94%A8yum%E6%BA%90/" itemprop="url">
-            <span itemprop="name">Untitled</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-
-    </div>
-  </div>
   
   
   
 
+
   
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span>
+  </nav>
 
 
 

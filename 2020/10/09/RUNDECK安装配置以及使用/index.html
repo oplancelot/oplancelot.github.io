@@ -20,15 +20,15 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="RUNDECK安装配置以及使用 1.运维、发布管理自动化2.根据权限授权3.行为审计 分为企业版和免费版    rpm -Uvh http:&#x2F;&#x2F;repo.rundeck.org&#x2F;latest.rpm    sudo yum install rundeck java    sudo yum update rundeck    sudo rpm -i rundeck-3.3.3-20200910-1.">
+  <meta name="description" content="1.运维、发布管理自动化2.根据权限授权3.行为审计 分为企业版和免费版    rpm -Uvh http:&#x2F;&#x2F;repo.rundeck.org&#x2F;latest.rpm    sudo yum install rundeck java    sudo yum update rundeck    sudo rpm -i rundeck-3.3.3-20200910-1.noarch.rpm    su">
 <meta property="og:type" content="article">
-<meta property="og:title" content="oplancelot">
+<meta property="og:title" content="RUNDECK安装配置以及使用">
 <meta property="og:url" content="http://example.com/2020/10/09/RUNDECK%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/index.html">
 <meta property="og:site_name" content="oplancelot">
-<meta property="og:description" content="RUNDECK安装配置以及使用 1.运维、发布管理自动化2.根据权限授权3.行为审计 分为企业版和免费版    rpm -Uvh http:&#x2F;&#x2F;repo.rundeck.org&#x2F;latest.rpm    sudo yum install rundeck java    sudo yum update rundeck    sudo rpm -i rundeck-3.3.3-20200910-1.">
+<meta property="og:description" content="1.运维、发布管理自动化2.根据权限授权3.行为审计 分为企业版和免费版    rpm -Uvh http:&#x2F;&#x2F;repo.rundeck.org&#x2F;latest.rpm    sudo yum install rundeck java    sudo yum update rundeck    sudo rpm -i rundeck-3.3.3-20200910-1.noarch.rpm    su">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-10-09T06:06:11.268Z">
-<meta property="article:modified_time" content="2020-09-23T09:34:39.662Z">
+<meta property="article:published_time" content="2020-10-09T06:26:38.000Z">
+<meta property="article:modified_time" content="2020-10-09T06:43:59.480Z">
 <meta property="article:author" content="oplancelot">
 <meta name="twitter:card" content="summary">
 
@@ -45,7 +45,7 @@
   };
 </script>
 
-  <title> | oplancelot</title>
+  <title>RUNDECK安装配置以及使用 | oplancelot</title>
   
 
 
@@ -164,7 +164,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          
+          RUNDECK安装配置以及使用
         </h1>
 
         <div class="post-meta">
@@ -173,16 +173,10 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
+              
 
-              <time title="Created: 2020-10-09 14:06:11" itemprop="dateCreated datePublished" datetime="2020-10-09T14:06:11+08:00">2020-10-09</time>
+              <time title="Created: 2020-10-09 14:26:38 / Modified: 14:43:59" itemprop="dateCreated datePublished" datetime="2020-10-09T14:26:38+08:00">2020-10-09</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-09-23 17:34:39" itemprop="dateModified" datetime="2020-09-23T17:34:39+08:00">2020-09-23</time>
-              </span>
 
           
 
@@ -195,8 +189,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>RUNDECK安装配置以及使用</p>
-<p>1.运维、发布管理自动化<br>2.根据权限授权<br>3.行为审计</p>
+        <p>1.运维、发布管理自动化<br>2.根据权限授权<br>3.行为审计</p>
 <p>分为企业版和免费版<br>    rpm -Uvh <a target="_blank" rel="noopener" href="http://repo.rundeck.org/latest.rpm">http://repo.rundeck.org/latest.rpm</a><br>    sudo yum install rundeck java<br>    sudo yum update rundeck<br>    sudo rpm -i rundeck-3.3.3-20200910-1.noarch.rpm<br>    sudo service rundeckd start<br>    tail -f /var/log/rundeck/service.log<br>    出现<br>    Grails application running at <a target="_blank" rel="noopener" href="http://localhost:4440/">http://localhost:4440</a> in environment: production</p>
 <p>只能本地访问<br>    admin admin<br>    vim /etc/rundeck/rundeck-config.properties<br>    vim /etc/rundeck/framework.properties</p>
 <pre><code>$ vim /etc/rundeck/rundeck-config.properties
@@ -255,12 +248,12 @@ project.etc.dir = /var/lib/rundeck/projects/$&#123;project.name&#125;/etc</code>
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/10/09/ansible/" rel="prev" title="">
-      <i class="fa fa-chevron-left"></i> 
+    <a href="/2020/10/09/WSL%E4%BF%AE%E6%94%B9root%E5%AF%86%E7%A0%81/" rel="prev" title="WSL修改root密码">
+      <i class="fa fa-chevron-left"></i> WSL修改root密码
     </a></div>
       <div class="post-nav-item">
-    <a href="/2020/10/09/mysql-real_only%E5%8F%AA%E8%AF%BB%E5%B1%9E%E6%80%A7/" rel="next" title="">
-       <i class="fa fa-chevron-right"></i>
+    <a href="/2020/10/09/systemctl%E5%91%BD%E4%BB%A4%E5%88%9D%E6%AD%A5%E8%AF%B4%E6%98%8E/" rel="next" title="systemctl命令初步说明">
+      systemctl命令初步说明 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>

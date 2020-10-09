@@ -20,19 +20,19 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="1.存储连接方式默认网卡几个1 Broadcom 5720 四端口 1GbE BASE-T, rNDCRiser配置-raid卡，存储hba卡2 英特尔 X710 双端口 10GbE 直连 SFP+ 适配器, PCIe 全高 2.存储连接iscsi20T">
+  <meta name="description" content="title: CentOS-7 MySQL5.7.31 配置主从复制date: 2018-10-09 14:26:38tags:  两台CentOS-7主机：node1(主)：192.168.1.220，node2(从)：192.168.2.221两台主机均已安装MySQL5.7.31 ，且网络互通 2、配置过程主从原理大致有三个步骤： 在主库上把数据更改记录到二进制日志中（Binary Log">
 <meta property="og:type" content="article">
 <meta property="og:title" content="oplancelot">
-<meta property="og:url" content="http://example.com/2020/10/09/DELL%E6%96%B9%E6%A1%88%E9%A2%84%E5%A4%87/index.html">
+<meta property="og:url" content="http://example.com/2020/10/09/unsafe/MySQL5.7.31%20%E9%85%8D%E7%BD%AE%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/index.html">
 <meta property="og:site_name" content="oplancelot">
-<meta property="og:description" content="1.存储连接方式默认网卡几个1 Broadcom 5720 四端口 1GbE BASE-T, rNDCRiser配置-raid卡，存储hba卡2 英特尔 X710 双端口 10GbE 直连 SFP+ 适配器, PCIe 全高 2.存储连接iscsi20T">
+<meta property="og:description" content="title: CentOS-7 MySQL5.7.31 配置主从复制date: 2018-10-09 14:26:38tags:  两台CentOS-7主机：node1(主)：192.168.1.220，node2(从)：192.168.2.221两台主机均已安装MySQL5.7.31 ，且网络互通 2、配置过程主从原理大致有三个步骤： 在主库上把数据更改记录到二进制日志中（Binary Log">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-10-09T06:06:11.267Z">
-<meta property="article:modified_time" content="2020-09-21T06:52:21.398Z">
+<meta property="article:published_time" content="2020-10-09T06:42:15.479Z">
+<meta property="article:modified_time" content="2020-10-09T06:36:52.403Z">
 <meta property="article:author" content="oplancelot">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://example.com/2020/10/09/DELL%E6%96%B9%E6%A1%88%E9%A2%84%E5%A4%87/">
+<link rel="canonical" href="http://example.com/2020/10/09/unsafe/MySQL5.7.31%20%E9%85%8D%E7%BD%AE%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">
 
 
 <script id="page-configurations">
@@ -151,7 +151,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/DELL%E6%96%B9%E6%A1%88%E9%A2%84%E5%A4%87/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/unsafe/MySQL5.7.31%20%E9%85%8D%E7%BD%AE%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -173,16 +173,10 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
+              
 
-              <time title="Created: 2020-10-09 14:06:11" itemprop="dateCreated datePublished" datetime="2020-10-09T14:06:11+08:00">2020-10-09</time>
+              <time title="Created: 2020-10-09 14:42:15 / Modified: 14:36:52" itemprop="dateCreated datePublished" datetime="2020-10-09T14:42:15+08:00">2020-10-09</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-09-21 14:52:21" itemprop="dateModified" datetime="2020-09-21T14:52:21+08:00">2020-09-21</time>
-              </span>
 
           
 
@@ -195,8 +189,82 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>1.存储连接方式<br>默认网卡几个<br>1 Broadcom 5720 四端口 1GbE BASE-T, rNDC<br>Riser配置-raid卡，存储hba卡<br>2 英特尔 X710 双端口 10GbE 直连 SFP+ 适配器, PCIe 全高</p>
-<p>2.存储连接<br>iscsi<br>20T</p>
+        <hr>
+<p>title: CentOS-7 MySQL5.7.31 配置主从复制<br>date: 2018-10-09 14:26:38<br>tags:</p>
+<hr>
+<p>两台CentOS-7主机：node1(主)：192.168.1.220，node2(从)：192.168.2.221<br>两台主机均已安装MySQL5.7.31 ，且网络互通</p>
+<p>2、配置过程<br>主从原理大致有三个步骤：</p>
+<p>在主库上把数据更改记录到二进制日志中（Binary Log）中，这些记录称为二进制日志事件。<br>从库通过IO线程将主库上的日志复制到自己的中继日志（Relay Log）中。<br>从库通过SQL线程读取中继日志中的事件，将其重放到自己数据上。<br>　　配置文件确定</p>
+<p>配置主库：</p>
+<p>修改my.cnf 文件，在[mysqld] 段下添加：<br>    #master———-begin<br>    sync_binlog=1<br>    #server ID<br>    server-id=10<br>    #enable mysql binlog<br>    log-bin= /data/mysql/logs/binlog/mysql-bin<br>    #innodb—#<br>    #flush every log write<br>    #0 redologbuff 1write+fsync 2wrie<br>    innodb_support_xa=1<br>    #master———–end</p>
+<p>配置好后重启mysql服务</p>
+<p>检查data目录是否有binlog日志生成</p>
+<p>登录主数据库，新建一个复制账号</p>
+<pre><code>mysql&gt; CREATE USER &#39;repl&#39;@&#39;%&#39; IDENTIFIED BY &#39;repl&#39;;
+mysql&gt; GRANT REPLICATION SLAVE ON *.* TO &#39;repl&#39;@&#39;%&#39;;
+
+https://dev.mysql.com/doc/refman/5.7/en/replication-howto-repuser.html
+
+
+mysql&gt;  FLUSH TABLES WITH READ LOCK;  //锁表做备份
+UNLOCK TABLES;//做完解锁
+
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt;  SHOW MASTER STATUS;
++------------------+----------+--------------+------------------+-------------------+
+| File | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
++------------------+----------+--------------+------------------+-------------------+
+| mysql-bin.000004 |  596 |  |  |   |
+mysql-bin.000008 |  605 //记住这两个值
+
+;</code></pre>
+<p> #做备份<br>    mysqldump -uroot -p –all-databases –master-data &gt; dbdump.db</p>
+<p>添加set-gtid-purged=off参数，免得导入提示：<br>    ERROR 1840 (HY000) at line 24: @@GLOBAL.GTID_PURGED can only be set when @@GLOBAL.GTID_EXECUTED is empty.</p>
+<pre><code>mysqldump -uroot -p --set-gtid-purged=off --master-data &gt; dbdump.db</code></pre>
+<p>配置从库：</p>
+<p>修改my.cnf 文件，在[mysqld] 段下添加：</p>
+<pre><code>#slave-----------beign
+server-id=20
+relay_log=/data/mysql/logs/relaylog/relay-bin
+#skip_slave_start //复制是否随mysql启动进行，需要同步时关闭
+read_only =1 //限制普通用户是否可以写入数据库，root不限制
+
+#slave-end</code></pre>
+<p>修改完后重启MySQL</p>
+<p>导入dump备份<br>    scp <a href="mailto:&#x72;&#111;&#111;&#x74;&#64;&#x31;&#57;&#x32;&#x2e;&#x31;&#x36;&#x38;&#46;&#x31;&#x2e;&#x32;&#48;&#48;">&#x72;&#111;&#111;&#x74;&#64;&#x31;&#57;&#x32;&#x2e;&#x31;&#x36;&#x38;&#46;&#x31;&#x2e;&#x32;&#48;&#48;</a>:/root/dbdump.db ./<br>    mysql -uroot -p  &lt; dbdump.db</p>
+<p>登录从数据库，配置主从</p>
+<p>在从库上指定主库地址，以及 同步账号、密码，并启动同步<br>    mysql&gt; CHANGE MASTER TO   MASTER_HOST=’192.168.0.136’,MASTER_USER=’repl’,MASTER_PASSWORD=’repl’,MASTER_LOG_FILE=’mysqlbin.000003’,MASTER_LOG_POS=635;</p>
+<pre><code>mysql&gt; START SLAVE;
+mysql&gt; STOP SLAVE;
+mysql&gt; SHOW SLAVE STATUS\G； //查看复制状态
+
+
+show slave status;
+show processlist;</code></pre>
+<p>查看从库状态，查看Slave_IO_Running: Yes和 Slave_SQL_Running: Yes 为yes主从配置完成<br>如果启动同步后，第一个为Connecting，第二个为Yes，大部分为连接问题，请检查网络是否通，配置的用户名密码是否正确</p>
+<p>主库建库，建表，插入<br>    create database newpay;<br>    create table newpay_user(id int,name char(10));</p>
+<pre><code>mysql&gt; select id,name from newpay_user;
++------+------+
+| id   | name |
++------+------+
+|   10 | TOM  |
++------+------+
+1 row in set (0.00 sec)
+
+mysql&gt; exit;
+Bye
+
+
+
+
+ CREATE USER &#39;test&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;test&#39;;
+ CREATE USER &#39;test&#39;@&#39;%&#39; IDENTIFIED BY &#39;test&#39;;
+SET PASSWORD FOR &#39;test&#39;@&#39;localhost&#39; = PASSWORD(&quot;test&quot;);
+SET PASSWORD FOR &#39;test&#39;@&#39;%&#39; = PASSWORD(&quot;test&quot;);
+
+GRANT ALL PRIVILEGES ON test.* TO &#39;test&#39;@&#39;%&#39; IDENTIFIED BY &#39;test&#39; WITH GRANT OPTION;</code></pre>
 
     </div>
 
@@ -212,11 +280,11 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/10/09/CentOS%E9%85%8D%E7%BD%AEiptables%E8%A7%84%E5%88%99%E5%B9%B6%E4%BD%BF%E5%85%B6%E6%B0%B8%E4%B9%85%E7%94%9F%E6%95%88/" rel="prev" title="">
+    <a href="/2020/10/09/unsafe/nginx%E6%BA%90%E7%A0%81%E5%AE%89%E8%A3%85/" rel="prev" title="">
       <i class="fa fa-chevron-left"></i> 
     </a></div>
       <div class="post-nav-item">
-    <a href="/2020/10/09/WSL%E4%BF%AE%E6%94%B9root%E5%AF%86%E7%A0%81/" rel="next" title="">
+    <a href="/2020/10/09/unsafe/openvpn%E5%AE%89%E8%A3%85%E5%92%8C%E9%85%8D%E7%BD%AE/" rel="next" title="">
        <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>

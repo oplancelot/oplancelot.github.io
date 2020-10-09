@@ -146,7 +146,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/DELL%E6%96%B9%E6%A1%88%E9%A2%84%E5%A4%87/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/unsafe/SSL%E8%AF%81%E4%B9%A6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -160,7 +160,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/10/09/DELL%E6%96%B9%E6%A1%88%E9%A2%84%E5%A4%87/" class="post-title-link" itemprop="url">Untitled</a>
+            <a href="/2020/10/09/unsafe/SSL%E8%AF%81%E4%B9%A6/" class="post-title-link" itemprop="url">Untitled</a>
         </h2>
 
         <div class="post-meta">
@@ -170,14 +170,14 @@
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
-              <time title="Created: 2020-10-09 14:06:11" itemprop="dateCreated datePublished" datetime="2020-10-09T14:06:11+08:00">2020-10-09</time>
+              <time title="Created: 2020-10-09 14:13:38" itemprop="dateCreated datePublished" datetime="2020-10-09T14:13:38+08:00">2020-10-09</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-09-21 14:52:21" itemprop="dateModified" datetime="2020-09-21T14:52:21+08:00">2020-09-21</time>
+                <time title="Modified: 2020-09-27 15:20:14" itemprop="dateModified" datetime="2020-09-27T15:20:14+08:00">2020-09-27</time>
               </span>
 
           
@@ -191,8 +191,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>1.存储连接方式<br>默认网卡几个<br>1 Broadcom 5720 四端口 1GbE BASE-T, rNDC<br>Riser配置-raid卡，存储hba卡<br>2 英特尔 X710 双端口 10GbE 直连 SFP+ 适配器, PCIe 全高</p>
-<p>2.存储连接<br>iscsi<br>20T</p>
+          <p>使用key和pem生成jks证书<br>nginx证书生成jks<br>openssl生成*.pfk文件，jdk的keytool生成jks文件<br>[root@hongkong cert]# openssl<br>OpenSSL&gt; pkcs12 -export -out /etc/nginx/cert/newpay.la.pfx -in /etc/nginx/cert/newpay.la.pem -inkey /etc/nginx/cert/newpay.la.key</p>
+<p>#输入最少6位密码<br>keytool -importkeystore -srckeystore /etc/nginx/cert/newpay.la.pfx -destkeystore /etc/nginx/cert/newpay.la.jks -srcstoretype PKCS12 -deststoretype JKS</p>
+<p>PEM文件和private.key文件生成Tomcat服务器所需的jks文件(配置SSL用)<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/long19901216/article/details/79696796">https://blog.csdn.net/long19901216/article/details/79696796</a><br>Tomcat服务器配置SSL<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/long19901216/article/details/79714170">https://blog.csdn.net/long19901216/article/details/79714170</a></p>
+<p>wireshak解密用证书<br>openssl pkcs12 -export  -in newpay.la.pem -inkey newpay.la.key -out newpay.p12 -passout pass:123321</p>
 
       
     </div>
@@ -212,7 +214,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/CentOS%E9%85%8D%E7%BD%AEiptables%E8%A7%84%E5%88%99%E5%B9%B6%E4%BD%BF%E5%85%B6%E6%B0%B8%E4%B9%85%E7%94%9F%E6%95%88/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/10/09/centos7%E9%85%8D%E7%BD%AE%E6%9C%AC%E5%9C%B0yum%E6%BA%90%E3%80%81%E4%BD%BF%E7%94%A8yum%E6%BA%90/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -226,7 +228,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/10/09/CentOS%E9%85%8D%E7%BD%AEiptables%E8%A7%84%E5%88%99%E5%B9%B6%E4%BD%BF%E5%85%B6%E6%B0%B8%E4%B9%85%E7%94%9F%E6%95%88/" class="post-title-link" itemprop="url">Untitled</a>
+            <a href="/2018/10/09/centos7%E9%85%8D%E7%BD%AE%E6%9C%AC%E5%9C%B0yum%E6%BA%90%E3%80%81%E4%BD%BF%E7%94%A8yum%E6%BA%90/" class="post-title-link" itemprop="url">centos7配置本地yum源</a>
         </h2>
 
         <div class="post-meta">
@@ -236,14 +238,14 @@
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
-              <time title="Created: 2020-10-09 14:06:11" itemprop="dateCreated datePublished" datetime="2020-10-09T14:06:11+08:00">2020-10-09</time>
+              <time title="Created: 2018-10-09 14:26:38" itemprop="dateCreated datePublished" datetime="2018-10-09T14:26:38+08:00">2018-10-09</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-09-16 15:08:08" itemprop="dateModified" datetime="2020-09-16T15:08:08+08:00">2020-09-16</time>
+                <time title="Modified: 2020-10-09 14:36:57" itemprop="dateModified" datetime="2020-10-09T14:36:57+08:00">2020-10-09</time>
               </span>
 
           
@@ -257,26 +259,77 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>CentOS配置iptables规则并使其永久生效<br>© 版权声明：本文为博主原创文章，转载请注明出处</p>
-<ol>
-<li>目的</li>
-</ol>
-<p>　　最近为了使用redis，配置远程连接的使用需要使用iptable是设置允许外部访问6379端口，但是设置完成后重启总是失效。因此百度了一下如何设置永久生效，并记录。</p>
-<ol start="2">
-<li>设置</li>
-</ol>
-<p>　　2.1 添加iptables规则</p>
-<p>iptables -I INPUT 1 -p tcp -m state –state NEW -m tcp –dport 6379 -j ACCEPT<br>　　2.2 保存</p>
-<p>service iptables save<br>　　执行这个命令的时候有时候可能会报错：The service command supports only basic LSB actions (start, stop, restart, try-restart, reload, force-reload, status). For other actions, please try to use systemctl.</p>
-<p>　　这是因为没有安装iptables服务，直接使用yum安装iptables服务即可.</p>
-<p>yum install iptables-services<br>　　安装完成后，重新执行 service iptables save 命令即可保存成功。</p>
-<p>　　2.3 配置iptables开机自启</p>
-<p>　　保存后重启依然没有生效，后百度得知，需要设置iptables开机自启才可使配置生效。</p>
-<p>　　执行如下命令（老版本命令为：service iptables on），设置iptables开机自启</p>
-<p>systemctl enable iptables.service<br> 3. 注意</p>
-<p>　　需关闭firewalld防火墙</p>
-<p>　　systemctl stop firewalld.service</p>
-<p>　　systemctl disable firewalld.service</p>
+          <h1 id="centos7配置本地yum源、使用yum源"><a href="#centos7配置本地yum源、使用yum源" class="headerlink" title="centos7配置本地yum源、使用yum源"></a>centos7配置本地yum源、使用yum源</h1><p>在某些软件集群的安装中（如CDH，以下构建均以此为例），由于qiang的原因、或本地不能访问外网等，可能无法通yum方式在线安装，这时候非常有必要在本地配置一个yum源，集群中server通过这个局域网的yum仓库在（ftp，http，nfs等方式）本地方便、快速的安装应用。</p>
+<p>查看Linux发行版本<br>EL7中提供了一个全新的命令 hostnamectl，不仅可以用来设置hostname，还可以查看操作系统版本及Linux内核信息。</p>
+<p>安装Apache httpd WEB服务器<br>使用apache http服务，可以很方便的将应用资源以http形式对外提供，首先安装一个httpd服务</p>
+<pre><code>yum install httpd
+systemctl start httpd
+systemctl enable httpd #将httpd服务加入开机启动列表里
+
+systemctl stop firewalld #关闭防火墙
+systemctl disable firewalld #禁用防火墙</code></pre>
+<p>创建yum本地源rpm包，加快cdh构建流程<br>①、安装createrepo软件：</p>
+<pre><code>yum -y install createrepo</code></pre>
+<p>②、创建httpd文件服务目录</p>
+<p>如同nginx的www目录，应用文件存放在httpd的 /var/www/html 目录下。</p>
+<pre><code>cd /var/www/html
+
+[root@centos-yum html]# ls
+centos78  extra  ks  updates  x86_64</code></pre>
+<p>centos文件夹是安装kickstart用的<br>    ln -s x86_64/Packages /var/www/html/centos78/Packages<br>指向rpm包</p>
+<p>④、创建rpm、parcel本地资源库<br>执行如下指令：</p>
+<pre><code>createrepo /var/www/html/x86_64</code></pre>
+<p>创建yum本地资源库配置文件</p>
+<p>yum本地源文件一般放置于/etc/yum.repos.d/下</p>
+<pre><code>cd /etc/yum.repos.d/</code></pre>
+<p>新建<br>local.repo 文件，根据资源路径进行编写：</p>
+<pre><code>[local]
+name=centos2003-iso
+baseurl=http://192.168.1.222/centos78
+enabled=1
+gpgcheck=0</code></pre>
+<p>⑥、更新安装源<br>A). 清空缓存</p>
+<pre><code>yum clean all
+Repository cloudera-manager is listed more than once in the configuration
+正在清理软件源： base cloudera-manager epel extras updates zabbix zabbix-non-supported
+Cleaning up list of fastest mirrors</code></pre>
+<p>B). 重新建立缓存</p>
+<pre><code>yum makecache
+已加载插件：fastestmirror, langpacks
+Repository cloudera-manager is listed more than once in the configuration
+Determining fastest mirrors
+epel/x86_64/metalink | 6.8 kB 00:00:00
+base: mirrors.aliyun.com
+epel: mirrors.tuna.tsinghua.edu.cn
+extras: ftp.sjtu.edu.cn
+updates: mirrors.aliyun.com
+base | 3.6 kB 00:00:00
+cloudera-manager</code></pre>
+<p>元数据缓存已建立</p>
+<p>C). 查看yum源</p>
+<pre><code>yum repolist
+源标识 源名称 状态
+base/7/x86_64 CentOS-7 - Base 10,019
+cloudera-manager cloudera-manager</code></pre>
+<p>D). 查找软件包</p>
+<pre><code>yum search 软件包</code></pre>
+<p>⑦、使用yum本地源</p>
+<pre><code>yum install 软件包
+yum install cloudera-manager-daemons cloudera-manager-agent cloudera-manager-server</code></pre>
+<p>浏览器里访问<a target="_blank" rel="noopener" href="http://192.168.1.222/centos78/">http://192.168.1.222/centos78/</a></p>
+<p>局域网中其他server使用该yum本地源<br>如果集群中其他server，如cloudera-scm-agent 也需要在本地进行安装，只需将xxx.repo文件拷贝至其对应目录中，并刷新软件缓存，即可。</p>
+<pre><code>scp /etc/yum.repos.d/local.repo $&#123;TARGET_SERVER_IP&#125;:/etc/yum.repos.d</code></pre>
+<p>centos7运行system-config-kickstart时在Package Selection模块中出现如下错误：</p>
+<p>Package Selection</p>
+<pre><code>   Packageselection is disabled due to problems downloading package information</code></pre>
+<p>这是因为centos7中的kickstart需要使用自己的包仓库，这时我们只需要在/etc/yum.repo.d/目录下编辑一个名叫develop的仓库就可以。</p>
+<p>我的解决方法是：vim /etc/yum.repo.d/development.repo</p>
+<pre><code>[development]
+
+name=development
+baseurl=http://192.168.1.222/centos78
+enabled=1
+gpgcheck=0</code></pre>
 
       
     </div>

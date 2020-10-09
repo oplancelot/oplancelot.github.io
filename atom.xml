@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>oplancelot</title>
+  
+  <subtitle>keep your eyes on the stars and your feet on the ground</subtitle>
+  <link href="http://oplancelot.github.com/atom.xml" rel="self"/>
+  
+  <link href="http://oplancelot.github.com/"/>
+  <updated>2020-10-09T06:43:59.480Z</updated>
+  <id>http://oplancelot.github.com/</id>
+  
+  <author>
+    <name>oplancelot</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>RUNDECK安装配置以及使用</title>
+    <link href="http://oplancelot.github.com/2020/10/09/RUNDECK%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/"/>
+    <id>http://oplancelot.github.com/2020/10/09/RUNDECK%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/</id>
+    <published>2020-10-09T06:26:38.000Z</published>
+    <updated>2020-10-09T06:43:59.480Z</updated>
+    
+    <content type="html"><![CDATA[<p>1.运维、发布管理自动化<br>2.根据权限授权<br>3.行为审计</p><p>分为企业版和免费版<br>    rpm -Uvh <a href="http://repo.rundeck.org/latest.rpm">http://repo.rundeck.org/latest.rpm</a><br>    sudo yum install rundeck java<br>    sudo yum update rundeck<br>    sudo rpm -i rundeck-3.3.3-20200910-1.noarch.rpm<br>    sudo service rundeckd start<br>    tail -f /var/log/rundeck/service.log<br>    出现<br>    Grails application running at <a href="http://localhost:4440/">http://localhost:4440</a> in environment: production</p><p>只能本地访问<br>    admin admin<br>    vim /etc/rundeck/rundeck-config.properties<br>    vim /etc/rundeck/framework.properties</p><pre><code>$ vim /etc/rundeck/rundeck-config.propertiesgrails.serverURL=http://localhost:4440改成grails.serverURL=http://192.168.1.222:4440# service rundeckd restart</code></pre><p>可以局域网访问了</p><p>创建mysql数据库替换本地数据库<br>    mysql&gt; create user ‘rundeck’@’%’;<br>    Query OK, 0 rows affected (0.00 sec)</p><pre><code>mysql&gt; set password for &#39;rundeck&#39;@&#39;%&#39;=password(&#39;rundeck&#39;);Query OK, 0 rows affected, 1 warning (0.00 sec)mysql&gt; create database rundeck;Query OK, 1 row affected (0.02 sec)mysql&gt; grant all privileges on rundeck.* to &#39;rundeck&#39;@&#39;%&#39; identified by &#39;rundeck&#39; with grant option;Query OK, 0 rows affected, 1 warning (0.01 sec)mysql&gt; grant all privileges on rundeck.* to &#39;rundeck&#39;@&#39;localhost&#39; identified by &#39;rundeck&#39; with grant option;Query OK, 0 rows affected, 2 warnings (0.00 sec)mysql&gt; FLUSH PRIVILEGES;Query OK, 0 rows affected (0.00 sec)</code></pre><p>Update your rundeck-config.properties and configure the datasource:</p><pre><code>RPM/Debian location: /etc/rundeck/rundeck-config.propertiesLauncher location: $RDECK_BASE/server/config/rundeck-config.propertiesContents:dataSource.url = jdbc:mysql://192.168.1.222/rundeck?autoReconnect=true&amp;useSSL=falsedataSource.username=rundeckdataSource.password=rundeckdataSource.driverClassName=com.mysql.cj.jdbc.Driver//官网有点旧了，多加cj</code></pre><p>   #rundeck add my.cnf<br>    innodb_file_format=barracuda<br>    innodb_file_per_table=true<br>    innodb_large_prefix=true<br>然后从本地可以登陆rundeck了；其他电脑则报错；token问题<br>清除cookie<br>日志查看<br>     tail -f /var/log/rundeck/rundeck.access.log</p><p>project文件路径查看<br>    /etc/rundeck/project.properties</p><pre><code># The base directory for this project&#39;s instances#project.dir = /var/lib/rundeck/projects/$&#123;project.name&#125;## The base directory of project specific configuration files#project.etc.dir = /var/lib/rundeck/projects/$&#123;project.name&#125;/etc</code></pre><p>nodes添加在project settings<br>edit nodes 里指定路径，会生成配置文件</p><p>证书认证<br>管理员文档<a href="https://docs.rundeck.com/docs/administration/configuration/database/mysql.html">https://docs.rundeck.com/docs/administration/configuration/database/mysql.html</a></p><p>官网<a href="https://docs.rundeck.com/docs/manual/01-introduction.html">https://docs.rundeck.com/docs/manual/01-introduction.html</a><br>参考<a href="https://blog.csdn.net/liumiaocn/article/details/89135773">https://blog.csdn.net/liumiaocn/article/details/89135773</a></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;1.运维、发布管理自动化&lt;br&gt;2.根据权限授权&lt;br&gt;3.行为审计&lt;/p&gt;
+&lt;p&gt;分为企业版和免费版&lt;br&gt;    rpm -Uvh &lt;a href=&quot;http://repo.rundeck.org/latest.rpm&quot;&gt;http://repo.rundeck.org/</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Centos7最小化安装完毕</title>
+    <link href="http://oplancelot.github.com/2020/10/09/Centos7%E6%9C%80%E5%B0%8F%E5%8C%96%E5%AE%89%E8%A3%85/"/>
+    <id>http://oplancelot.github.com/2020/10/09/Centos7%E6%9C%80%E5%B0%8F%E5%8C%96%E5%AE%89%E8%A3%85/</id>
+    <published>2020-10-09T06:26:38.000Z</published>
+    <updated>2020-10-09T06:29:21.837Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="Centos7最小化安装完毕后，为了方便日后操作和维护管理，建议安装下列软件-。"><a href="#Centos7最小化安装完毕后，为了方便日后操作和维护管理，建议安装下列软件-。" class="headerlink" title="Centos7最小化安装完毕后，为了方便日后操作和维护管理，建议安装下列软件 #。"></a>Centos7最小化安装完毕后，为了方便日后操作和维护管理，建议安装下列软件 #。</h1><p>yum -y install lshw pciutils gdisk system-storage-manager<br>yum -y bash-completion zip unzip bzip2 tree tmpwatch pinfo man-pages<br>yum -y nano vim-enhanced tmux screen<br>yum -y net-tools psmisclsof sysstat<br>yum -y yum-plugin-security yum-utils createrepo<br>yum -y get wget curl eliks lynx lftp mailx mutt reync<br>yum -y libaio make cmake gcc-c++ gcc zib zlib-devel open openssl-devel pcre pcre-devel</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;Centos7最小化安装完毕后，为了方便日后操作和维护管理，建议安装下列软件-。&quot;&gt;&lt;a href=&quot;#Centos7最小化安装完毕后，为了方便日后操作和维护管理，建议安装下列软件-。&quot; class=&quot;headerlink&quot; title=&quot;Centos7最小化安装</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Ansible</title>
+    <link href="http://oplancelot.github.com/2020/10/09/ansible/"/>
+    <id>http://oplancelot.github.com/2020/10/09/ansible/</id>
+    <published>2020-10-09T06:26:38.000Z</published>
+    <updated>2020-10-09T06:32:28.559Z</updated>
+    
+    <content type="html"><![CDATA[<p>yum install ansible -y<br>用法简介<br><a href="https://www.cnblogs.com/along21/p/8241542.html">https://www.cnblogs.com/along21/p/8241542.html</a></p><p><a href="https://www.cnblogs.com/yanjieli/p/10969089.html">https://www.cnblogs.com/yanjieli/p/10969089.html</a><br><a href="https://www.cnblogs.com/createwell/p/12123772.html">https://www.cnblogs.com/createwell/p/12123772.html</a></p><p><img src="https://img2018.cnblogs.com/blog/1210730/201906/1210730-20190603174855830-17103163.png"></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;yum install ansible -y&lt;br&gt;用法简介&lt;br&gt;&lt;a href=&quot;https://www.cnblogs.com/along21/p/8241542.html&quot;&gt;https://www.cnblogs.com/along21/p/8241542.html</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>清空 Github 仓库,而不是删除重新创建.</title>
+    <link href="http://oplancelot.github.com/2020/10/09/%E6%B8%85%E7%A9%BA%20github%20%E4%BB%93%E5%BA%93,%E8%80%8C%E4%B8%8D%E6%98%AF%E5%88%A0%E9%99%A4%E9%87%8D%E6%96%B0%E5%88%9B%E5%BB%BA/"/>
+    <id>http://oplancelot.github.com/2020/10/09/%E6%B8%85%E7%A9%BA%20github%20%E4%BB%93%E5%BA%93,%E8%80%8C%E4%B8%8D%E6%98%AF%E5%88%A0%E9%99%A4%E9%87%8D%E6%96%B0%E5%88%9B%E5%BB%BA/</id>
+    <published>2020-10-09T06:26:38.000Z</published>
+    <updated>2020-10-09T07:33:15.038Z</updated>
+    
+    <content type="html"><![CDATA[<p>– Remove the history from</p><p>rm -rf .git<br>– recreate the repos from the current content only</p><p>git init<br>touch README<br>git add README<br>git commit -m “Initial commit”<br>– push to the github remote repos ensuring you overwrite history</p><p>git remote add origin <a href="mailto:&#103;&#105;&#x74;&#64;&#103;&#105;&#116;&#x68;&#117;&#98;&#x2e;&#99;&#111;&#109;">&#103;&#105;&#x74;&#64;&#103;&#105;&#116;&#x68;&#117;&#98;&#x2e;&#99;&#111;&#109;</a>:oplancelot/oplancelot.github.io.git<br>git push -u –force origin master</p><p>git remote add oplancelot <a href="mailto:&#103;&#x69;&#x74;&#64;&#103;&#105;&#x74;&#104;&#x75;&#x62;&#46;&#x63;&#x6f;&#x6d;">&#103;&#x69;&#x74;&#64;&#103;&#105;&#x74;&#104;&#x75;&#x62;&#46;&#x63;&#x6f;&#x6d;</a>:oplancelot/oplancelot.github.io.git<br>git push -u –force oplancelot master</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;– Remove the history from&lt;/p&gt;
+&lt;p&gt;rm -rf .git&lt;br&gt;– recreate the repos from the current content only&lt;/p&gt;
+&lt;p&gt;git init&lt;br&gt;touch README&lt;br&gt;git</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>WSL修改root密码</title>
+    <link href="http://oplancelot.github.com/2019/10/09/WSL%E4%BF%AE%E6%94%B9root%E5%AF%86%E7%A0%81/"/>
+    <id>http://oplancelot.github.com/2019/10/09/WSL%E4%BF%AE%E6%94%B9root%E5%AF%86%E7%A0%81/</id>
+    <published>2019-10-09T06:26:38.000Z</published>
+    <updated>2020-10-09T07:35:13.958Z</updated>
+    
+    <content type="html"><![CDATA[<p>打开Windows PowerShell</p><p>版权所有 (C) Microsoft Corporation。保留所有权利。</p><p>尝试新的跨平台 PowerShell <a href="https://aka.ms/pscore6">https://aka.ms/pscore6</a><br>输入<br>    PS C:\Windows\system32&gt; ubuntu config –default-user root<br>输入</p><pre><code>PS C:\Windows\system32&gt; ubuntuWelcome to Ubuntu 20.04.1 LTS (GNU/Linux 4.4.0-18362-Microsoft x86_64) * Documentation:  https://help.ubuntu.com * Management: https://landscape.canonical.com * Support:https://ubuntu.com/advantage  System information as of Fri Oct  9 10:39:11 CST 2020  System load:0.52  Users logged in:0  Usage of /home: unknown   IPv4 address for eth2:  192.168.1.20  Memory usage:   38%   IPv4 address for eth3:  169.254.86.168  Swap usage: 0%IPv4 address for wifi0: 192.168.0.21  Processes:  91 update can be installed immediately.0 of these updates are security updates.To see these additional updates run: apt list --upgradableThe list of available updates is more than a week old.To check for new updates run: sudo apt updateThis message is shown once once a day. To disable it please create the/root/.hushlogin file.root@lancelot-laptop:~# passwdNew password:Retype new password:passwd: password updated successfullyroot@lancelot-laptop:~#</code></pre>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;打开Windows PowerShell&lt;/p&gt;
+&lt;p&gt;版权所有 (C) Microsoft Corporation。保留所有权利。&lt;/p&gt;
+&lt;p&gt;尝试新的跨平台 PowerShell &lt;a href=&quot;https://aka.ms/pscore6&quot;&gt;https://aka</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Centos7配置本地yum源</title>
+    <link href="http://oplancelot.github.com/2018/10/09/centos7%E9%85%8D%E7%BD%AE%E6%9C%AC%E5%9C%B0yum%E6%BA%90%E3%80%81%E4%BD%BF%E7%94%A8yum%E6%BA%90/"/>
+    <id>http://oplancelot.github.com/2018/10/09/centos7%E9%85%8D%E7%BD%AE%E6%9C%AC%E5%9C%B0yum%E6%BA%90%E3%80%81%E4%BD%BF%E7%94%A8yum%E6%BA%90/</id>
+    <published>2018-10-09T06:26:38.000Z</published>
+    <updated>2020-10-09T06:36:57.390Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="centos7配置本地yum源、使用yum源"><a href="#centos7配置本地yum源、使用yum源" class="headerlink" title="centos7配置本地yum源、使用yum源"></a>centos7配置本地yum源、使用yum源</h1><p>在某些软件集群的安装中（如CDH，以下构建均以此为例），由于qiang的原因、或本地不能访问外网等，可能无法通yum方式在线安装，这时候非常有必要在本地配置一个yum源，集群中server通过这个局域网的yum仓库在（ftp，http，nfs等方式）本地方便、快速的安装应用。</p><p>查看Linux发行版本<br>EL7中提供了一个全新的命令 hostnamectl，不仅可以用来设置hostname，还可以查看操作系统版本及Linux内核信息。</p><p>安装Apache httpd WEB服务器<br>使用apache http服务，可以很方便的将应用资源以http形式对外提供，首先安装一个httpd服务</p><pre><code>yum install httpdsystemctl start httpdsystemctl enable httpd #将httpd服务加入开机启动列表里systemctl stop firewalld #关闭防火墙systemctl disable firewalld #禁用防火墙</code></pre><p>创建yum本地源rpm包，加快cdh构建流程<br>①、安装createrepo软件：</p><pre><code>yum -y install createrepo</code></pre><p>②、创建httpd文件服务目录</p><p>如同nginx的www目录，应用文件存放在httpd的 /var/www/html 目录下。</p><pre><code>cd /var/www/html[root@centos-yum html]# lscentos78  extra  ks  updates  x86_64</code></pre><p>centos文件夹是安装kickstart用的<br>    ln -s x86_64/Packages /var/www/html/centos78/Packages<br>指向rpm包</p><p>④、创建rpm、parcel本地资源库<br>执行如下指令：</p><pre><code>createrepo /var/www/html/x86_64</code></pre><p>创建yum本地资源库配置文件</p><p>yum本地源文件一般放置于/etc/yum.repos.d/下</p><pre><code>cd /etc/yum.repos.d/</code></pre><p>新建<br>local.repo 文件，根据资源路径进行编写：</p><pre><code>[local]name=centos2003-isobaseurl=http://192.168.1.222/centos78enabled=1gpgcheck=0</code></pre><p>⑥、更新安装源<br>A). 清空缓存</p><pre><code>yum clean allRepository cloudera-manager is listed more than once in the configuration正在清理软件源： base cloudera-manager epel extras updates zabbix zabbix-non-supportedCleaning up list of fastest mirrors</code></pre><p>B). 重新建立缓存</p><pre><code>yum makecache已加载插件：fastestmirror, langpacksRepository cloudera-manager is listed more than once in the configurationDetermining fastest mirrorsepel/x86_64/metalink | 6.8 kB 00:00:00base: mirrors.aliyun.comepel: mirrors.tuna.tsinghua.edu.cnextras: ftp.sjtu.edu.cnupdates: mirrors.aliyun.combase | 3.6 kB 00:00:00cloudera-manager</code></pre><p>元数据缓存已建立</p><p>C). 查看yum源</p><pre><code>yum repolist源标识 源名称 状态base/7/x86_64 CentOS-7 - Base 10,019cloudera-manager cloudera-manager</code></pre><p>D). 查找软件包</p><pre><code>yum search 软件包</code></pre><p>⑦、使用yum本地源</p><pre><code>yum install 软件包yum install cloudera-manager-daemons cloudera-manager-agent cloudera-manager-server</code></pre><p>浏览器里访问<a href="http://192.168.1.222/centos78/">http://192.168.1.222/centos78/</a></p><p>局域网中其他server使用该yum本地源<br>如果集群中其他server，如cloudera-scm-agent 也需要在本地进行安装，只需将xxx.repo文件拷贝至其对应目录中，并刷新软件缓存，即可。</p><pre><code>scp /etc/yum.repos.d/local.repo $&#123;TARGET_SERVER_IP&#125;:/etc/yum.repos.d</code></pre><p>centos7运行system-config-kickstart时在Package Selection模块中出现如下错误：</p><p>Package Selection</p><pre><code>   Packageselection is disabled due to problems downloading package information</code></pre><p>这是因为centos7中的kickstart需要使用自己的包仓库，这时我们只需要在/etc/yum.repo.d/目录下编辑一个名叫develop的仓库就可以。</p><p>我的解决方法是：vim /etc/yum.repo.d/development.repo</p><pre><code>[development]name=developmentbaseurl=http://192.168.1.222/centos78enabled=1gpgcheck=0</code></pre>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;centos7配置本地yum源、使用yum源&quot;&gt;&lt;a href=&quot;#centos7配置本地yum源、使用yum源&quot; class=&quot;headerlink&quot; title=&quot;centos7配置本地yum源、使用yum源&quot;&gt;&lt;/a&gt;centos7配置本地yum源、使用yu</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Systemctl命令初步说明</title>
+    <link href="http://oplancelot.github.com/2018/10/09/systemctl%E5%91%BD%E4%BB%A4%E5%88%9D%E6%AD%A5%E8%AF%B4%E6%98%8E/"/>
+    <id>http://oplancelot.github.com/2018/10/09/systemctl%E5%91%BD%E4%BB%A4%E5%88%9D%E6%AD%A5%E8%AF%B4%E6%98%8E/</id>
+    <published>2018-10-09T06:26:38.000Z</published>
+    <updated>2020-10-09T07:36:20.757Z</updated>
+    
+    <content type="html"><![CDATA[<p>systemctl命令初步说明<br><a href="https://www.jianshu.com/p/b39b564e6616">https://www.jianshu.com/p/b39b564e6616</a><br>epiiplus1equal0<br>2019.01.31 10:18:18</p><p>LinuxSystemctl是一个系统管理守护进程, 工具和库的集合, 用于取代System V, service和chkconfig命令, 初始进程主要负责控制systemd系统和服务管理器.<br>通过Systemctl –help可以看到该命令主要分为:<br>查询或发送控制命令给systemd服务,<br>管理单元服务的命令,<br>服务文件的相关命令, 任务, 环境, 快照相关命令,<br>systemd服务的配置重载, 系统开机关机相关的命令.</p><ol><li><p>对单元的操作<br> systemctl list-unit-files [-t type] # 列出所有可用单元<br> systemctl list-units# 列出所有运行中单元<br> systemctl –-failed  # 列出所有失败单元<br> systemctl is-enabled crond.service  # 检查某个单元（如 crond.service)是否启用</p></li><li><p>对服务的操作</p><h1 id="0-列出所有服务"><a href="#0-列出所有服务" class="headerlink" title="0. 列出所有服务"></a>0. 列出所有服务</h1><p> systemctl list-unit-files –t service </p><h1 id="1-Linux中如何启动-重启-停止-重载服务以及检查服务-如-httpd-service-状态"><a href="#1-Linux中如何启动-重启-停止-重载服务以及检查服务-如-httpd-service-状态" class="headerlink" title="1. Linux中如何启动, 重启, 停止, 重载服务以及检查服务(如 httpd.service)状态"></a>1. Linux中如何启动, 重启, 停止, 重载服务以及检查服务(如 httpd.service)状态</h1><p> systemctl [ start | restart | stop | reload | status ] httpd.service</p><h1 id="2-重启-停止-挂起-休眠系统或使系统进入混合睡眠"><a href="#2-重启-停止-挂起-休眠系统或使系统进入混合睡眠" class="headerlink" title="2. 重启/停止/挂起/休眠系统或使系统进入混合睡眠"></a>2. 重启/停止/挂起/休眠系统或使系统进入混合睡眠</h1><p> systemctl [ reboot | halt | suspend | hibernate | hybrid-sleep ]</p><h1 id="3-启动救援模式-紧急模式"><a href="#3-启动救援模式-紧急模式" class="headerlink" title="3. 启动救援模式/紧急模式"></a>3. 启动救援模式/紧急模式</h1><p> systemctl [ rescue | emergency ]</p><h1 id="4-如何激活服务并在开机时启用或禁用服务-即系统启动时自动启动mysql-service服务"><a href="#4-如何激活服务并在开机时启用或禁用服务-即系统启动时自动启动mysql-service服务" class="headerlink" title="4. 如何激活服务并在开机时启用或禁用服务(即系统启动时自动启动mysql.service服务)"></a>4. 如何激活服务并在开机时启用或禁用服务(即系统启动时自动启动mysql.service服务)</h1><p> systemctl [ enable | disable ] mysql.service </p><h1 id="5-判断某个服务的状态-可用于脚本"><a href="#5-判断某个服务的状态-可用于脚本" class="headerlink" title="5. 判断某个服务的状态, 可用于脚本"></a>5. 判断某个服务的状态, 可用于脚本</h1><p> systemctl [is-active|is-enabled|is-failed|isolate|is-system-running] unit</p><h1 id="6-如何屏蔽-让它不能启动-或显示服务-如ntpdate-service"><a href="#6-如何屏蔽-让它不能启动-或显示服务-如ntpdate-service" class="headerlink" title="6. 如何屏蔽(让它不能启动)或显示服务 (如ntpdate.service)"></a>6. 如何屏蔽(让它不能启动)或显示服务 (如ntpdate.service)</h1><p> systemctl mask ntpdate.service<br> ln -s ‘/dev/null”/etc/systemd/system/ntpdate.service’<br> systemctl unmask ntpdate.service<br> rm ‘/etc/systemd/system/ntpdate.service’</p><h1 id="7-使用systemctl命令杀死服务"><a href="#7-使用systemctl命令杀死服务" class="headerlink" title="7. 使用systemctl命令杀死服务"></a>7. 使用systemctl命令杀死服务</h1><p> systemctl kill crond </p><h1 id="8-检查某个服务的所有配置细节"><a href="#8-检查某个服务的所有配置细节" class="headerlink" title="8. 检查某个服务的所有配置细节"></a>8. 检查某个服务的所有配置细节</h1><p> systemctl show mysql</p><h1 id="9-获取某个服务-httpd-的依赖性列表"><a href="#9-获取某个服务-httpd-的依赖性列表" class="headerlink" title="9. 获取某个服务(httpd)的依赖性列表"></a>9. 获取某个服务(httpd)的依赖性列表</h1><p> systemctl list-dependencies httpd.service</p><h1 id="static-不可被手动开启-只能被其他unit带启"><a href="#static-不可被手动开启-只能被其他unit带启" class="headerlink" title="static 不可被手动开启, 只能被其他unit带启"></a>static 不可被手动开启, 只能被其他unit带启</h1><h1 id="mask-不会被别的unit带启-默认设置disable时会被其他服务带动启动"><a href="#mask-不会被别的unit带启-默认设置disable时会被其他服务带动启动" class="headerlink" title="mask   不会被别的unit带启, 默认设置disable时会被其他服务带动启动"></a>mask   不会被别的unit带启, 默认设置disable时会被其他服务带动启动</h1><h1 id="unmask-取消mask设置"><a href="#unmask-取消mask设置" class="headerlink" title="unmask 取消mask设置"></a>unmask 取消mask设置</h1><p>注意：当我们使用systemctl的start，restart，stop和reload命令时，终端不会输出任何内容，只有status命令可以打印输出.</p></li><li><p>启动运行等级3或运行等级5</p><h1 id="列出当前使用的运行等级"><a href="#列出当前使用的运行等级" class="headerlink" title="列出当前使用的运行等级"></a>列出当前使用的运行等级</h1><p> systemctl get-default<br> systemctl isolate runlevel5.target # 或<br> systemctl isolate graphical.target<br> systemctl isolate runlevel3.target # 或<br> systemctl isolate multiuser.target</p><h1 id="设置多用户模式或图形模式为默认运行等级"><a href="#设置多用户模式或图形模式为默认运行等级" class="headerlink" title="设置多用户模式或图形模式为默认运行等级"></a>设置多用户模式或图形模式为默认运行等级</h1><p> systemctl set-default runlevel3.target<br> systemctl set-default runlevel5.target</p></li><li><p>列出所有系统挂载点 (也可以设置启动挂载或不挂载)<br> systemctl list-unit-files -t mount</p></li></ol>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;systemctl命令初步说明&lt;br&gt;&lt;a href=&quot;https://www.jianshu.com/p/b39b564e6616&quot;&gt;https://www.jianshu.com/p/b39b564e6616&lt;/a&gt;&lt;br&gt;epiiplus1equal0&lt;br&gt;2019</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>CentOS配置iptables规则并使其永久生效</title>
+    <link href="http://oplancelot.github.com/2018/10/09/CentOS%E9%85%8D%E7%BD%AEiptables%E8%A7%84%E5%88%99%E5%B9%B6%E4%BD%BF%E5%85%B6%E6%B0%B8%E4%B9%85%E7%94%9F%E6%95%88/"/>
+    <id>http://oplancelot.github.com/2018/10/09/CentOS%E9%85%8D%E7%BD%AEiptables%E8%A7%84%E5%88%99%E5%B9%B6%E4%BD%BF%E5%85%B6%E6%B0%B8%E4%B9%85%E7%94%9F%E6%95%88/</id>
+    <published>2018-10-09T06:26:38.000Z</published>
+    <updated>2020-10-09T07:36:30.563Z</updated>
+    
+    <content type="html"><![CDATA[<p>CentOS配置iptables规则并使其永久生效<br>© 版权声明：本文为博主原创文章，转载请注明出处</p><ol><li>目的</li></ol><p>　　最近为了使用redis，配置远程连接的使用需要使用iptable是设置允许外部访问6379端口，但是设置完成后重启总是失效。因此百度了一下如何设置永久生效，并记录。</p><ol start="2"><li>设置</li></ol><p>　　2.1 添加iptables规则</p><pre><code>iptables -I INPUT 1 -p tcp -m state --state NEW -m tcp --dport 6379 -j ACCEPT</code></pre><p>　　2.2 保存</p><pre><code>service iptables save</code></pre><p>　　执行这个命令的时候有时候可能会报错：The service command supports only basic LSB actions (start, stop, restart, try-restart, reload, force-reload, status). For other actions, please try to use systemctl.</p><p>　　这是因为没有安装iptables服务，直接使用yum安装iptables服务即可.</p><pre><code>yum install iptables-services</code></pre><p>　　安装完成后，重新执行 service iptables save 命令即可保存成功。</p><p>　　2.3 配置iptables开机自启</p><p>　　保存后重启依然没有生效，后百度得知，需要设置iptables开机自启才可使配置生效。</p><p>　　执行如下命令（老版本命令为：service iptables on），设置iptables开机自启</p><p>systemctl enable iptables.service<br> 3. 注意</p><p>　　需关闭firewalld防火墙</p><pre><code>　　systemctl stop firewalld.service　　systemctl disable firewalld.service</code></pre>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;CentOS配置iptables规则并使其永久生效&lt;br&gt;© 版权声明：本文为博主原创文章，转载请注明出处&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;目的&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;　　最近为了使用redis，配置远程连接的使用需要使用iptable是设置允许外部访问6379端口，但是设</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+</feed>

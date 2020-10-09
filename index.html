@@ -205,88 +205,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/CentOS%E9%85%8D%E7%BD%AEiptables%E8%A7%84%E5%88%99%E5%B9%B6%E4%BD%BF%E5%85%B6%E6%B0%B8%E4%B9%85%E7%94%9F%E6%95%88/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="oplancelot">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="oplancelot">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/10/09/CentOS%E9%85%8D%E7%BD%AEiptables%E8%A7%84%E5%88%99%E5%B9%B6%E4%BD%BF%E5%85%B6%E6%B0%B8%E4%B9%85%E7%94%9F%E6%95%88/" class="post-title-link" itemprop="url">CentOS配置iptables规则并使其永久生效</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2020-10-09 14:26:38 / Modified: 14:37:39" itemprop="dateCreated datePublished" datetime="2020-10-09T14:26:38+08:00">2020-10-09</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>CentOS配置iptables规则并使其永久生效<br>© 版权声明：本文为博主原创文章，转载请注明出处</p>
-<ol>
-<li>目的</li>
-</ol>
-<p>　　最近为了使用redis，配置远程连接的使用需要使用iptable是设置允许外部访问6379端口，但是设置完成后重启总是失效。因此百度了一下如何设置永久生效，并记录。</p>
-<ol start="2">
-<li>设置</li>
-</ol>
-<p>　　2.1 添加iptables规则</p>
-<pre><code>iptables -I INPUT 1 -p tcp -m state --state NEW -m tcp --dport 6379 -j ACCEPT</code></pre>
-<p>　　2.2 保存</p>
-<pre><code>service iptables save</code></pre>
-<p>　　执行这个命令的时候有时候可能会报错：The service command supports only basic LSB actions (start, stop, restart, try-restart, reload, force-reload, status). For other actions, please try to use systemctl.</p>
-<p>　　这是因为没有安装iptables服务，直接使用yum安装iptables服务即可.</p>
-<pre><code>yum install iptables-services</code></pre>
-<p>　　安装完成后，重新执行 service iptables save 命令即可保存成功。</p>
-<p>　　2.3 配置iptables开机自启</p>
-<p>　　保存后重启依然没有生效，后百度得知，需要设置iptables开机自启才可使配置生效。</p>
-<p>　　执行如下命令（老版本命令为：service iptables on），设置iptables开机自启</p>
-<p>systemctl enable iptables.service<br> 3. 注意</p>
-<p>　　需关闭firewalld防火墙</p>
-<pre><code>　　systemctl stop firewalld.service
-
-　　systemctl disable firewalld.service</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
     <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/RUNDECK%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -389,7 +307,7 @@ project.etc.dir = /var/lib/rundeck/projects/$&#123;project.name&#125;/etc</code>
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/WSL%E4%BF%AE%E6%94%B9root%E5%AF%86%E7%A0%81/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/ansible/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -403,7 +321,7 @@ project.etc.dir = /var/lib/rundeck/projects/$&#123;project.name&#125;/etc</code>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/10/09/WSL%E4%BF%AE%E6%94%B9root%E5%AF%86%E7%A0%81/" class="post-title-link" itemprop="url">WSL修改root密码</a>
+            <a href="/2020/10/09/ansible/" class="post-title-link" itemprop="url">ansible</a>
         </h2>
 
         <div class="post-meta">
@@ -414,8 +332,138 @@ project.etc.dir = /var/lib/rundeck/projects/$&#123;project.name&#125;/etc</code>
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2020-10-09 14:26:38 / Modified: 14:43:47" itemprop="dateCreated datePublished" datetime="2020-10-09T14:26:38+08:00">2020-10-09</time>
+              <time title="Created: 2020-10-09 14:26:38 / Modified: 14:32:28" itemprop="dateCreated datePublished" datetime="2020-10-09T14:26:38+08:00">2020-10-09</time>
             </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>yum install ansible -y<br>用法简介<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/along21/p/8241542.html">https://www.cnblogs.com/along21/p/8241542.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/yanjieli/p/10969089.html">https://www.cnblogs.com/yanjieli/p/10969089.html</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/createwell/p/12123772.html">https://www.cnblogs.com/createwell/p/12123772.html</a></p>
+<p><img src="https://img2018.cnblogs.com/blog/1210730/201906/1210730-20190603174855830-17103163.png"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/%E6%B8%85%E7%A9%BA%20github%20%E4%BB%93%E5%BA%93,%E8%80%8C%E4%B8%8D%E6%98%AF%E5%88%A0%E9%99%A4%E9%87%8D%E6%96%B0%E5%88%9B%E5%BB%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="oplancelot">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="oplancelot">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/10/09/%E6%B8%85%E7%A9%BA%20github%20%E4%BB%93%E5%BA%93,%E8%80%8C%E4%B8%8D%E6%98%AF%E5%88%A0%E9%99%A4%E9%87%8D%E6%96%B0%E5%88%9B%E5%BB%BA/" class="post-title-link" itemprop="url">清空 github 仓库,而不是删除重新创建.</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2020-10-09 14:26:38 / Modified: 15:33:15" itemprop="dateCreated datePublished" datetime="2020-10-09T14:26:38+08:00">2020-10-09</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>– Remove the history from</p>
+<p>rm -rf .git<br>– recreate the repos from the current content only</p>
+<p>git init<br>touch README<br>git add README<br>git commit -m “Initial commit”<br>– push to the github remote repos ensuring you overwrite history</p>
+<p>git remote add origin <a href="mailto:&#x67;&#x69;&#116;&#x40;&#x67;&#105;&#x74;&#104;&#x75;&#98;&#x2e;&#x63;&#111;&#x6d;">&#x67;&#x69;&#116;&#x40;&#x67;&#105;&#x74;&#104;&#x75;&#98;&#x2e;&#x63;&#111;&#x6d;</a>:oplancelot/oplancelot.github.io.git<br>git push -u –force origin master</p>
+<p>git remote add oplancelot <a href="mailto:&#103;&#x69;&#x74;&#x40;&#x67;&#x69;&#116;&#x68;&#117;&#98;&#46;&#x63;&#x6f;&#x6d;">&#103;&#x69;&#x74;&#x40;&#x67;&#x69;&#116;&#x68;&#117;&#98;&#46;&#x63;&#x6f;&#x6d;</a>:oplancelot/oplancelot.github.io.git<br>git push -u –force oplancelot master</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2019/10/09/WSL%E4%BF%AE%E6%94%B9root%E5%AF%86%E7%A0%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="oplancelot">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="oplancelot">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/10/09/WSL%E4%BF%AE%E6%94%B9root%E5%AF%86%E7%A0%81/" class="post-title-link" itemprop="url">WSL修改root密码</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-10-09 14:26:38" itemprop="dateCreated datePublished" datetime="2019-10-09T14:26:38+08:00">2019-10-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-10-09 15:35:13" itemprop="dateModified" datetime="2020-10-09T15:35:13+08:00">2020-10-09</time>
+              </span>
 
           
 
@@ -481,7 +529,7 @@ root@lancelot-laptop:~#</code></pre>
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/systemctl%E5%91%BD%E4%BB%A4%E5%88%9D%E6%AD%A5%E8%AF%B4%E6%98%8E/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/10/09/CentOS%E9%85%8D%E7%BD%AEiptables%E8%A7%84%E5%88%99%E5%B9%B6%E4%BD%BF%E5%85%B6%E6%B0%B8%E4%B9%85%E7%94%9F%E6%95%88/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -495,7 +543,7 @@ root@lancelot-laptop:~#</code></pre>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/10/09/systemctl%E5%91%BD%E4%BB%A4%E5%88%9D%E6%AD%A5%E8%AF%B4%E6%98%8E/" class="post-title-link" itemprop="url">systemctl命令初步说明</a>
+            <a href="/2018/10/09/CentOS%E9%85%8D%E7%BD%AEiptables%E8%A7%84%E5%88%99%E5%B9%B6%E4%BD%BF%E5%85%B6%E6%B0%B8%E4%B9%85%E7%94%9F%E6%95%88/" class="post-title-link" itemprop="url">CentOS配置iptables规则并使其永久生效</a>
         </h2>
 
         <div class="post-meta">
@@ -504,10 +552,16 @@ root@lancelot-laptop:~#</code></pre>
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2020-10-09 14:26:38 / Modified: 14:43:32" itemprop="dateCreated datePublished" datetime="2020-10-09T14:26:38+08:00">2020-10-09</time>
+              <time title="Created: 2018-10-09 14:26:38" itemprop="dateCreated datePublished" datetime="2018-10-09T14:26:38+08:00">2018-10-09</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-10-09 15:36:30" itemprop="dateModified" datetime="2020-10-09T15:36:30+08:00">2020-10-09</time>
+              </span>
 
           
 
@@ -520,92 +574,30 @@ root@lancelot-laptop:~#</code></pre>
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>systemctl命令初步说明<br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/b39b564e6616">https://www.jianshu.com/p/b39b564e6616</a><br>epiiplus1equal0<br>2019.01.31 10:18:18</p>
-<p>LinuxSystemctl是一个系统管理守护进程, 工具和库的集合, 用于取代System V, service和chkconfig命令, 初始进程主要负责控制systemd系统和服务管理器.<br>通过Systemctl –help可以看到该命令主要分为:<br>查询或发送控制命令给systemd服务,<br>管理单元服务的命令,<br>服务文件的相关命令, 任务, 环境, 快照相关命令,<br>systemd服务的配置重载, 系统开机关机相关的命令.</p>
+          <p>CentOS配置iptables规则并使其永久生效<br>© 版权声明：本文为博主原创文章，转载请注明出处</p>
 <ol>
-<li><p>对单元的操作<br> systemctl list-unit-files [-t type] # 列出所有可用单元<br> systemctl list-units# 列出所有运行中单元<br> systemctl –-failed  # 列出所有失败单元<br> systemctl is-enabled crond.service  # 检查某个单元（如 crond.service)是否启用</p>
-</li>
-<li><p>对服务的操作</p>
-<h1 id="0-列出所有服务"><a href="#0-列出所有服务" class="headerlink" title="0. 列出所有服务"></a>0. 列出所有服务</h1><p> systemctl list-unit-files –t service </p>
-<h1 id="1-Linux中如何启动-重启-停止-重载服务以及检查服务-如-httpd-service-状态"><a href="#1-Linux中如何启动-重启-停止-重载服务以及检查服务-如-httpd-service-状态" class="headerlink" title="1. Linux中如何启动, 重启, 停止, 重载服务以及检查服务(如 httpd.service)状态"></a>1. Linux中如何启动, 重启, 停止, 重载服务以及检查服务(如 httpd.service)状态</h1><p> systemctl [ start | restart | stop | reload | status ] httpd.service</p>
-<h1 id="2-重启-停止-挂起-休眠系统或使系统进入混合睡眠"><a href="#2-重启-停止-挂起-休眠系统或使系统进入混合睡眠" class="headerlink" title="2. 重启/停止/挂起/休眠系统或使系统进入混合睡眠"></a>2. 重启/停止/挂起/休眠系统或使系统进入混合睡眠</h1><p> systemctl [ reboot | halt | suspend | hibernate | hybrid-sleep ]</p>
-<h1 id="3-启动救援模式-紧急模式"><a href="#3-启动救援模式-紧急模式" class="headerlink" title="3. 启动救援模式/紧急模式"></a>3. 启动救援模式/紧急模式</h1><p> systemctl [ rescue | emergency ]</p>
-<h1 id="4-如何激活服务并在开机时启用或禁用服务-即系统启动时自动启动mysql-service服务"><a href="#4-如何激活服务并在开机时启用或禁用服务-即系统启动时自动启动mysql-service服务" class="headerlink" title="4. 如何激活服务并在开机时启用或禁用服务(即系统启动时自动启动mysql.service服务)"></a>4. 如何激活服务并在开机时启用或禁用服务(即系统启动时自动启动mysql.service服务)</h1><p> systemctl [ enable | disable ] mysql.service </p>
-<h1 id="5-判断某个服务的状态-可用于脚本"><a href="#5-判断某个服务的状态-可用于脚本" class="headerlink" title="5. 判断某个服务的状态, 可用于脚本"></a>5. 判断某个服务的状态, 可用于脚本</h1><p> systemctl [is-active|is-enabled|is-failed|isolate|is-system-running] unit</p>
-<h1 id="6-如何屏蔽-让它不能启动-或显示服务-如ntpdate-service"><a href="#6-如何屏蔽-让它不能启动-或显示服务-如ntpdate-service" class="headerlink" title="6. 如何屏蔽(让它不能启动)或显示服务 (如ntpdate.service)"></a>6. 如何屏蔽(让它不能启动)或显示服务 (如ntpdate.service)</h1><p> systemctl mask ntpdate.service<br> ln -s ‘/dev/null”/etc/systemd/system/ntpdate.service’<br> systemctl unmask ntpdate.service<br> rm ‘/etc/systemd/system/ntpdate.service’</p>
-<h1 id="7-使用systemctl命令杀死服务"><a href="#7-使用systemctl命令杀死服务" class="headerlink" title="7. 使用systemctl命令杀死服务"></a>7. 使用systemctl命令杀死服务</h1><p> systemctl kill crond </p>
-<h1 id="8-检查某个服务的所有配置细节"><a href="#8-检查某个服务的所有配置细节" class="headerlink" title="8. 检查某个服务的所有配置细节"></a>8. 检查某个服务的所有配置细节</h1><p> systemctl show mysql</p>
-<h1 id="9-获取某个服务-httpd-的依赖性列表"><a href="#9-获取某个服务-httpd-的依赖性列表" class="headerlink" title="9. 获取某个服务(httpd)的依赖性列表"></a>9. 获取某个服务(httpd)的依赖性列表</h1><p> systemctl list-dependencies httpd.service</p>
-<h1 id="static-不可被手动开启-只能被其他unit带启"><a href="#static-不可被手动开启-只能被其他unit带启" class="headerlink" title="static 不可被手动开启, 只能被其他unit带启"></a>static 不可被手动开启, 只能被其他unit带启</h1><h1 id="mask-不会被别的unit带启-默认设置disable时会被其他服务带动启动"><a href="#mask-不会被别的unit带启-默认设置disable时会被其他服务带动启动" class="headerlink" title="mask   不会被别的unit带启, 默认设置disable时会被其他服务带动启动"></a>mask   不会被别的unit带启, 默认设置disable时会被其他服务带动启动</h1><h1 id="unmask-取消mask设置"><a href="#unmask-取消mask设置" class="headerlink" title="unmask 取消mask设置"></a>unmask 取消mask设置</h1><p>注意：当我们使用systemctl的start，restart，stop和reload命令时，终端不会输出任何内容，只有status命令可以打印输出.</p>
-</li>
-<li><p>启动运行等级3或运行等级5</p>
-<h1 id="列出当前使用的运行等级"><a href="#列出当前使用的运行等级" class="headerlink" title="列出当前使用的运行等级"></a>列出当前使用的运行等级</h1><p> systemctl get-default<br> systemctl isolate runlevel5.target # 或<br> systemctl isolate graphical.target<br> systemctl isolate runlevel3.target # 或<br> systemctl isolate multiuser.target</p>
-<h1 id="设置多用户模式或图形模式为默认运行等级"><a href="#设置多用户模式或图形模式为默认运行等级" class="headerlink" title="设置多用户模式或图形模式为默认运行等级"></a>设置多用户模式或图形模式为默认运行等级</h1><p> systemctl set-default runlevel3.target<br> systemctl set-default runlevel5.target</p>
-</li>
-<li><p>列出所有系统挂载点 (也可以设置启动挂载或不挂载)<br> systemctl list-unit-files -t mount</p>
-</li>
+<li>目的</li>
 </ol>
+<p>　　最近为了使用redis，配置远程连接的使用需要使用iptable是设置允许外部访问6379端口，但是设置完成后重启总是失效。因此百度了一下如何设置永久生效，并记录。</p>
+<ol start="2">
+<li>设置</li>
+</ol>
+<p>　　2.1 添加iptables规则</p>
+<pre><code>iptables -I INPUT 1 -p tcp -m state --state NEW -m tcp --dport 6379 -j ACCEPT</code></pre>
+<p>　　2.2 保存</p>
+<pre><code>service iptables save</code></pre>
+<p>　　执行这个命令的时候有时候可能会报错：The service command supports only basic LSB actions (start, stop, restart, try-restart, reload, force-reload, status). For other actions, please try to use systemctl.</p>
+<p>　　这是因为没有安装iptables服务，直接使用yum安装iptables服务即可.</p>
+<pre><code>yum install iptables-services</code></pre>
+<p>　　安装完成后，重新执行 service iptables save 命令即可保存成功。</p>
+<p>　　2.3 配置iptables开机自启</p>
+<p>　　保存后重启依然没有生效，后百度得知，需要设置iptables开机自启才可使配置生效。</p>
+<p>　　执行如下命令（老版本命令为：service iptables on），设置iptables开机自启</p>
+<p>systemctl enable iptables.service<br> 3. 注意</p>
+<p>　　需关闭firewalld防火墙</p>
+<pre><code>　　systemctl stop firewalld.service
 
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/ansible/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="oplancelot">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="oplancelot">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/10/09/ansible/" class="post-title-link" itemprop="url">ansible</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2020-10-09 14:26:38 / Modified: 14:32:28" itemprop="dateCreated datePublished" datetime="2020-10-09T14:26:38+08:00">2020-10-09</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>yum install ansible -y<br>用法简介<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/along21/p/8241542.html">https://www.cnblogs.com/along21/p/8241542.html</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/yanjieli/p/10969089.html">https://www.cnblogs.com/yanjieli/p/10969089.html</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/createwell/p/12123772.html">https://www.cnblogs.com/createwell/p/12123772.html</a></p>
-<p><img src="https://img2018.cnblogs.com/blog/1210730/201906/1210730-20190603174855830-17103163.png"></p>
+　　systemctl disable firewalld.service</code></pre>
 
       
     </div>
@@ -756,6 +748,95 @@ gpgcheck=0</code></pre>
   
   
 
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/10/09/systemctl%E5%91%BD%E4%BB%A4%E5%88%9D%E6%AD%A5%E8%AF%B4%E6%98%8E/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="oplancelot">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="oplancelot">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/10/09/systemctl%E5%91%BD%E4%BB%A4%E5%88%9D%E6%AD%A5%E8%AF%B4%E6%98%8E/" class="post-title-link" itemprop="url">systemctl命令初步说明</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-10-09 14:26:38" itemprop="dateCreated datePublished" datetime="2018-10-09T14:26:38+08:00">2018-10-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-10-09 15:36:20" itemprop="dateModified" datetime="2020-10-09T15:36:20+08:00">2020-10-09</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>systemctl命令初步说明<br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/b39b564e6616">https://www.jianshu.com/p/b39b564e6616</a><br>epiiplus1equal0<br>2019.01.31 10:18:18</p>
+<p>LinuxSystemctl是一个系统管理守护进程, 工具和库的集合, 用于取代System V, service和chkconfig命令, 初始进程主要负责控制systemd系统和服务管理器.<br>通过Systemctl –help可以看到该命令主要分为:<br>查询或发送控制命令给systemd服务,<br>管理单元服务的命令,<br>服务文件的相关命令, 任务, 环境, 快照相关命令,<br>systemd服务的配置重载, 系统开机关机相关的命令.</p>
+<ol>
+<li><p>对单元的操作<br> systemctl list-unit-files [-t type] # 列出所有可用单元<br> systemctl list-units# 列出所有运行中单元<br> systemctl –-failed  # 列出所有失败单元<br> systemctl is-enabled crond.service  # 检查某个单元（如 crond.service)是否启用</p>
+</li>
+<li><p>对服务的操作</p>
+<h1 id="0-列出所有服务"><a href="#0-列出所有服务" class="headerlink" title="0. 列出所有服务"></a>0. 列出所有服务</h1><p> systemctl list-unit-files –t service </p>
+<h1 id="1-Linux中如何启动-重启-停止-重载服务以及检查服务-如-httpd-service-状态"><a href="#1-Linux中如何启动-重启-停止-重载服务以及检查服务-如-httpd-service-状态" class="headerlink" title="1. Linux中如何启动, 重启, 停止, 重载服务以及检查服务(如 httpd.service)状态"></a>1. Linux中如何启动, 重启, 停止, 重载服务以及检查服务(如 httpd.service)状态</h1><p> systemctl [ start | restart | stop | reload | status ] httpd.service</p>
+<h1 id="2-重启-停止-挂起-休眠系统或使系统进入混合睡眠"><a href="#2-重启-停止-挂起-休眠系统或使系统进入混合睡眠" class="headerlink" title="2. 重启/停止/挂起/休眠系统或使系统进入混合睡眠"></a>2. 重启/停止/挂起/休眠系统或使系统进入混合睡眠</h1><p> systemctl [ reboot | halt | suspend | hibernate | hybrid-sleep ]</p>
+<h1 id="3-启动救援模式-紧急模式"><a href="#3-启动救援模式-紧急模式" class="headerlink" title="3. 启动救援模式/紧急模式"></a>3. 启动救援模式/紧急模式</h1><p> systemctl [ rescue | emergency ]</p>
+<h1 id="4-如何激活服务并在开机时启用或禁用服务-即系统启动时自动启动mysql-service服务"><a href="#4-如何激活服务并在开机时启用或禁用服务-即系统启动时自动启动mysql-service服务" class="headerlink" title="4. 如何激活服务并在开机时启用或禁用服务(即系统启动时自动启动mysql.service服务)"></a>4. 如何激活服务并在开机时启用或禁用服务(即系统启动时自动启动mysql.service服务)</h1><p> systemctl [ enable | disable ] mysql.service </p>
+<h1 id="5-判断某个服务的状态-可用于脚本"><a href="#5-判断某个服务的状态-可用于脚本" class="headerlink" title="5. 判断某个服务的状态, 可用于脚本"></a>5. 判断某个服务的状态, 可用于脚本</h1><p> systemctl [is-active|is-enabled|is-failed|isolate|is-system-running] unit</p>
+<h1 id="6-如何屏蔽-让它不能启动-或显示服务-如ntpdate-service"><a href="#6-如何屏蔽-让它不能启动-或显示服务-如ntpdate-service" class="headerlink" title="6. 如何屏蔽(让它不能启动)或显示服务 (如ntpdate.service)"></a>6. 如何屏蔽(让它不能启动)或显示服务 (如ntpdate.service)</h1><p> systemctl mask ntpdate.service<br> ln -s ‘/dev/null”/etc/systemd/system/ntpdate.service’<br> systemctl unmask ntpdate.service<br> rm ‘/etc/systemd/system/ntpdate.service’</p>
+<h1 id="7-使用systemctl命令杀死服务"><a href="#7-使用systemctl命令杀死服务" class="headerlink" title="7. 使用systemctl命令杀死服务"></a>7. 使用systemctl命令杀死服务</h1><p> systemctl kill crond </p>
+<h1 id="8-检查某个服务的所有配置细节"><a href="#8-检查某个服务的所有配置细节" class="headerlink" title="8. 检查某个服务的所有配置细节"></a>8. 检查某个服务的所有配置细节</h1><p> systemctl show mysql</p>
+<h1 id="9-获取某个服务-httpd-的依赖性列表"><a href="#9-获取某个服务-httpd-的依赖性列表" class="headerlink" title="9. 获取某个服务(httpd)的依赖性列表"></a>9. 获取某个服务(httpd)的依赖性列表</h1><p> systemctl list-dependencies httpd.service</p>
+<h1 id="static-不可被手动开启-只能被其他unit带启"><a href="#static-不可被手动开启-只能被其他unit带启" class="headerlink" title="static 不可被手动开启, 只能被其他unit带启"></a>static 不可被手动开启, 只能被其他unit带启</h1><h1 id="mask-不会被别的unit带启-默认设置disable时会被其他服务带动启动"><a href="#mask-不会被别的unit带启-默认设置disable时会被其他服务带动启动" class="headerlink" title="mask   不会被别的unit带启, 默认设置disable时会被其他服务带动启动"></a>mask   不会被别的unit带启, 默认设置disable时会被其他服务带动启动</h1><h1 id="unmask-取消mask设置"><a href="#unmask-取消mask设置" class="headerlink" title="unmask 取消mask设置"></a>unmask 取消mask设置</h1><p>注意：当我们使用systemctl的start，restart，stop和reload命令时，终端不会输出任何内容，只有status命令可以打印输出.</p>
+</li>
+<li><p>启动运行等级3或运行等级5</p>
+<h1 id="列出当前使用的运行等级"><a href="#列出当前使用的运行等级" class="headerlink" title="列出当前使用的运行等级"></a>列出当前使用的运行等级</h1><p> systemctl get-default<br> systemctl isolate runlevel5.target # 或<br> systemctl isolate graphical.target<br> systemctl isolate runlevel3.target # 或<br> systemctl isolate multiuser.target</p>
+<h1 id="设置多用户模式或图形模式为默认运行等级"><a href="#设置多用户模式或图形模式为默认运行等级" class="headerlink" title="设置多用户模式或图形模式为默认运行等级"></a>设置多用户模式或图形模式为默认运行等级</h1><p> systemctl set-default runlevel3.target<br> systemctl set-default runlevel5.target</p>
+</li>
+<li><p>列出所有系统挂载点 (也可以设置启动挂载或不挂载)<br> systemctl list-unit-files -t mount</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
 
   
 
@@ -822,7 +903,7 @@ gpgcheck=0</code></pre>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-count">8</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>

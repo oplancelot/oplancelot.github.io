@@ -146,6 +146,342 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/Centos7%E6%9C%80%E5%B0%8F%E5%8C%96%E5%AE%89%E8%A3%85/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="oplancelot">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="oplancelot">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/10/09/Centos7%E6%9C%80%E5%B0%8F%E5%8C%96%E5%AE%89%E8%A3%85/" class="post-title-link" itemprop="url">Untitled</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-10-09 14:20:04" itemprop="dateCreated datePublished" datetime="2020-10-09T14:20:04+08:00">2020-10-09</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Centos7最小化安装完毕后，为了方便日后操作和维护管理，建议安装下列软件-。"><a href="#Centos7最小化安装完毕后，为了方便日后操作和维护管理，建议安装下列软件-。" class="headerlink" title="Centos7最小化安装完毕后，为了方便日后操作和维护管理，建议安装下列软件 #。"></a>Centos7最小化安装完毕后，为了方便日后操作和维护管理，建议安装下列软件 #。</h1><p>yum -y install lshw pciutils gdisk system-storage-manager<br>yum -y bash-completion zip unzip bzip2 tree tmpwatch pinfo man-pages<br>yum -y nano vim-enhanced tmux screen<br>yum -y net-tools psmisclsof sysstat<br>yum -y yum-plugin-security yum-utils createrepo<br>yum -y get wget curl eliks lynx lftp mailx mutt reync<br>yum -y libaio make cmake gcc-c++ gcc zib zlib-devel open openssl-devel pcre pcre-devel</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/centos7%E9%85%8D%E7%BD%AE%E6%9C%AC%E5%9C%B0yum%E6%BA%90%E3%80%81%E4%BD%BF%E7%94%A8yum%E6%BA%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="oplancelot">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="oplancelot">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/10/09/centos7%E9%85%8D%E7%BD%AE%E6%9C%AC%E5%9C%B0yum%E6%BA%90%E3%80%81%E4%BD%BF%E7%94%A8yum%E6%BA%90/" class="post-title-link" itemprop="url">Untitled</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-10-09 14:18:16" itemprop="dateCreated datePublished" datetime="2020-10-09T14:18:16+08:00">2020-10-09</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="centos7配置本地yum源、使用yum源"><a href="#centos7配置本地yum源、使用yum源" class="headerlink" title="centos7配置本地yum源、使用yum源"></a>centos7配置本地yum源、使用yum源</h1><p>在某些软件集群的安装中（如CDH，以下构建均以此为例），由于qiang的原因、或本地不能访问外网等，可能无法通yum方式在线安装，这时候非常有必要在本地配置一个yum源，集群中server通过这个局域网的yum仓库在（ftp，http，nfs等方式）本地方便、快速的安装应用。</p>
+<p>查看Linux发行版本<br>EL7中提供了一个全新的命令 hostnamectl，不仅可以用来设置hostname，还可以查看操作系统版本及Linux内核信息。</p>
+<p>安装Apache httpd WEB服务器<br>使用apache http服务，可以很方便的将应用资源以http形式对外提供，首先安装一个httpd服务</p>
+<p>yum install httpd<br>systemctl start httpd<br>systemctl enable httpd #将httpd服务加入开机启动列表里</p>
+<p>systemctl stop firewalld #关闭防火墙<br>systemctl disable firewalld #禁用防火墙</p>
+<p>创建yum本地源rpm包，加快cdh构建流程<br>①、安装createrepo软件：</p>
+<p>yum -y install createrepo</p>
+<p>②、创建httpd文件服务目录</p>
+<p>如同nginx的www目录，应用文件存放在httpd的 /var/www/html 目录下。</p>
+<p>cd /var/www/html</p>
+<p>[root@centos-yum html]# ls<br>centos78  extra  ks  updates  x86_64</p>
+<p>centos文件夹是安装kickstart用的<br>ln -s x86_64/Packages /var/www/html/centos78/Packages<br>指向rpm包</p>
+<p>④、创建rpm、parcel本地资源库<br>执行如下指令：</p>
+<p>createrepo /var/www/html/x86_64</p>
+<p>创建yum本地资源库配置文件</p>
+<p>yum本地源文件一般放置于/etc/yum.repos.d/下</p>
+<p>cd /etc/yum.repos.d/</p>
+<p>新建<br>local.repo 文件，根据资源路径进行编写：</p>
+<p>[local]<br>name=centos2003-iso<br>baseurl=<a target="_blank" rel="noopener" href="http://192.168.1.222/centos78">http://192.168.1.222/centos78</a><br>enabled=1<br>gpgcheck=0</p>
+<p>⑥、更新安装源<br>A). 清空缓存</p>
+<p>yum clean all<br>Repository cloudera-manager is listed more than once in the configuration<br>正在清理软件源： base cloudera-manager epel extras updates zabbix zabbix-non-supported<br>Cleaning up list of fastest mirrors</p>
+<p>B). 重新建立缓存</p>
+<p>yum makecache<br>已加载插件：fastestmirror, langpacks<br>Repository cloudera-manager is listed more than once in the configuration<br>Determining fastest mirrors<br>epel/x86_64/metalink | 6.8 kB 00:00:00<br>base: mirrors.aliyun.com<br>epel: mirrors.tuna.tsinghua.edu.cn<br>extras: ftp.sjtu.edu.cn<br>updates: mirrors.aliyun.com<br>base | 3.6 kB 00:00:00<br>cloudera-manager<br>元数据缓存已建立</p>
+<p>C). 查看yum源</p>
+<p>yum repolist<br>源标识 源名称 状态<br>base/7/x86_64 CentOS-7 - Base 10,019<br>cloudera-manager cloudera-manager</p>
+<p>D). 查找软件包</p>
+<p>yum search 软件包</p>
+<p>⑦、使用yum本地源</p>
+<p>yum install 软件包<br>yum install cloudera-manager-daemons cloudera-manager-agent cloudera-manager-server</p>
+<p>浏览器里访问<a target="_blank" rel="noopener" href="http://192.168.1.222/centos78/">http://192.168.1.222/centos78/</a></p>
+<p>局域网中其他server使用该yum本地源<br>如果集群中其他server，如cloudera-scm-agent 也需要在本地进行安装，只需将xxx.repo文件拷贝至其对应目录中，并刷新软件缓存，即可。</p>
+<p>scp /etc/yum.repos.d/local.repo ${TARGET_SERVER_IP}:/etc/yum.repos.d</p>
+<p>centos7运行system-config-kickstart时在Package Selection模块中出现如下错误：</p>
+<p>Package Selection</p>
+<pre><code>   Packageselection is disabled due to problems downloading package information</code></pre>
+<p>这是因为centos7中的kickstart需要使用自己的包仓库，这时我们只需要在/etc/yum.repo.d/目录下编辑一个名叫develop的仓库就可以。</p>
+<p>我的解决方法是：vim /etc/yum.repo.d/development.repo</p>
+<p>[development]</p>
+<p>name=development<br>baseurl=<a target="_blank" rel="noopener" href="http://192.168.1.222/centos78">http://192.168.1.222/centos78</a><br>enabled=1<br>gpgcheck=0</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/MySQL5.7.31%20%E9%85%8D%E7%BD%AE%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="oplancelot">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="oplancelot">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/10/09/MySQL5.7.31%20%E9%85%8D%E7%BD%AE%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" class="post-title-link" itemprop="url">Untitled</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-10-09 14:17:26" itemprop="dateCreated datePublished" datetime="2020-10-09T14:17:26+08:00">2020-10-09</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="CentOS-7-MySQL5-7-31-配置主从复制"><a href="#CentOS-7-MySQL5-7-31-配置主从复制" class="headerlink" title="CentOS-7 MySQL5.7.31 配置主从复制"></a>CentOS-7 MySQL5.7.31 配置主从复制</h1><pre><code>　　两台CentOS-7主机：node1(主)：192.168.1.220，node2(从)：192.168.2.221
+
+　　两台主机均已安装MySQL5.7.31 ，且网络互通
+
+2、配置过程
+主从原理大致有三个步骤：
+
+在主库上把数据更改记录到二进制日志中（Binary Log）中，这些记录称为二进制日志事件。
+从库通过IO线程将主库上的日志复制到自己的中继日志（Relay Log）中。
+从库通过SQL线程读取中继日志中的事件，将其重放到自己数据上。
+　　配置文件确定
+
+配置主库：
+
+修改my.cnf 文件，在[mysqld] 段下添加：
+#master----------begin
+sync_binlog=1
+#server ID
+server-id=10
+#enable mysql binlog
+log-bin= /data/mysql/logs/binlog/mysql-bin
+#innodb---#
+#flush every log write
+#0 redologbuff 1write+fsync 2wrie
+innodb_support_xa=1
+#master-----------end
+
+配置好后重启mysql服务
+
+检查data目录是否有binlog日志生成
+
+
+
+登录主数据库，新建一个复制账号
+
+mysql&gt; CREATE USER &#39;repl&#39;@&#39;%&#39; IDENTIFIED BY &#39;repl&#39;;
+mysql&gt; GRANT REPLICATION SLAVE ON *.* TO &#39;repl&#39;@&#39;%&#39;;
+
+https://dev.mysql.com/doc/refman/5.7/en/replication-howto-repuser.html
+
+
+mysql&gt;  FLUSH TABLES WITH READ LOCK;  //锁表做备份
+UNLOCK TABLES;//做完解锁
+
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt;  SHOW MASTER STATUS;
++------------------+----------+--------------+------------------+-------------------+
+| File | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
++------------------+----------+--------------+------------------+-------------------+
+| mysql-bin.000004 |  596 |  |  |   |
+mysql-bin.000008 |  605 //记住这两个值
+
+;
+
+
+ #做备份
+mysqldump -uroot -p --all-databases --master-data &gt; dbdump.db
+
+添加set-gtid-purged=off参数，免得导入提示：
+    ERROR 1840 (HY000) at line 24: @@GLOBAL.GTID_PURGED can only be set when @@GLOBAL.GTID_EXECUTED is empty.
+
+mysqldump -uroot -p --set-gtid-purged=off --master-data &gt; dbdump.db
+配置从库：
+
+修改my.cnf 文件，在[mysqld] 段下添加：
+
+#slave-----------beign
+server-id=20
+relay_log=/data/mysql/logs/relaylog/relay-bin
+#skip_slave_start //复制是否随mysql启动进行，需要同步时关闭
+read_only =1 //限制普通用户是否可以写入数据库，root不限制
+
+#slave-end
+
+
+
+修改完后重启MySQL
+
+导入dump备份
+scp root@192.168.1.200:/root/dbdump.db ./
+mysql -uroot -p  &lt; dbdump.db
+
+
+登录从数据库，配置主从
+
+在从库上指定主库地址，以及 同步账号、密码，并启动同步
+mysql&gt; CHANGE MASTER TO   MASTER_HOST=&#39;192.168.0.136&#39;,MASTER_USER=&#39;repl&#39;,MASTER_PASSWORD=&#39;repl&#39;,MASTER_LOG_FILE=&#39;mysqlbin.000003&#39;,MASTER_LOG_POS=635;
+
+mysql&gt; START SLAVE;
+mysql&gt; STOP SLAVE;
+mysql&gt; SHOW SLAVE STATUS\G； //查看复制状态
+
+
+show slave status;
+show processlist;
+查看从库状态，查看Slave_IO_Running: Yes和 Slave_SQL_Running: Yes 为yes主从配置完成
+如果启动同步后，第一个为Connecting，第二个为Yes，大部分为连接问题，请检查网络是否通，配置的用户名密码是否正确
+
+主库建库，建表，插入
+create database newpay;
+create table newpay_user(id int,name char(10));
+
+
+mysql&gt; select id,name from newpay_user;
++------+------+
+| id   | name |
++------+------+
+|   10 | TOM  |
++------+------+
+1 row in set (0.00 sec)
+
+mysql&gt; exit;
+Bye
+
+
+
+
+ CREATE USER &#39;test&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;test&#39;;
+ CREATE USER &#39;test&#39;@&#39;%&#39; IDENTIFIED BY &#39;test&#39;;
+SET PASSWORD FOR &#39;test&#39;@&#39;localhost&#39; = PASSWORD(&quot;test&quot;);
+SET PASSWORD FOR &#39;test&#39;@&#39;%&#39; = PASSWORD(&quot;test&quot;);
+
+GRANT ALL PRIVILEGES ON test.* TO &#39;test&#39;@&#39;%&#39; IDENTIFIED BY &#39;test&#39; WITH GRANT OPTION;</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
     <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/unsafe/%E8%AF%81%E4%B9%A6%E5%92%8C%E5%AF%86%E9%92%A5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -814,259 +1150,6 @@ root@lancelot-laptop:~#</code></pre>
       
           <p>1.存储连接方式<br>默认网卡几个<br>1 Broadcom 5720 四端口 1GbE BASE-T, rNDC<br>Riser配置-raid卡，存储hba卡<br>2 英特尔 X710 双端口 10GbE 直连 SFP+ 适配器, PCIe 全高</p>
 <p>2.存储连接<br>iscsi<br>20T</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/CentOS%E9%85%8D%E7%BD%AEiptables%E8%A7%84%E5%88%99%E5%B9%B6%E4%BD%BF%E5%85%B6%E6%B0%B8%E4%B9%85%E7%94%9F%E6%95%88/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="oplancelot">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="oplancelot">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/10/09/CentOS%E9%85%8D%E7%BD%AEiptables%E8%A7%84%E5%88%99%E5%B9%B6%E4%BD%BF%E5%85%B6%E6%B0%B8%E4%B9%85%E7%94%9F%E6%95%88/" class="post-title-link" itemprop="url">Untitled</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2020-10-09 10:34:42" itemprop="dateCreated datePublished" datetime="2020-10-09T10:34:42+08:00">2020-10-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-09-16 15:08:08" itemprop="dateModified" datetime="2020-09-16T15:08:08+08:00">2020-09-16</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>CentOS配置iptables规则并使其永久生效<br>© 版权声明：本文为博主原创文章，转载请注明出处</p>
-<ol>
-<li>目的</li>
-</ol>
-<p>　　最近为了使用redis，配置远程连接的使用需要使用iptable是设置允许外部访问6379端口，但是设置完成后重启总是失效。因此百度了一下如何设置永久生效，并记录。</p>
-<ol start="2">
-<li>设置</li>
-</ol>
-<p>　　2.1 添加iptables规则</p>
-<p>iptables -I INPUT 1 -p tcp -m state –state NEW -m tcp –dport 6379 -j ACCEPT<br>　　2.2 保存</p>
-<p>service iptables save<br>　　执行这个命令的时候有时候可能会报错：The service command supports only basic LSB actions (start, stop, restart, try-restart, reload, force-reload, status). For other actions, please try to use systemctl.</p>
-<p>　　这是因为没有安装iptables服务，直接使用yum安装iptables服务即可.</p>
-<p>yum install iptables-services<br>　　安装完成后，重新执行 service iptables save 命令即可保存成功。</p>
-<p>　　2.3 配置iptables开机自启</p>
-<p>　　保存后重启依然没有生效，后百度得知，需要设置iptables开机自启才可使配置生效。</p>
-<p>　　执行如下命令（老版本命令为：service iptables on），设置iptables开机自启</p>
-<p>systemctl enable iptables.service<br> 3. 注意</p>
-<p>　　需关闭firewalld防火墙</p>
-<p>　　systemctl stop firewalld.service</p>
-<p>　　systemctl disable firewalld.service</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/Centos7%E6%9C%80%E5%B0%8F%E5%8C%96%E5%AE%89%E8%A3%85/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="oplancelot">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="oplancelot">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/10/09/Centos7%E6%9C%80%E5%B0%8F%E5%8C%96%E5%AE%89%E8%A3%85/" class="post-title-link" itemprop="url">Untitled</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2020-10-09 10:34:42" itemprop="dateCreated datePublished" datetime="2020-10-09T10:34:42+08:00">2020-10-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-09-15 15:59:36" itemprop="dateModified" datetime="2020-09-15T15:59:36+08:00">2020-09-15</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Centos7最小化安装完毕后，为了方便日后操作和维护管理，建议安装下列软件。<br>yum -y install lshw pciutils gdisk system-storage-manager<br>yum -y bash-completion zip unzip bzip2 tree tmpwatch pinfo man-pages<br>yum -y nano vim-enhanced tmux screen<br>yum -y net-tools psmisclsof sysstat<br>yum -y yum-plugin-security yum-utils createrepo<br>yum -y get wget curl eliks lynx lftp mailx mutt reync<br>yum -y libaio make cmake gcc-c++ gcc zib zlib-devel open openssl-devel pcre pcre-devel</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/centos7%E9%85%8D%E7%BD%AE%E6%9C%AC%E5%9C%B0yum%E6%BA%90%E3%80%81%E4%BD%BF%E7%94%A8yum%E6%BA%90/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="oplancelot">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="oplancelot">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/10/09/centos7%E9%85%8D%E7%BD%AE%E6%9C%AC%E5%9C%B0yum%E6%BA%90%E3%80%81%E4%BD%BF%E7%94%A8yum%E6%BA%90/" class="post-title-link" itemprop="url">Untitled</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2020-10-09 10:34:42" itemprop="dateCreated datePublished" datetime="2020-10-09T10:34:42+08:00">2020-10-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-09-15 15:41:54" itemprop="dateModified" datetime="2020-09-15T15:41:54+08:00">2020-09-15</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>centos7配置本地yum源、使用yum源</p>
-<p>在某些软件集群的安装中（如CDH，以下构建均以此为例），由于qiang的原因、或本地不能访问外网等，可能无法通yum方式在线安装，这时候非常有必要在本地配置一个yum源，集群中server通过这个局域网的yum仓库在（ftp，http，nfs等方式）本地方便、快速的安装应用。</p>
-<p>查看Linux发行版本<br>EL7中提供了一个全新的命令 hostnamectl，不仅可以用来设置hostname，还可以查看操作系统版本及Linux内核信息。</p>
-<p>安装Apache httpd WEB服务器<br>使用apache http服务，可以很方便的将应用资源以http形式对外提供，首先安装一个httpd服务</p>
-<p>yum install httpd<br>systemctl start httpd<br>systemctl enable httpd #将httpd服务加入开机启动列表里</p>
-<p>systemctl stop firewalld #关闭防火墙<br>systemctl disable firewalld #禁用防火墙</p>
-<p>创建yum本地源rpm包，加快cdh构建流程<br>①、安装createrepo软件：</p>
-<p>yum -y install createrepo</p>
-<p>②、创建httpd文件服务目录</p>
-<p>如同nginx的www目录，应用文件存放在httpd的 /var/www/html 目录下。</p>
-<p>cd /var/www/html</p>
-<p>[root@centos-yum html]# ls<br>centos78  extra  ks  updates  x86_64</p>
-<p>centos文件夹是安装kickstart用的<br>ln -s x86_64/Packages /var/www/html/centos78/Packages<br>指向rpm包</p>
-<p>④、创建rpm、parcel本地资源库<br>执行如下指令：</p>
-<p>createrepo /var/www/html/x86_64</p>
-<p>创建yum本地资源库配置文件</p>
-<p>yum本地源文件一般放置于/etc/yum.repos.d/下</p>
-<p>cd /etc/yum.repos.d/</p>
-<p>新建<br>local.repo 文件，根据资源路径进行编写：</p>
-<p>[local]<br>name=centos2003-iso<br>baseurl=<a target="_blank" rel="noopener" href="http://192.168.1.222/centos78">http://192.168.1.222/centos78</a><br>enabled=1<br>gpgcheck=0</p>
-<p>⑥、更新安装源<br>A). 清空缓存</p>
-<p>yum clean all<br>Repository cloudera-manager is listed more than once in the configuration<br>正在清理软件源： base cloudera-manager epel extras updates zabbix zabbix-non-supported<br>Cleaning up list of fastest mirrors</p>
-<p>B). 重新建立缓存</p>
-<p>yum makecache<br>已加载插件：fastestmirror, langpacks<br>Repository cloudera-manager is listed more than once in the configuration<br>Determining fastest mirrors<br>epel/x86_64/metalink | 6.8 kB 00:00:00<br>base: mirrors.aliyun.com<br>epel: mirrors.tuna.tsinghua.edu.cn<br>extras: ftp.sjtu.edu.cn<br>updates: mirrors.aliyun.com<br>base | 3.6 kB 00:00:00<br>cloudera-manager<br>元数据缓存已建立</p>
-<p>C). 查看yum源</p>
-<p>yum repolist<br>源标识 源名称 状态<br>base/7/x86_64 CentOS-7 - Base 10,019<br>cloudera-manager cloudera-manager</p>
-<p>D). 查找软件包</p>
-<p>yum search 软件包</p>
-<p>⑦、使用yum本地源</p>
-<p>yum install 软件包<br>yum install cloudera-manager-daemons cloudera-manager-agent cloudera-manager-server</p>
-<p>浏览器里访问<a target="_blank" rel="noopener" href="http://192.168.1.222/centos78/">http://192.168.1.222/centos78/</a></p>
-<p>局域网中其他server使用该yum本地源<br>如果集群中其他server，如cloudera-scm-agent 也需要在本地进行安装，只需将xxx.repo文件拷贝至其对应目录中，并刷新软件缓存，即可。</p>
-<p>scp /etc/yum.repos.d/local.repo ${TARGET_SERVER_IP}:/etc/yum.repos.d</p>
-<p>centos7运行system-config-kickstart时在Package Selection模块中出现如下错误：</p>
-<p>Package Selection</p>
-<pre><code>   Packageselection is disabled due to problems downloading package information</code></pre>
-<p>这是因为centos7中的kickstart需要使用自己的包仓库，这时我们只需要在/etc/yum.repo.d/目录下编辑一个名叫develop的仓库就可以。</p>
-<p>我的解决方法是：vim /etc/yum.repo.d/development.repo</p>
-<p>[development]</p>
-<p>name=development<br>baseurl=<a target="_blank" rel="noopener" href="http://192.168.1.222/centos78">http://192.168.1.222/centos78</a><br>enabled=1<br>gpgcheck=0</p>
 
       
     </div>

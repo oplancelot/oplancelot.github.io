@@ -146,7 +146,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/CentOS%E9%85%8D%E7%BD%AEiptables%E8%A7%84%E5%88%99%E5%B9%B6%E4%BD%BF%E5%85%B6%E6%B0%B8%E4%B9%85%E7%94%9F%E6%95%88/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/mysql%E8%B0%83%E4%BC%98/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -160,7 +160,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/10/09/CentOS%E9%85%8D%E7%BD%AEiptables%E8%A7%84%E5%88%99%E5%B9%B6%E4%BD%BF%E5%85%B6%E6%B0%B8%E4%B9%85%E7%94%9F%E6%95%88/" class="post-title-link" itemprop="url">Untitled</a>
+            <a href="/2020/10/09/mysql%E8%B0%83%E4%BC%98/" class="post-title-link" itemprop="url">Untitled</a>
         </h2>
 
         <div class="post-meta">
@@ -170,14 +170,14 @@
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
-              <time title="Created: 2020-10-09 10:34:42" itemprop="dateCreated datePublished" datetime="2020-10-09T10:34:42+08:00">2020-10-09</time>
+              <time title="Created: 2020-10-09 14:06:11" itemprop="dateCreated datePublished" datetime="2020-10-09T14:06:11+08:00">2020-10-09</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-09-16 15:08:08" itemprop="dateModified" datetime="2020-09-16T15:08:08+08:00">2020-09-16</time>
+                <time title="Modified: 2020-09-22 17:50:06" itemprop="dateModified" datetime="2020-09-22T17:50:06+08:00">2020-09-22</time>
               </span>
 
           
@@ -191,26 +191,100 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>CentOS配置iptables规则并使其永久生效<br>© 版权声明：本文为博主原创文章，转载请注明出处</p>
-<ol>
-<li>目的</li>
-</ol>
-<p>　　最近为了使用redis，配置远程连接的使用需要使用iptable是设置允许外部访问6379端口，但是设置完成后重启总是失效。因此百度了一下如何设置永久生效，并记录。</p>
-<ol start="2">
-<li>设置</li>
-</ol>
-<p>　　2.1 添加iptables规则</p>
-<p>iptables -I INPUT 1 -p tcp -m state –state NEW -m tcp –dport 6379 -j ACCEPT<br>　　2.2 保存</p>
-<p>service iptables save<br>　　执行这个命令的时候有时候可能会报错：The service command supports only basic LSB actions (start, stop, restart, try-restart, reload, force-reload, status). For other actions, please try to use systemctl.</p>
-<p>　　这是因为没有安装iptables服务，直接使用yum安装iptables服务即可.</p>
-<p>yum install iptables-services<br>　　安装完成后，重新执行 service iptables save 命令即可保存成功。</p>
-<p>　　2.3 配置iptables开机自启</p>
-<p>　　保存后重启依然没有生效，后百度得知，需要设置iptables开机自启才可使配置生效。</p>
-<p>　　执行如下命令（老版本命令为：service iptables on），设置iptables开机自启</p>
-<p>systemctl enable iptables.service<br> 3. 注意</p>
-<p>　　需关闭firewalld防火墙</p>
-<p>　　systemctl stop firewalld.service</p>
-<p>　　systemctl disable firewalld.service</p>
+          <h1 id="cat-sys-block-sda-queue-scheduler"><a href="#cat-sys-block-sda-queue-scheduler" class="headerlink" title="cat /sys/block/sda/queue/scheduler"></a>cat /sys/block/sda/queue/scheduler</h1><p>noop deadline [cfq]<br>noop 适合raid控制器和san<br>echo noop &gt; /sys/block/sda/queue/scheduler<br>即使生效</p>
+<p>禁用交换</p>
+<h1 id="echo-0-gt-proc-sys-vm-swappiness"><a href="#echo-0-gt-proc-sys-vm-swappiness" class="headerlink" title="echo 0 &gt; /proc/sys/vm/swappiness"></a>echo 0 &gt; /proc/sys/vm/swappiness</h1><p>direct i/o不做缓存<br>#innodb_flush_method=0_DIRECT</p>
+<p>查看报告 proc 等待cpu,memory<br>#vmstat 5<br>#iostat -dx 5</p>
+<p>my.cnf 配置<br>    [client]<br>    port = 3306<br>    socket = /data/mysql/tmp/mysql.sock</p>
+<pre><code>#The MySQL server
+[mysqld_safe]
+#优化内存管理是否使用jemalloc
+#malloc-lib=/usr/local/lib/libjemalloc.so 
+
+[mysqld]
+#主从复制事务复制
+#GTID config
+gtid_mode=ON
+log-slave-updates=1
+enforce-gtid-consistency=1
+
+port = 3306
+socket = /data/mysql/tmp/mysql.sock
+datadir = /data/mysql/data
+basedir = /usr/local/mysql
+
+skip-name-resolve 
+#连接不按域名解析
+
+#character-set-server=utf8 
+#服务器安装时指定的默认编码格式，这个变量建议由系统自己管理，不要人为定义
+
+
+long_query_time = 1     #慢查询开启参数
+transaction-isolation = READ-COMMITTED #事务隔离类型
+slow_query_log_file = /data/mysql/logs/slowlog/slow.log
+
+query_cache_size=0
+query_cache_type = 0
+
+
+thread_cache_size=16384    #线程池缓存大小
+
+table_open_cache=10000 #高速缓存的大小4G-&gt;2048
+
+log_warnings=2#表示&quot;失败的连接&quot;的信息和创建新连接时&quot;拒绝访问&quot;类的错误信息也会被记录到错误日志中。</code></pre>
+<h1 id="log-bin-trust-function-creators-1-主从复制开启会关闭这个参数"><a href="#log-bin-trust-function-creators-1-主从复制开启会关闭这个参数" class="headerlink" title="log_bin_trust_function_creators=1 #主从复制开启会关闭这个参数"></a>log_bin_trust_function_creators=1 #主从复制开启会关闭这个参数</h1><pre><code>back_log = 1000 #back_log值指出在MySQL暂时停止回答新请求之前的短时间内多少个请求可以被存在堆栈中
+key_buffer_size = 128M #1G内存的机器，如果不使用MyISAM表，推荐值是16M（8-64M），针对myisam临时表
+max_allowed_packet = 256M #最大1G
+
+read_buffer_size = 2M #16G=1M
+myisam_sort_buffer_size = 8M
+expire_logs_days = 10 #binlog过期时间10天
+wait_timeout = 28800 #8小时
+max_connections=2000 #最大连接数
+
+default-storage-engine = InnoDB
+
+
+sync_binlog=1
+tmp_table_size = 32M  #　tmp_table_size参数配置内部内存临时表的大小。 此参数不适用用户创建的MEMORY表，用户创建的MEMORY表用max_heap_table_size参数配置
+join_buffer_size=2m #join 表
+sort_buffer_size=8M
+read_rnd_buffer_size=4M
+max_heap_table_size=32M
+binlog_cache_size=16M # 为每个session 分配的内存，在事务过程中用来存储二进制日志的缓存
+relay_log_recovery=1 #影响从库突然宕机，此参数会影响是否讲未完成的relaylog执行
+tmpdir = /data/tmp
+log-bin = /data/mysql/logs/binlog/mysqlbin.log
+relay_log = /data/mysql/logs/relaylog/relay-bin.log
+log_slave_updates=1 #从库生成binlog时需要开启
+
+# binary logging format - mixed recommended
+binlog_format=row #复制来说是最安全可靠的
+
+# INNODB config
+#innodb_file_per_table=1
+innodb_flush_method = O_DIRECT #性能稳定性最好
+innodb_read_io_threads = 16 #异步IO线程数
+innodb_write_io_threads = 16
+innodb_thread_concurrency=0
+innodb_log_buffer_size=16m #设置为 64-512MB
+innodb_log_file_size=1G
+innodb_data_file_path = ibdata1:512M:autoextend
+innodb_log_files_in_group=3
+innodb_buffer_pool_instances=8 #
+innodb_buffer_pool_size = 583M #60~80%总内存，51.2G
+#innodb_additional_mem_pool_size=64M
+innodb_flush_neighbors=0 #附近脏页是否刷新,SSD关闭
+innodb_io_capacity_max=4000 #2 SASRAID10 2000 SSD 5000
+
+innodb_flush_log_at_trx_commit=1 #提交事务的时候就写入redolog
+
+# required unique id between 1 and 2^32 - 1
+# defaults to 1 if master-host is not set
+# but will not function as a master if omitted
+server-id = 1
+slave-skip-errors = 1062,1053 #1062的错误是指一些主键重复的错误</code></pre>
 
       
     </div>
@@ -230,7 +304,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/28/openvpn%E5%AE%89%E8%A3%85%E5%92%8C%E9%85%8D%E7%BD%AE/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/openvpn%E5%AE%89%E8%A3%85%E5%92%8C%E9%85%8D%E7%BD%AE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -244,7 +318,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/09/28/openvpn%E5%AE%89%E8%A3%85%E5%92%8C%E9%85%8D%E7%BD%AE/" class="post-title-link" itemprop="url">Untitled</a>
+            <a href="/2020/10/09/openvpn%E5%AE%89%E8%A3%85%E5%92%8C%E9%85%8D%E7%BD%AE/" class="post-title-link" itemprop="url">Untitled</a>
         </h2>
 
         <div class="post-meta">
@@ -254,8 +328,15 @@
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
-              <time title="Created: 2020-09-28 15:58:36" itemprop="dateCreated datePublished" datetime="2020-09-28T15:58:36+08:00">2020-09-28</time>
+              <time title="Created: 2020-10-09 14:06:11" itemprop="dateCreated datePublished" datetime="2020-10-09T14:06:11+08:00">2020-10-09</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-09-28 15:58:36" itemprop="dateModified" datetime="2020-09-28T15:58:36+08:00">2020-09-28</time>
+              </span>
 
           
 
@@ -321,8 +402,8 @@ iptables -t nat -A POSTROUTING -d 0.0.0.0/0 -j SNAT --to 78.141.218.222</code></
 
 　　systemctl disable firewalld.service</code></pre>
 <p>   使用一下命令查看开启<br>    systemctl list-unit-files|grep fire</p>
-<p>添加开机启动（脚本写了）<br>    systemctl enable –now <a href="mailto:&#111;&#112;&#x65;&#110;&#118;&#x70;&#110;&#45;&#115;&#101;&#114;&#118;&#101;&#114;&#64;&#115;&#101;&#x72;&#x76;&#x65;&#x72;&#x2e;&#115;&#101;&#114;&#118;&#105;&#99;&#101;">&#111;&#112;&#x65;&#110;&#118;&#x70;&#110;&#45;&#115;&#101;&#114;&#118;&#101;&#114;&#64;&#115;&#101;&#x72;&#x76;&#x65;&#x72;&#x2e;&#115;&#101;&#114;&#118;&#105;&#99;&#101;</a></p>
-<p>重启查看openserver状态<br>    systemctl status <a href="mailto:&#111;&#112;&#101;&#x6e;&#x76;&#112;&#110;&#45;&#115;&#x65;&#x72;&#x76;&#x65;&#114;&#x40;&#x73;&#101;&#x72;&#x76;&#101;&#x72;&#x2e;&#x73;&#101;&#x72;&#118;&#x69;&#x63;&#x65;">&#111;&#112;&#101;&#x6e;&#x76;&#112;&#110;&#45;&#115;&#x65;&#x72;&#x76;&#x65;&#114;&#x40;&#x73;&#101;&#x72;&#x76;&#101;&#x72;&#x2e;&#x73;&#101;&#x72;&#118;&#x69;&#x63;&#x65;</a><br>    systemctl restart <a href="mailto:&#111;&#112;&#101;&#110;&#x76;&#112;&#x6e;&#45;&#115;&#x65;&#114;&#x76;&#x65;&#x72;&#x40;&#x73;&#101;&#x72;&#x76;&#x65;&#x72;&#46;&#115;&#x65;&#114;&#118;&#x69;&#x63;&#x65;">&#111;&#112;&#101;&#110;&#x76;&#112;&#x6e;&#45;&#115;&#x65;&#114;&#x76;&#x65;&#x72;&#x40;&#x73;&#101;&#x72;&#x76;&#x65;&#x72;&#46;&#115;&#x65;&#114;&#118;&#x69;&#x63;&#x65;</a></p>
+<p>添加开机启动（脚本写了）<br>    systemctl enable –now <a href="mailto:&#x6f;&#x70;&#101;&#x6e;&#118;&#x70;&#x6e;&#45;&#x73;&#101;&#x72;&#x76;&#x65;&#114;&#x40;&#x73;&#101;&#x72;&#118;&#x65;&#x72;&#x2e;&#115;&#x65;&#114;&#118;&#x69;&#99;&#x65;">&#x6f;&#x70;&#101;&#x6e;&#118;&#x70;&#x6e;&#45;&#x73;&#101;&#x72;&#x76;&#x65;&#114;&#x40;&#x73;&#101;&#x72;&#118;&#x65;&#x72;&#x2e;&#115;&#x65;&#114;&#118;&#x69;&#99;&#x65;</a></p>
+<p>重启查看openserver状态<br>    systemctl status <a href="mailto:&#x6f;&#112;&#101;&#x6e;&#118;&#x70;&#110;&#x2d;&#x73;&#101;&#114;&#118;&#x65;&#x72;&#64;&#x73;&#x65;&#x72;&#118;&#x65;&#114;&#46;&#x73;&#101;&#x72;&#118;&#x69;&#99;&#101;">&#x6f;&#112;&#101;&#x6e;&#118;&#x70;&#110;&#x2d;&#x73;&#101;&#114;&#118;&#x65;&#x72;&#64;&#x73;&#x65;&#x72;&#118;&#x65;&#114;&#46;&#x73;&#101;&#x72;&#118;&#x69;&#99;&#101;</a><br>    systemctl restart <a href="mailto:&#x6f;&#112;&#x65;&#x6e;&#118;&#x70;&#110;&#x2d;&#115;&#101;&#114;&#x76;&#x65;&#x72;&#x40;&#115;&#101;&#114;&#x76;&#x65;&#x72;&#46;&#115;&#x65;&#114;&#x76;&#x69;&#x63;&#x65;">&#x6f;&#112;&#x65;&#x6e;&#118;&#x70;&#110;&#x2d;&#115;&#101;&#114;&#x76;&#x65;&#x72;&#x40;&#115;&#101;&#114;&#x76;&#x65;&#x72;&#46;&#115;&#x65;&#114;&#x76;&#x69;&#x63;&#x65;</a></p>
 <p>win客户端查看路由</p>
 <pre><code>  route print -4</code></pre>
 <p>参考一下网址<br>修改clients-common.txt，解决WIN10否则dns泄露问题<br><a target="_blank" rel="noopener" href="https://www.v2ex.com/t/521393">https://www.v2ex.com/t/521393</a><br>zk8802   2018-12-27 16:38:15 +08:00<br>楼主设置了 block-outside-dns ？这样 OpenVPN 会添加 Windows 防火墙记录，拦掉除 tap 以外的所有网络接口上的 DNS 请求。把这行从你配置文件中删掉试试。</p>
@@ -346,7 +427,7 @@ iptables -t nat -A POSTROUTING -d 0.0.0.0/0 -j SNAT --to 78.141.218.222</code></
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/25/nginx/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/nginx%E6%BA%90%E7%A0%81%E5%AE%89%E8%A3%85/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -360,7 +441,7 @@ iptables -t nat -A POSTROUTING -d 0.0.0.0/0 -j SNAT --to 78.141.218.222</code></
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/09/25/nginx/" class="post-title-link" itemprop="url">Untitled</a>
+            <a href="/2020/10/09/nginx%E6%BA%90%E7%A0%81%E5%AE%89%E8%A3%85/" class="post-title-link" itemprop="url">Untitled</a>
         </h2>
 
         <div class="post-meta">
@@ -370,118 +451,15 @@ iptables -t nat -A POSTROUTING -d 0.0.0.0/0 -j SNAT --to 78.141.218.222</code></
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
-              <time title="Created: 2020-09-25 12:04:21" itemprop="dateCreated datePublished" datetime="2020-09-25T12:04:21+08:00">2020-09-25</time>
+              <time title="Created: 2020-10-09 14:06:11" itemprop="dateCreated datePublished" datetime="2020-10-09T14:06:11+08:00">2020-10-09</time>
             </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>源码安装</p>
-<pre><code>yum -y install gcc gcc-c++ autoconf automake make  
-yum -y install zlib zlib-devel openssl openssl-devel pcre pcre-devel
-wget http://nginx.org/download/nginx-1.18.0.tar.gz
-
-./configure --with-http_ssl_module
-
-make&amp;&amp;make install
-ln -s /usr/local/nginx/sbin/nginx /usr/bin/nginx</code></pre>
-<p>nginx的一些常用管理命令</p>
-<p>开启：<code>nginx</code><br>查看：<code>ps -ef|grep nginx</code>  <code>curl 127.0.0.1</code></p>
-<p>重启：<code>nginx -s reload</code><br>停止：<code>nginx -s stop</code>或者是通过kill nginx进程号<br>查看版本：<code>nginx –V</code></p>
-<p>官网 <a target="_blank" rel="noopener" href="http://nginx.org/en/docs/configure.html">http://nginx.org/en/docs/configure.html</a></p>
-<p>useradd -s /sbin/nologin -M nginx</p>
-<p>华为云配好需要备案<br>配置/etc/hosts 添加127.0.0.1 newpay.la</p>
-<p>curl -k –tlsv1 “<a target="_blank" rel="noopener" href="https://newpay.la&quot;/">https://newpay.la&quot;</a></p>
-<p>反向代理配置<br>香港nginx.conf<br> server {<br>        listen       443 ssl;<br>        #server_name  localhost;<br>        server_name  newpay.la; //香港地址</p>
-<pre><code>    ssl_certificate      cert/newpay.la.pem;
-    ssl_certificate_key  cert/newpay.la.key;
-
-    ssl_session_cache    shared:SSL:1m;
-    ssl_session_timeout  5m;
-
-#    ssl_ciphers  HIGH:!aNULL:!MD5;
-#    ssl_prefer_server_ciphers  on;
-
-    location / &#123;
-        root   html;
-        index  index.html index.htm;
-        #proxy_pass 121.36.13.223;//域名不行修改hosts
-        #proxy_set_header Host &#39;121.36.13.223&#39;;
-        proxy_pass https://bj.newpay.la/;//转发地址，修改/etc/hosts
-        proxy_set_header Host &#39;bj.newpay.la&#39;;//host和上面保持一致
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    &#125;
-&#125;</code></pre>
-<p>北京conf.d/newpay.conf</p>
-<p> server {<br>        listen       443 ssl;<br>        server_name  localhost;</p>
-<pre><code>    ssl_certificate      cert/newpay.la.pem;//证书
-    ssl_certificate_key  cert/newpay.la.key;
-
-    ssl_session_cache    shared:SSL:1m;
-    ssl_session_timeout  5m;
-
-#    ssl_ciphers  HIGH:!aNULL:!MD5;
-#    ssl_prefer_server_ciphers  on;
-
-    location / &#123;
-        root   /usr/share/nginx/html;
-        index  index.html index.htm;
-    &#125;
-&#125;</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/24/nginx%E6%BA%90%E7%A0%81%E5%AE%89%E8%A3%85/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="oplancelot">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="oplancelot">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/09/24/nginx%E6%BA%90%E7%A0%81%E5%AE%89%E8%A3%85/" class="post-title-link" itemprop="url">Untitled</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-09-24 18:07:05" itemprop="dateModified" datetime="2020-09-24T18:07:05+08:00">2020-09-24</time>
               </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2020-09-24 18:07:05" itemprop="dateCreated datePublished" datetime="2020-09-24T18:07:05+08:00">2020-09-24</time>
-            </span>
 
           
 
@@ -529,7 +507,7 @@ ln -s /usr/local/nginx/sbin/nginx /usr/bin/nginx</code></pre>
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/24/ansible/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/mysql-source-install/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -543,7 +521,7 @@ ln -s /usr/local/nginx/sbin/nginx /usr/bin/nginx</code></pre>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/09/24/ansible/" class="post-title-link" itemprop="url">Untitled</a>
+            <a href="/2020/10/09/mysql-source-install/" class="post-title-link" itemprop="url">Untitled</a>
         </h2>
 
         <div class="post-meta">
@@ -553,69 +531,15 @@ ln -s /usr/local/nginx/sbin/nginx /usr/bin/nginx</code></pre>
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
-              <time title="Created: 2020-09-24 15:50:31" itemprop="dateCreated datePublished" datetime="2020-09-24T15:50:31+08:00">2020-09-24</time>
+              <time title="Created: 2020-10-09 14:06:11" itemprop="dateCreated datePublished" datetime="2020-10-09T14:06:11+08:00">2020-10-09</time>
             </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>ansible</p>
-<p>yum install ansible -y<br>用法简介<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/along21/p/8241542.html">https://www.cnblogs.com/along21/p/8241542.html</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/yanjieli/p/10969089.html">https://www.cnblogs.com/yanjieli/p/10969089.html</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/createwell/p/12123772.html">https://www.cnblogs.com/createwell/p/12123772.html</a></p>
-<p><img src="https://img2018.cnblogs.com/blog/1210730/201906/1210730-20190603174855830-17103163.png"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/24/mysql-source-install/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="oplancelot">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="oplancelot">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/09/24/mysql-source-install/" class="post-title-link" itemprop="url">Untitled</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-09-24 15:28:25" itemprop="dateModified" datetime="2020-09-24T15:28:25+08:00">2020-09-24</time>
               </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2020-09-24 15:28:25" itemprop="dateCreated datePublished" datetime="2020-09-24T15:28:25+08:00">2020-09-24</time>
-            </span>
 
           
 
@@ -717,7 +641,7 @@ FLUSH PRIVILEGES</code></pre>
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/24/mysqlautoinstall/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/my.cnf-master/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -731,7 +655,7 @@ FLUSH PRIVILEGES</code></pre>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/09/24/mysqlautoinstall/" class="post-title-link" itemprop="url">Untitled</a>
+            <a href="/2020/10/09/my.cnf-master/" class="post-title-link" itemprop="url">Untitled</a>
         </h2>
 
         <div class="post-meta">
@@ -741,8 +665,15 @@ FLUSH PRIVILEGES</code></pre>
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
-              <time title="Created: 2020-09-24 12:26:15" itemprop="dateCreated datePublished" datetime="2020-09-24T12:26:15+08:00">2020-09-24</time>
+              <time title="Created: 2020-10-09 14:06:11" itemprop="dateCreated datePublished" datetime="2020-10-09T14:06:11+08:00">2020-10-09</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-09-11 16:21:56" itemprop="dateModified" datetime="2020-09-11T16:21:56+08:00">2020-09-11</time>
+              </span>
 
           
 
@@ -755,12 +686,9 @@ FLUSH PRIVILEGES</code></pre>
     <div class="post-body" itemprop="articleBody">
 
       
-          <pre><code>./mysqlAutoinstall -t master -f mysql.cnf
-wget
-https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.31.tar.gz</code></pre>
-<p>脚本不能使用多线程编译会报错。</p>
-<p>登录MySQL，修改密码<br>    mysql -u root -p’临时密码’ #安装后生成临时密码，回车即可</p>
-<p> #修改密码<br>    mysql&gt; set password for root@localhost=password(‘Tengx1n@2o2o’);<br>    mysql&gt; flush privileges;//刷新生效</p>
+          <p>[mysqld]<br>character-set-server=utf8<br>collation-server=utf8_general_ci<br>datadir=/data/mysql/data<br>socket=/data/mysql/tmp/mysql.sock<br>#server ID<br>server-id=10<br>#enable mysql binlog<br>log-bin= mysql-bin<br>pid-file=/data/mysql/pids/mysqld.pid</p>
+<p>[mysqld_safe]<br>log-error=/data/mysql/logs/mysqld.log<br>pid-file=/data/mysql/pids/mysqld.pid</p>
+<p>[client]<br>default-character-set=utf8</p>
 
       
     </div>
@@ -780,7 +708,7 @@ https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.31.tar.gz</code></pre>
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/24/mysql-real_only%E5%8F%AA%E8%AF%BB%E5%B1%9E%E6%80%A7/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/mysql%205.7%E9%85%8D%E7%BD%AE%E9%A1%B9%E6%9C%80%E8%AF%A6%E7%BB%86%E7%9A%84%E8%A7%A3%E9%87%8A/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -794,7 +722,7 @@ https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.31.tar.gz</code></pre>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/09/24/mysql-real_only%E5%8F%AA%E8%AF%BB%E5%B1%9E%E6%80%A7/" class="post-title-link" itemprop="url">Untitled</a>
+            <a href="/2020/10/09/mysql%205.7%E9%85%8D%E7%BD%AE%E9%A1%B9%E6%9C%80%E8%AF%A6%E7%BB%86%E7%9A%84%E8%A7%A3%E9%87%8A/" class="post-title-link" itemprop="url">Untitled</a>
         </h2>
 
         <div class="post-meta">
@@ -804,7 +732,99 @@ https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.31.tar.gz</code></pre>
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
-              <time title="Created: 2020-09-24 11:54:26" itemprop="dateCreated datePublished" datetime="2020-09-24T11:54:26+08:00">2020-09-24</time>
+              <time title="Created: 2020-10-09 14:06:11" itemprop="dateCreated datePublished" datetime="2020-10-09T14:06:11+08:00">2020-10-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-09-11 14:37:31" itemprop="dateModified" datetime="2020-09-11T14:37:31+08:00">2020-09-11</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>mysql 5.7配置项最详细的解释<br>配置样例<br>首先提供一个我使用的配置样例</p>
+<p>复制代码<br>[client]<br>#password=88888888<br>socket=/data/var/mysql/mysql.sock  </p>
+<p>[mysqld_safe]<br>pid-file=/data/var/mysql/mysqld.pid<br>log-error = /data/local/mysql-5.7.19/log/mysql-error.log  </p>
+<p>[mysql]<br>socket=/data/var/mysql/mysql.sock  </p>
+<p>[mysqld]<br>user = mysql<br>port = 31306<br>datadir = /data/var/mysql<br>socket=/data/var/mysql/mysql.sock<br>symbolic-links=0<br>########basic settings########<br>server-id = 11<br>#bind_address = 10.166.224.32<br>autocommit = 1<br>character_set_server=utf8mb4<br>skip_name_resolve = 1<br>max_connections = 800<br>max_connect_errors = 100<br>transaction_isolation = READ-COMMITTED<br>explicit_defaults_for_timestamp = 1<br>join_buffer_size = 128M<br>tmp_table_size = 128M<br>tmpdir = /dev/shm<br>max_allowed_packet = 16M<br>sql_mode = “STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER”<br>interactive_timeout = 60<br>wait_timeout = 60<br>read_buffer_size = 16M<br>read_rnd_buffer_size = 32M<br>sort_buffer_size = 32M<br>########log settings########<br>#log_error = /data/local/mysql-5.7.19/log/mysql-error.log<br>slow_query_log = 1<br>slow_query_log_file = /data/local/mysql-5.7.19/log/mysql-slow.log<br>log_queries_not_using_indexes = 1<br>log_slow_admin_statements = 1<br>log_slow_slave_statements = 1<br>log_throttle_queries_not_using_indexes = 10<br>expire_logs_days = 90<br>long_query_time = 1<br>min_examined_row_limit = 100<br>########replication settings########<br>#master_info_repository = TABLE<br>#relay_log_info_repository = TABLE<br>log_bin = /data/local/mysql-5.7.19/log/mysql-bin<br>#sync_binlog = 4<br>gtid_mode = on<br>enforce_gtid_consistency = 1<br>#log_slave_updates<br>binlog_format = row<br>#relay_log = /data/local/mysql-5.7.19/log/mysql-relay.log<br>#relay_log_recovery = 1<br>#binlog_gtid_simple_recovery = 1<br>#slave_skip_errors = ddl_exist_errors<br>########innodb settings########<br>innodb_page_size = 16K<br>innodb_buffer_pool_size = 4G<br>#innodb_buffer_pool_instances = 8<br>#innodb_buffer_pool_load_at_startup = 1<br>#innodb_buffer_pool_dump_at_shutdown = 1<br>#innodb_lru_scan_depth = 2000<br>innodb_lock_wait_timeout = 5<br>#innodb_io_capacity = 4000<br>#innodb_io_capacity_max = 8000<br>#innodb_flush_method = O_DIRECT<br>#innodb_log_group_home_dir = /data/local/mysql-5.7.19/log/redolog/<br>#innodb_undo_directory = /data/local/mysql-5.7.19/log/undolog/<br>#innodb_undo_logs = 128<br>#innodb_undo_tablespaces = 0<br>#innodb_flush_neighbors = 1<br>#innodb_log_file_size = 4G<br>#innodb_log_buffer_size = 16M<br>#innodb_purge_threads = 4<br>innodb_large_prefix = 1<br>innodb_thread_concurrency = 64<br>#innodb_print_all_deadlocks = 1<br>#innodb_strict_mode = 1<br>innodb_sort_buffer_size = 64M<br>########semi sync replication settings########<br>#plugin_dir=/data/local/mysql-5.7.19/lib/plugin<br>#plugin_load = “rpl_semi_sync_master=semisync_master.so;rpl_semi_sync_slave=semisync_slave.so”<br>#loose_rpl_semi_sync_master_enabled = 1<br>#loose_rpl_semi_sync_slave_enabled = 1<br>#loose_rpl_semi_sync_master_timeout = 5000  </p>
+<p>[mysqld-5.7]<br>#innodb_buffer_pool_dump_pct = 40<br>innodb_page_cleaners = 4<br>#innodb_undo_log_truncate = 1<br>#innodb_max_undo_log_size = 2G<br>#innodb_purge_rseg_truncate_frequency = 128<br>#binlog_gtid_simple_recovery=1<br>log_timestamps=system<br>#transaction_write_set_extraction=MURMUR32<br>#show_compatibility_56=on<br>复制代码<br>详细解释<br>[client]<br>#password=88888888<br>mysql默认密码<br>socket=/data/var/mysql/mysql.sock<br>mysql以socket方式运行的sock文件位置</p>
+<p>[mysqld_safe]<br>log-error=/var/log/mysqld.log<br>错误日志位置<br>pid-file=/var/run/mysqld/mysqld.pid<br>进程id文件</p>
+<p>[mysql]<br>socket=/data/var/mysql/mysql.sock<br>mysql以socket方式运行的sock文件位置</p>
+<p>[mysqld]<br>user = mysql<br>mysql以什么用户运行<br>port = 31306<br>mysql运行在哪个端口<br>datadir = /data/var/mysql/<br>mysql的数据目录<br>socket=/data/var/mysql/mysql.sock<br>mysql以socket方式运行的sock文件位置<br>symbolic-links=0<br>是否支持符号链接，即数据库或表可以存储在my.cnf中指定datadir之外的分区或目录，为0不开启</p>
+<p>########basic settings########<br>server-id = 11<br>mysql的服务器分配id，在启用主从和集群的时候必须指定，每个节点必须不同<br>#bind_address = 10.166.224.32<br>mysql监听的ip地址，如果是127.0.0.1，表示仅本机访问<br>autocommit = 1<br>数据修改是否自动提交，为0不自动提交<br>character_set_server=utf8mb4<br>服务器使用的字符集<br>skip_name_resolve = 1<br>禁用DNS主机名查找，启用以后用内网地址向mysqlslap请求响应快了一半<br>max_connections = 800<br>mysql最大连接数</p>
+<p>max_connect_errors = 1000<br>某台host连接错误次数等于max_connect_errors（默认10） ，主机’host_name’再次尝试时被屏蔽。可有效反的防止dos攻击<br>transaction_isolation = READ-COMMITTED<br>数据库事务隔离级别<br>1.READ-UNCOMMITTED(读取未提交内容)级别<br>2. READ-COMMITTED（读取提交内容）<br>3. REPEATABLE-READ(可重读)<br>4.SERIERLIZED(可串行化)<br>默认级别REPEATABLE-READ<br>explicit_defaults_for_timestamp = 1<br>mysql中TIMESTAMP类型和其他的类型有点不一样(在没有设置explicit_defaults_for_timestamp=1的情况下）<br>join_buffer_size = 128M<br>当我们的join是ALL,index,rang或者Index_merge的时候使用的buffer。 实际上这种join被称为FULL JOIN<br>tmp_table_size = 128M<br>规定了内部内存临时表的最大值，每个线程都要分配。（实际起限制作用的是tmp_table_size和max_heap_table_size的最小值。）如果内存临时表超出了限制，MySQL就会自动地把它转化为基于磁盘的MyISAM表，存储在指定的tmpdir目录下<br>tmpdir = /dev/shm/mysql-tmp/<br>保存临时文件的目录<br>max_allowed_packet = 16M<br>mysql最大接受的数据包大小<br>sql_mode = “STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER”<br>sql_mode 模式，定义了你MySQL应该支持的sql语法，对数据的校验等等，限制一些所谓的‘不合法’的操作<br>interactive_timeout = 60<br>服务器关闭交互式连接前等待活动的秒数。交互式客户端定义为在mysql_real_connect()中使用CLIENT_INTERACTIVE选项的客户端<br>wait_timeout = 60<br>服务器关闭非交互连接之前等待活动的秒数，在线程启动时，根据全局wait_timeout值或全局interactive_timeout值初始化会话wait_timeout值，取决于客户端类型(由mysql_real_connect()的连接选项CLIENT_INTERACTIVE定义)<br>read_buffer_size = 16M<br>读入缓冲区的大小，将对表进行顺序扫描的请求将分配一个读入缓冲区，MySQL会为它分配一段内存缓冲区<br>read_rnd_buffer_size = 32M<br>随机读缓冲区大小，当按任意顺序读取行时（列如按照排序顺序）将分配一个随机读取缓冲区，进行排序查询时，MySQL会首先扫描一遍该缓冲，以避免磁盘搜索，提高查询速度<br>sort_buffer_size = 32M<br>是一个connection级参数，在每个connection第一次需要使用这个buffer的时候，一次性分配设置的内存</p>
+<p>########log settings########<br>#log_error = /data/local/mysql-5.7.19/log/mysql-error.log<br>错误日志位置<br>slow_query_log = 1<br>是否开启慢查询日志收集<br>slow_query_log_file = /data/local/mysql-5.7.19/log/mysql-slow.log<br>慢查询日志位置<br>log_queries_not_using_indexes = 1<br>是否记录未使用索引的语句<br>log_slow_admin_statements = 1<br>慢查询也记录那些慢的optimize table，analyze table和alter table语句<br>log_slow_slave_statements = 1<br>记录由Slave所产生的慢查询<br>log_throttle_queries_not_using_indexes = 10<br>设定每分钟记录到日志的未使用索引的语句数目，超过这个数目后只记录语句数量和花费的总时间<br>expire_logs_days = 90<br>日志自动过期清理天数<br>long_query_time = 1<br>设置记录慢查询超时时间<br>min_examined_row_limit = 100<br>查询检查返回少于该参数指定行的SQL不被记录到慢查询日志</p>
+<p>########replication settings########<br>#master_info_repository = TABLE<br>从机保存主节点信息方式，设成file时 会生成master.info 和 relay-log.info2个文件，设成table，信息就会存在mysql.master_slave_info表中。不管是设置的哪种值，都不要移动或者编辑相关的文件和表<br>#relay_log_info_repository = TABLE<br>用于保存slave读取relay log的位置信息，可选值为“FILE”、“TABLE”，以便crash重启后继续恢复<br>log_bin = /data/local/mysql-5.7.19/log/mysql-bin<br>binlog的保存位置，不能指定确定的文件名如mysql-bin.log，只能指定位置和前缀，会生成以前缀为开头的一系列文件<br>#sync_binlog = 4<br>这个参数是对于MySQL系统来说是至关重要的，他不仅影响到Binlog对MySQL所带来的性能损耗，而且还影响到MySQL中数据的完整性。对于“sync_binlog”参数的各种设置的说明如下：<br>sync_binlog=0，当事务提交之后，MySQL不做fsync之类的磁盘同步指令刷新binlog_cache中的信息到磁盘，而让Filesystem自行决定什么时候来做同步，或者cache满了之后才同步到磁盘。<br>sync_binlog=n，当每进行n次事务提交之后，MySQL将进行一次fsync之类的磁盘同步指令来将binlog_cache中的数据强制写入磁盘。<br>在MySQL中系统默认的设置是sync_binlog=0，也就是不做任何强制性的磁盘刷新指令，这时候的性能是最好的，但是风险也是最大的。因为一旦系统Crash，在binlog_cache中的所有binlog信息都会被丢失。而当设置为“1”的时候，是最安全但是性能损耗最大的设置。因为当设置为1的时候，即使系统Crash，也最多丢失binlog_cache中未完成的一个事务，对实际数据没有任何实质性影响。从以往经验和相关测试来看，对于高并发事务的系统来说，“sync_binlog”设置为0和设置为1的系统写入性能差距可能高达5倍甚至更多。<br>gtid_mode = on<br>启用gtid类型，否则就是普通的复制架构<br>enforce_gtid_consistency = 1<br>强制GTID的一致性<br>#log_slave_updates<br>slave更新是否记入日志，在做双主架构时异常重要，影响到双主架构是否能互相同步<br>binlog_format = row<br>binlog日志格式，可选值“MIXED”、“ROW”、“STATEMENT”，在5.6版本之前默认为“STATEMENT”，5.6之后默认为“MIXED”；因为“STATEMENT”方式在处理一些“不确定”性的方法时会造成数据不一致问题，我们建议使用“MIXED”或者“ROW”<br>#relay_log = /data/local/mysql-5.7.19/log/mysql-relay.log<br>从机保存同步中继日志的位置<br>#relay_log_recovery = 1<br>当slave从库宕机后，假如relay-log损坏了，导致一部分中继日志没有处理，则自动放弃所有未执行的relay-log，并且重新从master上获取日志，这样就保证了relay-log的完整性<br>#binlog_gtid_simple_recovery = 1<br>这个参数控制了当mysql启动或重启时，mysql在搜寻GTIDs时是如何迭代使用binlog文件的。 这个选项设置为真，会提升mysql执行恢复的性能。因为这样mysql-server启动和binlog日志清理更快<br>#slave_skip_errors = ddl_exist_errors<br>跳过指定error no类型的错误，设成all 跳过所有错误</p>
+<p>########innodb settings########<br>innodb_page_size = 16K<br>innodb每个数据页大小，这个参数在一开始初始化时就要加入my.cnf里，如果已经创建了表，再修改，启动MySQL会报错<br>innodb_buffer_pool_size = 4G<br>缓存innodb表的索引，数据，插入数据时的缓冲，专用mysql服务器设置的大小： 操作系统内存的70%-80%最佳<br>#innodb_buffer_pool_instances = 8<br>可以开启多个内存缓冲池，把需要缓冲的数据hash到不同的缓冲池中，这样可以并行的内存读写<br>#innodb_buffer_pool_load_at_startup = 1<br>默认为关闭OFF。如果开启该参数，启动MySQL服务时，MySQL将本地热数据加载到InnoDB缓冲池中<br>#innodb_buffer_pool_dump_at_shutdown = 1<br>默认为关闭OFF。如果开启该参数，停止MySQL服务时，InnoDB将InnoDB缓冲池中的热数据保存到本地硬盘<br>#innodb_lru_scan_depth = 2000<br>根据 官方文档 描述，它会影响page cleaner线程每次刷脏页的数量， 这是一个每1秒 loop一次的线程<br>innodb_lock_wait_timeout = 5<br>事务等待获取资源等待的最长时间，超过这个时间还未分配到资源则会返回应用失败；参数的时间单位是秒<br>#innodb_io_capacity = 4000<br>#innodb_io_capacity_max = 8000<br>这两个设置会影响InnoDB每秒在后台执行多少操作. 大多数写IO(除了写InnoDB日志)是后台操作的. 如果你深度了解硬件性能(如每秒可以执行多少次IO操作),则使用这些功能是很可取的,而不是让它闲着<br>#innodb_flush_method = O_DIRECT<br>默认值为 fdatasync. 如果使用 硬件RAID磁盘控制器, 可能需要设置为 O_DIRECT. 这在读取InnoDB缓冲池时可防止“双缓冲(double buffering)”效应,否则会在文件系统缓存与InnoDB缓存间形成2个副本(copy). 如果不使用硬件RAID控制器,或者使用SAN存储时, O_DIRECT 可能会导致性能下降<br>#innodb_log_group_home_dir = /data/local/mysql-5.7.19/log/redolog/<br>innodb重做日志保存目录<br>#innodb_undo_directory = /data/local/mysql-5.7.19/log/undolog/<br>innodb回滚日志保存目录<br>#innodb_undo_logs = 128<br>undo回滚段的数量， 至少大于等于35，默认128<br>#innodb_undo_tablespaces = 0<br>用于设定创建的undo表空间的个数，在mysql_install_db时初始化后，就再也不能被改动了；默认值为0，表示不独立设置undo的tablespace，默认记录到ibdata中；否则，则在undo目录下创建这么多个undo文件，例如假定设置该值为4，那么就会创建命名为undo001~undo004的undo tablespace文件，每个文件的默认大小为10M。修改该值会导致Innodb无法完成初始化，数据库无法启动，但是另两个参数可以修改<br>#innodb_flush_neighbors = 1<br>InnoDB存储引擎在刷新一个脏页时，会检测该页所在区(extent)的所有页，如果是脏页，那么一起刷新。这样做的好处是通过AIO可以将多个IO写操作合并为一个IO操作。对于传统机械硬盘建议使用，而对于固态硬盘可以关闭。<br>#innodb_log_file_size = 4G<br>这个值定义了日志文件的大小，innodb日志文件的作用是用来保存redo日志。一个事务对于数据或索引的修改往往对应到表空间中的随机的位置，因此当刷新这些修改到磁盘中就会引起随机的I/O，而随机的I/O往往比顺序的I/O更加昂贵的开销，因为随机的I/O需要更多的开销来定位到指定的位置。innodb使用日志来将随机的I/O转为顺序的I/O，只要日志文件是安全的，那么事务就是永久的，尽管这些改变还没有写到数据文件中，如果出现了当机或服务器断电的情况，那么innodb也可以通过日志文件来恢复以及提交的事务。但是日志文件是有一定的大小的，所以必须要把日志文件记录的改变写到数据文件中，innodb对于日志文件的操作是循环的，即当日志文件写满后，会将指针重新移动到文件开始的地方重新写，但是它不会覆盖那些还没有写到数据文件中的日志，因为这是唯一记录了事务持久化的记录<br>如果对 Innodb 数据表有大量的写入操作，那么选择合适的 innodb_log_file_size 值对提升MySQL性能很重要。然而设置太大了，就会增加恢复的时间，因此在MySQL崩溃或者突然断电等情况会令MySQL服务器花很长时间来恢复<br>#innodb_log_buffer_size = 16M<br>事务在内存中的缓冲。 分配原 则：控制在2-8M.这个值不用太多的。他里面的内存一般一秒钟写到磁盘一次<br>#innodb_purge_threads = 4<br>控制是否使用，使用几个独立purge线程（清除二进制日志）<br>innodb_large_prefix = 1<br>mysql在5.6之前一直都是单列索引限制767，起因是256×3-1。这个3是字符最大占用空间（utf8）。但是在5.6以后，开始支持4个字节的uutf8。255×4&gt;767, 于是增加了这个参数。这个参数默认值是OFF。当改为ON时，允许列索引最大达到3072<br>innodb_thread_concurrency = 64<br>InnoDB kernel并发最大的线程数。 1) 最少设置为(num_disks+num_cpus)*2。 2) 可以通过设置成1000来禁止这个限制<br>#innodb_print_all_deadlocks = 1<br>是否将死锁相关信息保存到MySQL 错误日志中<br>#innodb_strict_mode = 1<br>开启InnoDB严格检查模式，尤其采用了页数据压缩功能后，最好是开启该功能。开启此功能后，当创建表（CREATE TABLE）、更改表（ALTER TABLE）和创建索引（CREATE INDEX）语句时，如果写法有错误，不会有警告信息，而是直接抛出错误，这样就可直接将问题扼杀在摇篮里<br>innodb_sort_buffer_size = 64M<br>ORDER BY 或者GROUP BY 操作的buffer缓存大小</p>
+<p>########semi sync replication settings########<br>#plugin_dir=/data/local/mysql-5.7.19/lib/plugin<br>指定mysql的插件目录<br>#plugin_load = “rpl_semi_sync_master=semisync_master.so;rpl_semi_sync_slave=semisync_slave.so”<br>指定载入哪些插件<br>#loose_rpl_semi_sync_master_enabled = 1<br>控制主库上是否开启semisync<br>#loose_rpl_semi_sync_slave_enabled = 1<br>控制备库是否开启semisync<br>#loose_rpl_semi_sync_master_timeout = 5000<br>单位毫秒，防止半同步复制在没有收到确认的情况下，发送堵塞。master在超时之前没有收到确认，将恢复到异步复制，继续执行半同步没有进行的操作</p>
+<p>[mysqld-5.7]<br>#innodb_buffer_pool_dump_pct = 40<br>表示转储每个bp instance LRU上最热的page的百分比。通过设置该参数可以减少转储的page数<br>innodb_page_cleaners = 4<br>为了提升扩展性和刷脏效率，在5.7.4版本里引入了多个page cleaner线程。从而达到并行刷脏的效果<br>在该版本中，Page cleaner并未和buffer pool绑定，其模型为一个协调线程 + 多个工作线程，协调线程本身也是工作线程。因此如果innodb_page_cleaners设置为8，那么就是一个协调线程，加7个工作线程<br>#innodb_undo_log_truncate = 1<br>是否开启在线回收（收缩）undo log日志文件，支持动态设置<br>#innodb_max_undo_log_size = 2G<br>当超过这个阀值（默认是1G），会触发truncate回收（收缩）动作，truncate后空间缩小到10M<br>#innodb_purge_rseg_truncate_frequency = 128<br>控制回收（收缩）undo log的频率。undo log空间在它的回滚段没有得到释放之前不会收缩， 想要增加释放回滚区间的频率，就得降低设定值<br>#binlog_gtid_simple_recovery=1<br>这个参数控制了当mysql启动或重启时，mysql在搜寻GTIDs时是如何迭代使用binlog文件的。 这个选项设置为真，会提升mysql执行恢复的性能。因为这样mysql-server启动和binlog日志清理更快。该参数为真时，mysql-server只需打开最老的和最新的这2个binlog文件<br>log_timestamps=system<br>在MySQL 5.7.2 新增了 log_timestamps 这个参数，该参数主要是控制 error log、genera log，等等记录日志的显示时间参数。 在 5.7.2 之后改参数为默认 UTC 这样会导致日志中记录的时间比中国这边的慢，导致查看日志不方便。修改为 SYSTEM 就能解决问题<br>#transaction_write_set_extraction=MURMUR32<br>这个神奇的参数5.7.6版本引入，用于定义一个记录事务的算法，这个算法使用hash标识来记录事务。如果使用MGR，那么这个hash值需要用于分布式冲突检测何处理，在64位的系统，官网建议设置该参数使用 XXHASH64 算法。如果线上并没有使用该功能，应该设为off<br>#show_compatibility_56=on<br>从mysql5.7.6开始information_schema.global_status已经开始被舍弃，为了兼容性，此时需要打开 show_compatibility_56</p>
+<p>#table_open_cache = 512<br>table_open_cache指定表高速缓存的大小。每当MySQL访问一个表时，如果在表缓冲区中还有空间，该表就被打开并放入其中，这样可以更快地访问表内容。<br>通过检查峰值时间的状态值Open_tables和Opened_tables，可以决定是否需要增加table_open_cache的值。<br>可通过 SHOW GLOBAL STATUS LIKE ‘Open%tables’; 获得</p>
+<p>注意，不能盲目地把table_open_cache设置成很大的值，设置太大超过了shell的文件描述符(通过ulimit -n查看)，造成文件描述符不足，从而造成性能不稳定或者连接失败。</p>
+<p>阅读排行榜</p>
+<ol>
+<li>mysql 5.7配置项最详细的解释(8800)</li>
+<li>K3s简介（一）(2148)</li>
+<li>centos部署zabbix 3.4(1862)</li>
+<li>docker 使用之管理工具shipyard（五）(495)</li>
+<li>一、saltstack安装(385)<br>推荐排行榜</li>
+<li>python 基础(1)</li>
+<li>K3s简介（一）(1)<br>Copyright © 2020 换你一世迷离<br>Powered by .NET Core on Kubernetes</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/mysql-real_only%E5%8F%AA%E8%AF%BB%E5%B1%9E%E6%80%A7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="oplancelot">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="oplancelot">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/10/09/mysql-real_only%E5%8F%AA%E8%AF%BB%E5%B1%9E%E6%80%A7/" class="post-title-link" itemprop="url">Untitled</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-10-09 14:06:11" itemprop="dateCreated datePublished" datetime="2020-10-09T14:06:11+08:00">2020-10-09</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -860,7 +880,7 @@ https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.31.tar.gz</code></pre>
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/24/my.cnf-master/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/RUNDECK%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -874,7 +894,7 @@ https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.31.tar.gz</code></pre>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/09/24/my.cnf-master/" class="post-title-link" itemprop="url">Untitled</a>
+            <a href="/2020/10/09/RUNDECK%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">Untitled</a>
         </h2>
 
         <div class="post-meta">
@@ -884,75 +904,15 @@ https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.31.tar.gz</code></pre>
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
-              <time title="Created: 2020-09-24 11:45:16" itemprop="dateCreated datePublished" datetime="2020-09-24T11:45:16+08:00">2020-09-24</time>
+              <time title="Created: 2020-10-09 14:06:11" itemprop="dateCreated datePublished" datetime="2020-10-09T14:06:11+08:00">2020-10-09</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-09-11 16:21:56" itemprop="dateModified" datetime="2020-09-11T16:21:56+08:00">2020-09-11</time>
+                <time title="Modified: 2020-09-23 17:34:39" itemprop="dateModified" datetime="2020-09-23T17:34:39+08:00">2020-09-23</time>
               </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>[mysqld]<br>character-set-server=utf8<br>collation-server=utf8_general_ci<br>datadir=/data/mysql/data<br>socket=/data/mysql/tmp/mysql.sock<br>#server ID<br>server-id=10<br>#enable mysql binlog<br>log-bin= mysql-bin<br>pid-file=/data/mysql/pids/mysqld.pid</p>
-<p>[mysqld_safe]<br>log-error=/data/mysql/logs/mysqld.log<br>pid-file=/data/mysql/pids/mysqld.pid</p>
-<p>[client]<br>default-character-set=utf8</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/23/RUNDECK%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="oplancelot">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="oplancelot">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/09/23/RUNDECK%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">Untitled</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2020-09-23 17:34:39" itemprop="dateCreated datePublished" datetime="2020-09-23T17:34:39+08:00">2020-09-23</time>
-            </span>
 
           
 
@@ -1010,6 +970,166 @@ project.etc.dir = /var/lib/rundeck/projects/$&#123;project.name&#125;/etc</code>
 <p>nodes添加在project settings<br>edit nodes 里指定路径，会生成配置文件</p>
 <p>证书认证<br>管理员文档<a target="_blank" rel="noopener" href="https://docs.rundeck.com/docs/administration/configuration/database/mysql.html">https://docs.rundeck.com/docs/administration/configuration/database/mysql.html</a></p>
 <p>官网<a target="_blank" rel="noopener" href="https://docs.rundeck.com/docs/manual/01-introduction.html">https://docs.rundeck.com/docs/manual/01-introduction.html</a><br>参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/liumiaocn/article/details/89135773">https://blog.csdn.net/liumiaocn/article/details/89135773</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/ansible/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="oplancelot">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="oplancelot">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/10/09/ansible/" class="post-title-link" itemprop="url">Untitled</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-10-09 14:06:11" itemprop="dateCreated datePublished" datetime="2020-10-09T14:06:11+08:00">2020-10-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-09-24 15:50:31" itemprop="dateModified" datetime="2020-09-24T15:50:31+08:00">2020-09-24</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>ansible</p>
+<p>yum install ansible -y<br>用法简介<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/along21/p/8241542.html">https://www.cnblogs.com/along21/p/8241542.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/yanjieli/p/10969089.html">https://www.cnblogs.com/yanjieli/p/10969089.html</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/createwell/p/12123772.html">https://www.cnblogs.com/createwell/p/12123772.html</a></p>
+<p><img src="https://img2018.cnblogs.com/blog/1210730/201906/1210730-20190603174855830-17103163.png"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/WSL%E4%BF%AE%E6%94%B9root%E5%AF%86%E7%A0%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="oplancelot">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="oplancelot">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/10/09/WSL%E4%BF%AE%E6%94%B9root%E5%AF%86%E7%A0%81/" class="post-title-link" itemprop="url">Untitled</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2020-10-09 14:06:11 / Modified: 10:41:24" itemprop="dateCreated datePublished" datetime="2020-10-09T14:06:11+08:00">2020-10-09</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>打开Windows PowerShell</p>
+<p>版权所有 (C) Microsoft Corporation。保留所有权利。</p>
+<p>尝试新的跨平台 PowerShell <a target="_blank" rel="noopener" href="https://aka.ms/pscore6">https://aka.ms/pscore6</a><br>输入<br>    PS C:\Windows\system32&gt; ubuntu config –default-user root<br>输入</p>
+<pre><code>PS C:\Windows\system32&gt; ubuntu
+Welcome to Ubuntu 20.04.1 LTS (GNU/Linux 4.4.0-18362-Microsoft x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management: https://landscape.canonical.com
+ * Support:https://ubuntu.com/advantage
+
+  System information as of Fri Oct  9 10:39:11 CST 2020
+
+  System load:0.52  Users logged in:0
+  Usage of /home: unknown   IPv4 address for eth2:  192.168.1.20
+  Memory usage:   38%   IPv4 address for eth3:  169.254.86.168
+  Swap usage: 0%IPv4 address for wifi0: 192.168.0.21
+  Processes:  9
+
+1 update can be installed immediately.
+0 of these updates are security updates.
+To see these additional updates run: apt list --upgradable
+
+
+The list of available updates is more than a week old.
+To check for new updates run: sudo apt update
+
+
+This message is shown once once a day. To disable it please create the
+/root/.hushlogin file.
+root@lancelot-laptop:~# passwd
+New password:
+Retype new password:
+passwd: password updated successfully
+root@lancelot-laptop:~#</code></pre>
 
       
     </div>
@@ -1094,7 +1214,7 @@ project.etc.dir = /var/lib/rundeck/projects/$&#123;project.name&#125;/etc</code>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-count">22</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>

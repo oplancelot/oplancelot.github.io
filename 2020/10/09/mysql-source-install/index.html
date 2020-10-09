@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh_cn">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="yum -y install cmake ncurses-devel gcc gcc-c++ pcre pcre-devel openssl openssl-devel tar -zxvf boost_1_59_0.tar.gztar -zxvf mysql-5.7.31.tar.gz cd &#x2F;root&#x2F;mysql-5.7.31  yum install net-tools netstat -n">
+<meta property="og:type" content="article">
+<meta property="og:title" content="oplancelot">
+<meta property="og:url" content="http://example.com/2020/10/09/mysql-source-install/index.html">
+<meta property="og:site_name" content="oplancelot">
+<meta property="og:description" content="yum -y install cmake ncurses-devel gcc gcc-c++ pcre pcre-devel openssl openssl-devel tar -zxvf boost_1_59_0.tar.gztar -zxvf mysql-5.7.31.tar.gz cd &#x2F;root&#x2F;mysql-5.7.31  yum install net-tools netstat -n">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-10-09T06:06:11.269Z">
+<meta property="article:modified_time" content="2020-09-24T07:28:25.109Z">
+<meta property="article:author" content="oplancelot">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/10/09/mysql-source-install/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh_cn'
+  };
+</script>
+
+  <title> | oplancelot</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">oplancelot</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">keep going and move on</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/mysql-source-install/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="oplancelot">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="oplancelot">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-10-09 14:06:11" itemprop="dateCreated datePublished" datetime="2020-10-09T14:06:11+08:00">2020-10-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-09-24 15:28:25" itemprop="dateModified" datetime="2020-09-24T15:28:25+08:00">2020-09-24</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <pre><code> yum -y install cmake ncurses-devel gcc gcc-c++ pcre pcre-devel openssl openssl-devel</code></pre>
+<h1 id="tar-zxvf-boost-1-59-0-tar-gz"><a href="#tar-zxvf-boost-1-59-0-tar-gz" class="headerlink" title="tar -zxvf boost_1_59_0.tar.gz"></a>tar -zxvf boost_1_59_0.tar.gz</h1><pre><code>tar -zxvf mysql-5.7.31.tar.gz
+cd /root/mysql-5.7.31
+
+yum install net-tools
+netstat -nltp|grep mysql
+https://www.cnblogs.com/ftl1012/p/netstat.html
+    #停止firewalld服务
+[root@localhost  ~]#    systemctl stop firewalld
+   #禁用firewalld服务
+[root@localhost  ~]#    systemctl mask firewalld
+或者添加  iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+
+#sed -i &#39;s/SELINUX=enforcing/SELINUX=disabled/g&#39; /etc/selinux/config
+#setenforce 0
+#getenforce
+
+https://www.cnblogs.com/ftl1012/p/netstat.html</code></pre>
+<p>编译选项<br>    cmake -DCMAKE_INSTALL_PREFIX=/usr/local/mysql <br>     -DMYSQL_DATADIR=/data/mysql/data <br>     -DSYSCONFDIR=/etc <br>     -DWITH_MYISAM_STORAGE_ENGINE=1 <br>     -DWITH_INNOBASE_STORAGE_ENGINE=1 <br>     -DWITH_MEMORY_STORAGE_ENGINE=1 <br>     -DWITH_INNODB_MEMCACHED=1 <br>     -DMYSQL_UNIX_ADDR=/data/mysql/tmp/mysql.sock <br>     -DMYSQL_TCP_PORT=3306 <br>     -DENABLED_LOCAL_INFILE=1 <br>     -DWITH_PARTITION_STORAGE_ENGINE=1 <br>     -DWITH_DEBUG=OFF <br>     -DDEFAULT_CHARSET=utf8 <br>     -DDEFAULT_COLLATION=utf8_general_ci <br>     -DWITH_EXTRA_CHARSETS=all <br>     -DDOWNLOAD_BOOST=1 <br>     -DWITH_BOOST=/root/boost_1_59_0</p>
+<p>-DWITH_SSL=yes<br>完整参数链接<a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/5.7/en/source-configuration-options.html#option_cmake_default_collation">https://dev.mysql.com/doc/refman/5.7/en/source-configuration-options.html#option_cmake_default_collation</a></p>
+<p>4.make &amp;&amp; make install</p>
+<p>5.配置环境变量<br>    vim /etc/profile<br>    export PATH=/usr/local/mysql/bin:$PATH<br>    export PATH=/usr/local/mysql/bin:/usr/local/mysql/lib:$PATH<br>    source /etc/profile<br>复制代码创建mysql用户和data目录<br>    cd /data/mysql<br>    mkdir -p /data/mysql/{data,tmp,logs,pids,share}<br>    mkdir -p /data/mysql/log/{binlog,relaylog}</p>
+<pre><code>touch /data/mysql/logs/mysqld.log
+touch /data/mysql/pids/mysqld.pid
+useradd -s /sbin/nologin -M mysql
+chown -R mysql:mysql /data/mysql</code></pre>
+<p>加入守护进程<br>    cd /usr/local/mysql<br>    cp support-files/mysql.server /etc/init.d/mysqld<br>    chmod a+x /etc/init.d/mysqld<br>    chkconfig –add mysqld<br>    chkconfig mysqld on</p>
+<p>6.初始化数据库， –initialize 表示默认生成一个安全的密码，–initialize-insecure 表示不生成密码<br>basedir:mysql安装目录<br>datadir:mysql数据存放目录<br>    mysqld –initialize –user=mysql –basedir=/usr/local/mysql –datadir=/data/mysql/data</p>
+<pre><code>bin/mysqld --initialize 可以在命令行明文输入密码
+bin/mysqld --initialize-insecure --user=mysql</code></pre>
+<p>7.启动MySQL</p>
+<pre><code>service mysqld start|statsu|stop 推荐使用这个
+systemctl start mysqld
+systemctl start mysqld.service启动mysql
+systemctl status mysqld.service  查看mysql状态
+systemctl stop mysqld.service   关闭mysql</code></pre>
+<p>查看mysql进程 ps aux |grep mysql*<br>查看3306端口 netstat -anop|grep 3306</p>
+<p>8.登录MySQL，修改密码<br>    mysql -u root -p’临时密码’ #安装后生成临时密码，回车即可</p>
+<p> #修改密码<br>    mysql&gt; set password for root@localhost=password(‘Tengx1n@2o2o’);<br>    mysql&gt; flush privileges;//刷新生效</p>
+<pre><code>mysql&gt; use mysql
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed</code></pre>
+<p>MySQL5.7 mysql.user表没有password字段改 authentication_string；</p>
+<p>一. 创建用户:<br>命令:CREATE USER ‘username’@’host’ IDENTIFIED BY ‘password’;</p>
+<p>例子:<br>        CREATE USER ‘newpay’@’localhost’ IDENTIFIED BY ‘newpay’;<br>        CREATE USER ‘newpay’@’%’ IDENTIFIED BY ‘newpay’;<br>        CREATE USER ‘ad’@’localhost’ IDENTIFIED BY ‘newpay’;<br>        CREATE USER ‘ad’@’%’ IDENTIFIED BY ‘newpay’;</p>
+<p> CREATE USER ‘test’@’localhost’ IDENTIFIED BY ‘test’;<br> CREATE USER ‘test’@’%’ IDENTIFIED BY ‘test’;<br>PS：username - 你将创建的用户名,<br>host - 指定该用户在哪个主机上可以登陆，此处的”localhost”，是指该用户只能在本地登录，不能在另外一台机器上远程登录，如果想远程登录的话，将”localhost”改为”%”，表示在任何一台电脑上都可以登录;也可以指定某台机器可以远程登录;<br>password - 该用户的登陆密码,密码可以为空,如果为空则该用户可以不需要密码登陆服务器。</p>
+<p>新建数据库<br>      CREATE DATABASE IF NOT EXISTS newpay DEFAULT CHARSET utf8 COLLATE utf8_general_ci;</p>
+<p>二.授权:<br>命令:GRANT privileges ON databasename.tablename TO ‘username’@’host’</p>
+<p>PS: privileges - 用户的操作权限,如SELECT , INSERT , UPDATE 等(详细列表见该文最后面).如果要授予所的权限则使用ALL.;databasename - 数据库名,tablename-表名,如果要授予该用户对所有数据库和表的相应操作权限则可用<em>表示, 如</em>.*.</p>
+<p>例子:<br>     GRANT SELECT, INSERT ON mq.* TO ‘dog’@’localhost’;<br>     grant all privileges on newpay.* to newpay@’localhos’ identified by ‘newpay’;<br>     grant all privileges on newpay.* to newpay@’%’ identified by ‘newpay’;<br>     flush privileges;</p>
+<p>PS:必须执行flush privileges; </p>
+<pre><code>GRANT ALL PRIVILEGES ON *.* TO &#39;newpay&#39;@&#39;192.168.1.170&#39; IDENTIFIED BY &#39;newpay&#39; WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON *.* TO &#39;ad&#39;@&#39;%&#39; IDENTIFIED BY &#39;newpay&#39; WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON *.* TO &#39;ad&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;newpay&#39; WITH GRANT OPTION;
+
+FLUSH PRIVILEGES</code></pre>
+<p>四.设置与更改用户密码<br>命令:SET PASSWORD FOR ‘username’@’host’ = PASSWORD(‘newpassword’);</p>
+<p>例子: SET PASSWORD FOR ‘newpay’@’localhost’ = PASSWORD(“newpay-new”);<br>SET PASSWORD FOR ‘test’@’localhost’ = PASSWORD(“test”);<br>SET PASSWORD FOR ‘test’@’%’ = PASSWORD(“test”);<br>五.撤销用户权限<br>      命令: REVOKE privilege ON databasename.tablename FROM ‘username’@’host’;</p>
+<pre><code>  说明: privilege, databasename, tablename - 同授权部分.
+
+  例子: REVOKE SELECT ON mq.* FROM &#39;dog2&#39;@&#39;localhost&#39;;</code></pre>
+<p>PS: 假如你在给用户‘dog’@’localhost’’授权的时候是这样的(或类似的):GRANT SELECT ON test.user TO ‘dog’@’localhost’, 则在使用REVOKE SELECT ON <em>.</em> FROM ‘dog’@’localhost’;命令并不能撤销该用户对test数据库中user表的SELECT 操作.相反,如果授权使用的是GRANT SELECT ON <em>.</em> TO ‘dog’@’localhost’;则REVOKE SELECT ON test.user FROM ‘dog’@’localhost’;命令也不能撤销该用户对test数据库中user表的Select 权限.</p>
+<pre><code>  具体信息可以用命令SHOW GRANTS FOR &#39;dog&#39;@&#39;localhost&#39;; 查看.</code></pre>
+<p>六.删除用户<br>      命令: DROP USER ‘username’@’host’;</p>
+<p>七.查看用户的授权<br>    mysql&gt; show grants for newpay@localhost;<br>    +———————————————+<br>    | Grants for dog@localhost |<br>    +———————————————+<br>    | GRANT USAGE ON <em>.</em> TO ‘dog’@’localhost’ |<br>    | GRANT INSERT ON <code>mq</code>.* TO ‘dog’@’localhost’ |<br>    +———————————————+<br>    2 rows in set (0.00 sec)</p>
+<p>PS:GRANT USAGE:mysql usage权限就是空权限，默认create user的权限，只能连库，啥也不能干</p>
+<p>关于安装后的密码<br><a target="_blank" rel="noopener" href="https://www.yanning.wang/archives/379.html">https://www.yanning.wang/archives/379.html</a></p>
+<p>密码忘记处理方法 </p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/10/09/my.cnf-master/" rel="prev" title="">
+      <i class="fa fa-chevron-left"></i> 
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/10/09/nginx%E6%BA%90%E7%A0%81%E5%AE%89%E8%A3%85/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#tar-zxvf-boost-1-59-0-tar-gz"><span class="nav-number">1.</span> <span class="nav-text">tar -zxvf boost_1_59_0.tar.gz</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">oplancelot</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">oplancelot</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

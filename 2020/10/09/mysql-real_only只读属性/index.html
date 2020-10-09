@@ -20,19 +20,19 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="nimothummo">
+  <meta name="description" content="在MySQL数据库中，在进行数据迁移和从库只读状态设置时，都会涉及到只读状态和Master-Slave主从关系设置, 以下针对real_only只读属性做些笔记记录:  对于MySQL单实例数据库和master库，如果需要设置为只读状态，需要进行如下操作和设置：将MySQL设置为只读状态的命令（可以登录mysql执行下面命令， 或者在my.cnf配置文件中添加”read_only&#x3D;1”,然后重启m">
 <meta property="og:type" content="article">
 <meta property="og:title" content="oplancelot">
-<meta property="og:url" content="http://example.com/2020/10/09/%E6%96%87%E6%A1%A3/index.html">
+<meta property="og:url" content="http://example.com/2020/10/09/mysql-real_only%E5%8F%AA%E8%AF%BB%E5%B1%9E%E6%80%A7/index.html">
 <meta property="og:site_name" content="oplancelot">
-<meta property="og:description" content="nimothummo">
+<meta property="og:description" content="在MySQL数据库中，在进行数据迁移和从库只读状态设置时，都会涉及到只读状态和Master-Slave主从关系设置, 以下针对real_only只读属性做些笔记记录:  对于MySQL单实例数据库和master库，如果需要设置为只读状态，需要进行如下操作和设置：将MySQL设置为只读状态的命令（可以登录mysql执行下面命令， 或者在my.cnf配置文件中添加”read_only&#x3D;1”,然后重启m">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-10-09T06:06:11.271Z">
-<meta property="article:modified_time" content="2020-09-25T07:43:14.421Z">
+<meta property="article:published_time" content="2020-10-09T06:06:11.269Z">
+<meta property="article:modified_time" content="2020-09-14T05:29:04.680Z">
 <meta property="article:author" content="oplancelot">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://example.com/2020/10/09/%E6%96%87%E6%A1%A3/">
+<link rel="canonical" href="http://example.com/2020/10/09/mysql-real_only%E5%8F%AA%E8%AF%BB%E5%B1%9E%E6%80%A7/">
 
 
 <script id="page-configurations">
@@ -151,7 +151,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh_cn">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/%E6%96%87%E6%A1%A3/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/09/mysql-real_only%E5%8F%AA%E8%AF%BB%E5%B1%9E%E6%80%A7/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -181,7 +181,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-09-25 15:43:14" itemprop="dateModified" datetime="2020-09-25T15:43:14+08:00">2020-09-25</time>
+                <time title="Modified: 2020-09-14 13:29:04" itemprop="dateModified" datetime="2020-09-14T13:29:04+08:00">2020-09-14</time>
               </span>
 
           
@@ -195,7 +195,22 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>nimo<br>thummo</p>
+        <p>在MySQL数据库中，在进行数据迁移和从库只读状态设置时，都会涉及到只读状态和Master-Slave主从关系设置, 以下针对real_only只读属性做些笔记记录:</p>
+<ol>
+<li>对于MySQL单实例数据库和master库，如果需要设置为只读状态，需要进行如下操作和设置：<br>将MySQL设置为只读状态的命令（可以登录mysql执行下面命令， 或者在my.cnf配置文件中添加”read_only=1”,然后重启mysql服务）:</li>
+</ol>
+<p>1<br>2<br>3<br>4<br>mysql&gt; show global variables like “%read_only%”;<br>mysql&gt; flush tables with read lock;<br>mysql&gt; set global read_only=1;<br>mysql&gt; show global variables like “%read_only%”;<br>将MySQL从只读状态设置为读写状态的命令:</p>
+<p>1<br>2<br>mysql&gt; unlock tables;<br>mysql&gt; set global read_only=0;<br>2) 对于需要保证master-slave主从同步的salve库<br>将slave从库设置为只读状态，需要执行的命令为 (下面命令中的1 也可以写成 on):</p>
+<p>1<br>mysql&gt; set global read_only=1;<br>将salve库从只读状态变为读写状态，需要执行的命令是:</p>
+<p>1<br>mysql&gt; set global read_only=0;<br>对于Mysql数据库读写状态，主要靠”read_only”全局参数来设定；默认情况下, 数据库是用于读写操作的，所以read_only参数也是0或faluse状态，这时候不论是本地用户还是远程访问数据库的用户，都可以进行读写操作；</p>
+<p>如需设置为只读状态，将该read_only参数设置为1或TRUE状态，但设置 read_only=1 状态有两个需要注意的地方：</p>
+<ol>
+<li>read_only=1只读模式，不会影响slave同步复制的功能，所以在MySQL slave库中设定了read_only=1后，通过 “show slave status\G” 命令查看salve状态，可以看到salve仍然会读取master上的日志，并且在slave库中应用日志，保证主从数据库同步一致；</li>
+<li>read_only=1只读模式，限定的是普通用户进行数据修改的操作，但不会限定具有super权限的用户的数据修改操作 (但是如果设置了”super_read_only=on”， 则就会限定具有super权限的用户的数据修改操作了)；在MySQL中设置read_only=1后，普通的应用用户进行insert、update、delete等会产生数据变化的DML操作时，都会报出数据库处于只读模式不能发生数据变化的错误，但具有super权限的用户，例如在本地或远程通过root用户登录到数据库，还是可以进行数据变化的DML操作；(也就是说”real_only”只会禁止普通用户权限的mysql写操作，不能限制super权限用户的写操作； 如果要想连super权限用户的写操作也禁止，就使用”flush tables with read lock;”，这样设置也会阻止主从同步复制！)</li>
+</ol>
+<p>锁表操作<br>为了确保所有用户，包括具有super权限的用户也不能进行读写操作，就需要执行给所有的表加读锁的命令 “flush tables with read lock;”，这样使用具有super权限的用户登录数据库，想要发生数据变化的操作时，也会提示表被锁定不能修改的报错。这样通过设置”read_only=1”和”flush tables with read lock;”两条命令，就可以确保数据库处于只读模式，不会发生任何数据改变，在MySQL进行数据库迁移时，限定master主库不能有任何数据变化，就可以通过这种方式来设定。</p>
+<p>但同时由于加表锁的命令对数据库表限定非常严格，如果再slave从库上执行这个命令后，slave库可以从master读取binlog日志，但不能够应用日志，slave库不能发生数据改变，当然也不能够实现主从同步了，这时如果使用 “unlock tables;”解除全局的表读锁，slave就会应用从master读取到的binlog日志，继续保证主从库数据库一致同步。</p>
+<p>为了保证主从同步可以一直进行，在slave库上要保证具有super权限的root等用户只能在本地登录，不会发生数据变化，其他远程连接的应用用户只按需分配为select,insert,update,delete等权限，保证没有super权限，则只需要将salve设定”read_only=1”模式，即可保证主从同步，又可以实现从库只读。相对的，设定”read_only=1”只读模式开启的解锁命令为设定”read_only=0”;设定全局锁”flush tables with read lock;”，对应的解锁模式命令为：”unlock tables;”.当然设定了read_only=1后，所有的select查询操作都是可以正常进行的。</p>
 
     </div>
 
@@ -211,11 +226,11 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/10/09/systemctl%E5%91%BD%E4%BB%A4%E5%88%9D%E6%AD%A5%E8%AF%B4%E6%98%8E/" rel="prev" title="">
+    <a href="/2020/10/09/RUNDECK%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/" rel="prev" title="">
       <i class="fa fa-chevron-left"></i> 
     </a></div>
       <div class="post-nav-item">
-    <a href="/2020/10/09/unsafe/SSL%E8%AF%81%E4%B9%A6/" rel="next" title="">
+    <a href="/2020/10/09/mysql%205.7%E9%85%8D%E7%BD%AE%E9%A1%B9%E6%9C%80%E8%AF%A6%E7%BB%86%E7%9A%84%E8%A7%A3%E9%87%8A/" rel="next" title="">
        <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>

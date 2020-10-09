@@ -148,108 +148,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://oplancelot.github.com/2020/10/09/RUNDECK%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="oplancelot">
-      <meta itemprop="description" content="notes">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="oplancelot">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/10/09/RUNDECK%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">RUNDECK安装配置以及使用</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-10-09 14:26:38 / 修改时间：14:43:59" itemprop="dateCreated datePublished" datetime="2020-10-09T14:26:38+08:00">2020-10-09</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>1.运维、发布管理自动化<br>2.根据权限授权<br>3.行为审计</p>
-<p>分为企业版和免费版<br>    rpm -Uvh <a target="_blank" rel="noopener" href="http://repo.rundeck.org/latest.rpm">http://repo.rundeck.org/latest.rpm</a><br>    sudo yum install rundeck java<br>    sudo yum update rundeck<br>    sudo rpm -i rundeck-3.3.3-20200910-1.noarch.rpm<br>    sudo service rundeckd start<br>    tail -f /var/log/rundeck/service.log<br>    出现<br>    Grails application running at <a target="_blank" rel="noopener" href="http://localhost:4440/">http://localhost:4440</a> in environment: production</p>
-<p>只能本地访问<br>    admin admin<br>    vim /etc/rundeck/rundeck-config.properties<br>    vim /etc/rundeck/framework.properties</p>
-<pre><code>$ vim /etc/rundeck/rundeck-config.properties
-grails.serverURL=http://localhost:4440
-改成
-grails.serverURL=http://192.168.1.222:4440
-# service rundeckd restart</code></pre>
-<p>可以局域网访问了</p>
-<p>创建mysql数据库替换本地数据库<br>    mysql&gt; create user ‘rundeck’@’%’;<br>    Query OK, 0 rows affected (0.00 sec)</p>
-<pre><code>mysql&gt; set password for &#39;rundeck&#39;@&#39;%&#39;=password(&#39;rundeck&#39;);
-Query OK, 0 rows affected, 1 warning (0.00 sec)
-
-mysql&gt; create database rundeck;
-Query OK, 1 row affected (0.02 sec)
-
-mysql&gt; grant all privileges on rundeck.* to &#39;rundeck&#39;@&#39;%&#39; identified by &#39;rundeck&#39; with grant option;
-Query OK, 0 rows affected, 1 warning (0.01 sec)
-
-mysql&gt; grant all privileges on rundeck.* to &#39;rundeck&#39;@&#39;localhost&#39; identified by &#39;rundeck&#39; with grant option;
-Query OK, 0 rows affected, 2 warnings (0.00 sec)
-mysql&gt; FLUSH PRIVILEGES;
-Query OK, 0 rows affected (0.00 sec)</code></pre>
-<p>Update your rundeck-config.properties and configure the datasource:</p>
-<pre><code>RPM/Debian location: /etc/rundeck/rundeck-config.properties
-Launcher location: $RDECK_BASE/server/config/rundeck-config.properties
-Contents:
-
-dataSource.url = jdbc:mysql://192.168.1.222/rundeck?autoReconnect=true&amp;useSSL=false
-dataSource.username=rundeck
-dataSource.password=rundeck
-dataSource.driverClassName=com.mysql.cj.jdbc.Driver//官网有点旧了，多加cj</code></pre>
-<p>   #rundeck add my.cnf<br>    innodb_file_format=barracuda<br>    innodb_file_per_table=true<br>    innodb_large_prefix=true<br>然后从本地可以登陆rundeck了；其他电脑则报错；token问题<br>清除cookie<br>日志查看<br>     tail -f /var/log/rundeck/rundeck.access.log</p>
-<p>project文件路径查看<br>    /etc/rundeck/project.properties</p>
-<pre><code># The base directory for this project&#39;s instances
-#
-project.dir = /var/lib/rundeck/projects/$&#123;project.name&#125;
-#
-# The base directory of project specific configuration files
-#
-project.etc.dir = /var/lib/rundeck/projects/$&#123;project.name&#125;/etc</code></pre>
-<p>nodes添加在project settings<br>edit nodes 里指定路径，会生成配置文件</p>
-<p>证书认证<br>管理员文档<a target="_blank" rel="noopener" href="https://docs.rundeck.com/docs/administration/configuration/database/mysql.html">https://docs.rundeck.com/docs/administration/configuration/database/mysql.html</a></p>
-<p>官网<a target="_blank" rel="noopener" href="https://docs.rundeck.com/docs/manual/01-introduction.html">https://docs.rundeck.com/docs/manual/01-introduction.html</a><br>参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/liumiaocn/article/details/89135773">https://blog.csdn.net/liumiaocn/article/details/89135773</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://oplancelot.github.com/2020/10/09/Centos7%E6%9C%80%E5%B0%8F%E5%8C%96%E5%AE%89%E8%A3%85/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -370,6 +268,108 @@ project.etc.dir = /var/lib/rundeck/projects/$&#123;project.name&#125;/etc</code>
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://oplancelot.github.com/2020/10/09/RUNDECK%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="oplancelot">
+      <meta itemprop="description" content="notes">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="oplancelot">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/10/09/RUNDECK%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">RUNDECK安装配置以及使用</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-10-09 14:26:38 / 修改时间：14:43:59" itemprop="dateCreated datePublished" datetime="2020-10-09T14:26:38+08:00">2020-10-09</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>1.运维、发布管理自动化<br>2.根据权限授权<br>3.行为审计</p>
+<p>分为企业版和免费版<br>    rpm -Uvh <a target="_blank" rel="noopener" href="http://repo.rundeck.org/latest.rpm">http://repo.rundeck.org/latest.rpm</a><br>    sudo yum install rundeck java<br>    sudo yum update rundeck<br>    sudo rpm -i rundeck-3.3.3-20200910-1.noarch.rpm<br>    sudo service rundeckd start<br>    tail -f /var/log/rundeck/service.log<br>    出现<br>    Grails application running at <a target="_blank" rel="noopener" href="http://localhost:4440/">http://localhost:4440</a> in environment: production</p>
+<p>只能本地访问<br>    admin admin<br>    vim /etc/rundeck/rundeck-config.properties<br>    vim /etc/rundeck/framework.properties</p>
+<pre><code>$ vim /etc/rundeck/rundeck-config.properties
+grails.serverURL=http://localhost:4440
+改成
+grails.serverURL=http://192.168.1.222:4440
+# service rundeckd restart</code></pre>
+<p>可以局域网访问了</p>
+<p>创建mysql数据库替换本地数据库<br>    mysql&gt; create user ‘rundeck’@’%’;<br>    Query OK, 0 rows affected (0.00 sec)</p>
+<pre><code>mysql&gt; set password for &#39;rundeck&#39;@&#39;%&#39;=password(&#39;rundeck&#39;);
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql&gt; create database rundeck;
+Query OK, 1 row affected (0.02 sec)
+
+mysql&gt; grant all privileges on rundeck.* to &#39;rundeck&#39;@&#39;%&#39; identified by &#39;rundeck&#39; with grant option;
+Query OK, 0 rows affected, 1 warning (0.01 sec)
+
+mysql&gt; grant all privileges on rundeck.* to &#39;rundeck&#39;@&#39;localhost&#39; identified by &#39;rundeck&#39; with grant option;
+Query OK, 0 rows affected, 2 warnings (0.00 sec)
+mysql&gt; FLUSH PRIVILEGES;
+Query OK, 0 rows affected (0.00 sec)</code></pre>
+<p>Update your rundeck-config.properties and configure the datasource:</p>
+<pre><code>RPM/Debian location: /etc/rundeck/rundeck-config.properties
+Launcher location: $RDECK_BASE/server/config/rundeck-config.properties
+Contents:
+
+dataSource.url = jdbc:mysql://192.168.1.222/rundeck?autoReconnect=true&amp;useSSL=false
+dataSource.username=rundeck
+dataSource.password=rundeck
+dataSource.driverClassName=com.mysql.cj.jdbc.Driver//官网有点旧了，多加cj</code></pre>
+<p>   #rundeck add my.cnf<br>    innodb_file_format=barracuda<br>    innodb_file_per_table=true<br>    innodb_large_prefix=true<br>然后从本地可以登陆rundeck了；其他电脑则报错；token问题<br>清除cookie<br>日志查看<br>     tail -f /var/log/rundeck/rundeck.access.log</p>
+<p>project文件路径查看<br>    /etc/rundeck/project.properties</p>
+<pre><code># The base directory for this project&#39;s instances
+#
+project.dir = /var/lib/rundeck/projects/$&#123;project.name&#125;
+#
+# The base directory of project specific configuration files
+#
+project.etc.dir = /var/lib/rundeck/projects/$&#123;project.name&#125;/etc</code></pre>
+<p>nodes添加在project settings<br>edit nodes 里指定路径，会生成配置文件</p>
+<p>证书认证<br>管理员文档<a target="_blank" rel="noopener" href="https://docs.rundeck.com/docs/administration/configuration/database/mysql.html">https://docs.rundeck.com/docs/administration/configuration/database/mysql.html</a></p>
+<p>官网<a target="_blank" rel="noopener" href="https://docs.rundeck.com/docs/manual/01-introduction.html">https://docs.rundeck.com/docs/manual/01-introduction.html</a><br>参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/liumiaocn/article/details/89135773">https://blog.csdn.net/liumiaocn/article/details/89135773</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://oplancelot.github.com/2020/10/09/%E6%B8%85%E7%A9%BA%20github%20%E4%BB%93%E5%BA%93,%E8%80%8C%E4%B8%8D%E6%98%AF%E5%88%A0%E9%99%A4%E9%87%8D%E6%96%B0%E5%88%9B%E5%BB%BA/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -412,8 +412,8 @@ project.etc.dir = /var/lib/rundeck/projects/$&#123;project.name&#125;/etc</code>
           <p>– Remove the history from</p>
 <p>rm -rf .git<br>– recreate the repos from the current content only</p>
 <p>git init<br>touch README<br>git add README<br>git commit -m “Initial commit”<br>– push to the github remote repos ensuring you overwrite history</p>
-<p>git remote add origin <a href="mailto:&#103;&#105;&#116;&#64;&#103;&#x69;&#x74;&#104;&#117;&#x62;&#x2e;&#99;&#x6f;&#109;">&#103;&#105;&#116;&#64;&#103;&#x69;&#x74;&#104;&#117;&#x62;&#x2e;&#99;&#x6f;&#109;</a>:oplancelot/oplancelot.github.io.git<br>git push -u –force origin master</p>
-<p>git remote add oplancelot <a href="mailto:&#x67;&#105;&#116;&#x40;&#103;&#x69;&#116;&#104;&#117;&#98;&#46;&#x63;&#111;&#x6d;">&#x67;&#105;&#116;&#x40;&#103;&#x69;&#116;&#104;&#117;&#98;&#46;&#x63;&#111;&#x6d;</a>:oplancelot/oplancelot.github.io.git<br>git push -u –force oplancelot master</p>
+<p>git remote add origin <a href="mailto:&#103;&#x69;&#x74;&#64;&#x67;&#x69;&#x74;&#104;&#117;&#98;&#46;&#99;&#x6f;&#109;">&#103;&#x69;&#x74;&#64;&#x67;&#x69;&#x74;&#104;&#117;&#98;&#46;&#99;&#x6f;&#109;</a>:oplancelot/oplancelot.github.io.git<br>git push -u –force origin master</p>
+<p>git remote add oplancelot <a href="mailto:&#x67;&#105;&#116;&#x40;&#103;&#x69;&#x74;&#104;&#x75;&#98;&#x2e;&#99;&#x6f;&#x6d;">&#x67;&#105;&#116;&#x40;&#103;&#x69;&#x74;&#104;&#x75;&#98;&#x2e;&#99;&#x6f;&#x6d;</a>:oplancelot/oplancelot.github.io.git<br>git push -u –force oplancelot master</p>
 
       
     </div>
@@ -512,141 +512,6 @@ New password:
 Retype new password:
 passwd: password updated successfully
 root@lancelot-laptop:~#</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://oplancelot.github.com/2018/10/09/centos7%E9%85%8D%E7%BD%AE%E6%9C%AC%E5%9C%B0yum%E6%BA%90%E3%80%81%E4%BD%BF%E7%94%A8yum%E6%BA%90/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="oplancelot">
-      <meta itemprop="description" content="notes">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="oplancelot">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/10/09/centos7%E9%85%8D%E7%BD%AE%E6%9C%AC%E5%9C%B0yum%E6%BA%90%E3%80%81%E4%BD%BF%E7%94%A8yum%E6%BA%90/" class="post-title-link" itemprop="url">Centos7配置本地yum源</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-10-09 14:26:38" itemprop="dateCreated datePublished" datetime="2018-10-09T14:26:38+08:00">2018-10-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-10-09 14:36:57" itemprop="dateModified" datetime="2020-10-09T14:36:57+08:00">2020-10-09</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="centos7配置本地yum源、使用yum源"><a href="#centos7配置本地yum源、使用yum源" class="headerlink" title="centos7配置本地yum源、使用yum源"></a>centos7配置本地yum源、使用yum源</h1><p>在某些软件集群的安装中（如CDH，以下构建均以此为例），由于qiang的原因、或本地不能访问外网等，可能无法通yum方式在线安装，这时候非常有必要在本地配置一个yum源，集群中server通过这个局域网的yum仓库在（ftp，http，nfs等方式）本地方便、快速的安装应用。</p>
-<p>查看Linux发行版本<br>EL7中提供了一个全新的命令 hostnamectl，不仅可以用来设置hostname，还可以查看操作系统版本及Linux内核信息。</p>
-<p>安装Apache httpd WEB服务器<br>使用apache http服务，可以很方便的将应用资源以http形式对外提供，首先安装一个httpd服务</p>
-<pre><code>yum install httpd
-systemctl start httpd
-systemctl enable httpd #将httpd服务加入开机启动列表里
-
-systemctl stop firewalld #关闭防火墙
-systemctl disable firewalld #禁用防火墙</code></pre>
-<p>创建yum本地源rpm包，加快cdh构建流程<br>①、安装createrepo软件：</p>
-<pre><code>yum -y install createrepo</code></pre>
-<p>②、创建httpd文件服务目录</p>
-<p>如同nginx的www目录，应用文件存放在httpd的 /var/www/html 目录下。</p>
-<pre><code>cd /var/www/html
-
-[root@centos-yum html]# ls
-centos78  extra  ks  updates  x86_64</code></pre>
-<p>centos文件夹是安装kickstart用的<br>    ln -s x86_64/Packages /var/www/html/centos78/Packages<br>指向rpm包</p>
-<p>④、创建rpm、parcel本地资源库<br>执行如下指令：</p>
-<pre><code>createrepo /var/www/html/x86_64</code></pre>
-<p>创建yum本地资源库配置文件</p>
-<p>yum本地源文件一般放置于/etc/yum.repos.d/下</p>
-<pre><code>cd /etc/yum.repos.d/</code></pre>
-<p>新建<br>local.repo 文件，根据资源路径进行编写：</p>
-<pre><code>[local]
-name=centos2003-iso
-baseurl=http://192.168.1.222/centos78
-enabled=1
-gpgcheck=0</code></pre>
-<p>⑥、更新安装源<br>A). 清空缓存</p>
-<pre><code>yum clean all
-Repository cloudera-manager is listed more than once in the configuration
-正在清理软件源： base cloudera-manager epel extras updates zabbix zabbix-non-supported
-Cleaning up list of fastest mirrors</code></pre>
-<p>B). 重新建立缓存</p>
-<pre><code>yum makecache
-已加载插件：fastestmirror, langpacks
-Repository cloudera-manager is listed more than once in the configuration
-Determining fastest mirrors
-epel/x86_64/metalink | 6.8 kB 00:00:00
-base: mirrors.aliyun.com
-epel: mirrors.tuna.tsinghua.edu.cn
-extras: ftp.sjtu.edu.cn
-updates: mirrors.aliyun.com
-base | 3.6 kB 00:00:00
-cloudera-manager</code></pre>
-<p>元数据缓存已建立</p>
-<p>C). 查看yum源</p>
-<pre><code>yum repolist
-源标识 源名称 状态
-base/7/x86_64 CentOS-7 - Base 10,019
-cloudera-manager cloudera-manager</code></pre>
-<p>D). 查找软件包</p>
-<pre><code>yum search 软件包</code></pre>
-<p>⑦、使用yum本地源</p>
-<pre><code>yum install 软件包
-yum install cloudera-manager-daemons cloudera-manager-agent cloudera-manager-server</code></pre>
-<p>浏览器里访问<a target="_blank" rel="noopener" href="http://192.168.1.222/centos78/">http://192.168.1.222/centos78/</a></p>
-<p>局域网中其他server使用该yum本地源<br>如果集群中其他server，如cloudera-scm-agent 也需要在本地进行安装，只需将xxx.repo文件拷贝至其对应目录中，并刷新软件缓存，即可。</p>
-<pre><code>scp /etc/yum.repos.d/local.repo $&#123;TARGET_SERVER_IP&#125;:/etc/yum.repos.d</code></pre>
-<p>centos7运行system-config-kickstart时在Package Selection模块中出现如下错误：</p>
-<p>Package Selection</p>
-<pre><code>   Packageselection is disabled due to problems downloading package information</code></pre>
-<p>这是因为centos7中的kickstart需要使用自己的包仓库，这时我们只需要在/etc/yum.repo.d/目录下编辑一个名叫develop的仓库就可以。</p>
-<p>我的解决方法是：vim /etc/yum.repo.d/development.repo</p>
-<pre><code>[development]
-
-name=development
-baseurl=http://192.168.1.222/centos78
-enabled=1
-gpgcheck=0</code></pre>
 
       
     </div>
@@ -839,6 +704,141 @@ gpgcheck=0</code></pre>
   
   
 
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://oplancelot.github.com/2018/10/09/centos7%E9%85%8D%E7%BD%AE%E6%9C%AC%E5%9C%B0yum%E6%BA%90%E3%80%81%E4%BD%BF%E7%94%A8yum%E6%BA%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="oplancelot">
+      <meta itemprop="description" content="notes">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="oplancelot">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/10/09/centos7%E9%85%8D%E7%BD%AE%E6%9C%AC%E5%9C%B0yum%E6%BA%90%E3%80%81%E4%BD%BF%E7%94%A8yum%E6%BA%90/" class="post-title-link" itemprop="url">Centos7配置本地yum源</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-10-09 14:26:38" itemprop="dateCreated datePublished" datetime="2018-10-09T14:26:38+08:00">2018-10-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-10-09 14:36:57" itemprop="dateModified" datetime="2020-10-09T14:36:57+08:00">2020-10-09</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="centos7配置本地yum源、使用yum源"><a href="#centos7配置本地yum源、使用yum源" class="headerlink" title="centos7配置本地yum源、使用yum源"></a>centos7配置本地yum源、使用yum源</h1><p>在某些软件集群的安装中（如CDH，以下构建均以此为例），由于qiang的原因、或本地不能访问外网等，可能无法通yum方式在线安装，这时候非常有必要在本地配置一个yum源，集群中server通过这个局域网的yum仓库在（ftp，http，nfs等方式）本地方便、快速的安装应用。</p>
+<p>查看Linux发行版本<br>EL7中提供了一个全新的命令 hostnamectl，不仅可以用来设置hostname，还可以查看操作系统版本及Linux内核信息。</p>
+<p>安装Apache httpd WEB服务器<br>使用apache http服务，可以很方便的将应用资源以http形式对外提供，首先安装一个httpd服务</p>
+<pre><code>yum install httpd
+systemctl start httpd
+systemctl enable httpd #将httpd服务加入开机启动列表里
+
+systemctl stop firewalld #关闭防火墙
+systemctl disable firewalld #禁用防火墙</code></pre>
+<p>创建yum本地源rpm包，加快cdh构建流程<br>①、安装createrepo软件：</p>
+<pre><code>yum -y install createrepo</code></pre>
+<p>②、创建httpd文件服务目录</p>
+<p>如同nginx的www目录，应用文件存放在httpd的 /var/www/html 目录下。</p>
+<pre><code>cd /var/www/html
+
+[root@centos-yum html]# ls
+centos78  extra  ks  updates  x86_64</code></pre>
+<p>centos文件夹是安装kickstart用的<br>    ln -s x86_64/Packages /var/www/html/centos78/Packages<br>指向rpm包</p>
+<p>④、创建rpm、parcel本地资源库<br>执行如下指令：</p>
+<pre><code>createrepo /var/www/html/x86_64</code></pre>
+<p>创建yum本地资源库配置文件</p>
+<p>yum本地源文件一般放置于/etc/yum.repos.d/下</p>
+<pre><code>cd /etc/yum.repos.d/</code></pre>
+<p>新建<br>local.repo 文件，根据资源路径进行编写：</p>
+<pre><code>[local]
+name=centos2003-iso
+baseurl=http://192.168.1.222/centos78
+enabled=1
+gpgcheck=0</code></pre>
+<p>⑥、更新安装源<br>A). 清空缓存</p>
+<pre><code>yum clean all
+Repository cloudera-manager is listed more than once in the configuration
+正在清理软件源： base cloudera-manager epel extras updates zabbix zabbix-non-supported
+Cleaning up list of fastest mirrors</code></pre>
+<p>B). 重新建立缓存</p>
+<pre><code>yum makecache
+已加载插件：fastestmirror, langpacks
+Repository cloudera-manager is listed more than once in the configuration
+Determining fastest mirrors
+epel/x86_64/metalink | 6.8 kB 00:00:00
+base: mirrors.aliyun.com
+epel: mirrors.tuna.tsinghua.edu.cn
+extras: ftp.sjtu.edu.cn
+updates: mirrors.aliyun.com
+base | 3.6 kB 00:00:00
+cloudera-manager</code></pre>
+<p>元数据缓存已建立</p>
+<p>C). 查看yum源</p>
+<pre><code>yum repolist
+源标识 源名称 状态
+base/7/x86_64 CentOS-7 - Base 10,019
+cloudera-manager cloudera-manager</code></pre>
+<p>D). 查找软件包</p>
+<pre><code>yum search 软件包</code></pre>
+<p>⑦、使用yum本地源</p>
+<pre><code>yum install 软件包
+yum install cloudera-manager-daemons cloudera-manager-agent cloudera-manager-server</code></pre>
+<p>浏览器里访问<a target="_blank" rel="noopener" href="http://192.168.1.222/centos78/">http://192.168.1.222/centos78/</a></p>
+<p>局域网中其他server使用该yum本地源<br>如果集群中其他server，如cloudera-scm-agent 也需要在本地进行安装，只需将xxx.repo文件拷贝至其对应目录中，并刷新软件缓存，即可。</p>
+<pre><code>scp /etc/yum.repos.d/local.repo $&#123;TARGET_SERVER_IP&#125;:/etc/yum.repos.d</code></pre>
+<p>centos7运行system-config-kickstart时在Package Selection模块中出现如下错误：</p>
+<p>Package Selection</p>
+<pre><code>   Packageselection is disabled due to problems downloading package information</code></pre>
+<p>这是因为centos7中的kickstart需要使用自己的包仓库，这时我们只需要在/etc/yum.repo.d/目录下编辑一个名叫develop的仓库就可以。</p>
+<p>我的解决方法是：vim /etc/yum.repo.d/development.repo</p>
+<pre><code>[development]
+
+name=development
+baseurl=http://192.168.1.222/centos78
+enabled=1
+gpgcheck=0</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
 
   
 
@@ -940,7 +940,9 @@ gpgcheck=0</code></pre>
   <span class="author" itemprop="copyrightHolder">oplancelot</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
-  </div>
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
 
         
 
@@ -971,6 +973,9 @@ gpgcheck=0</code></pre>
 <script src="/js/next-boot.js"></script>
 
 
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+    <script defer src="/lib/three/canvas_sphere.min.js"></script>
 
 
   

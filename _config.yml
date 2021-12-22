@@ -2,7 +2,7 @@ markdown: kramdown
 permalink: /:categories/:title.html
 highlighter: rouge
 name: grealot
-url: https://oplacelot.github.io
+url: https://oplancelot.github.io
 twitter: __brennerm
 sass:
   style: compressed

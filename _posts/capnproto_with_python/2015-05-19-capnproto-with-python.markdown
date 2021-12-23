@@ -18,7 +18,7 @@ This language is used to define structures for further use. It's syntax shows si
 Let's have a look at it:
 
 {% highlight text %}
-const blogUrl :Text = "brennerm.github.io/"; 
+const blogUrl :Text = "oplancelot.github.io/"; 
 
 enum Language {
 	en @0;
@@ -205,7 +205,7 @@ And there is our result:
 
 
 That's all you need to know for now to make use of Cap'n Proto for your Python application. When having a look at the [roadmap](https://capnproto.org/roadmap.html) there will be some interesting features in the future, like *shared-memory RPC* or *dynamic schema transmission* so stay tuned for updates.
-<br>All shown code examples can be found on [github](https://github.com/brennerm/brennerm.github.io/tree/master/_posts/capnproto_with_python).
+<br>All shown code examples can be found on [github](https://github.com/brennerm/oplancelot.github.io/tree/master/_posts/capnproto_with_python).
 
 #Update 20.05.2015
 Played around using my own sockets when communicating with pycapnp's RPC lately and had some trouble in the beginning. So I just want to let you guys know how to get it working.

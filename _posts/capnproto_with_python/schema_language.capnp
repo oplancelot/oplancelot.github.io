@@ -1,6 +1,6 @@
 @0x80319128e80b6bc3;
 
-const blogUrl :Text = "brennerm.github.io/"; 
+const blogUrl :Text = "oplancelot.github.io/"; 
 
 enum Language {
 	en @0;

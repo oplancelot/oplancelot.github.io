@@ -1,4 +1,6 @@
---- layout: layout ---
+---
+layout: layout
+---
 
 <section class="content">
     <h1>
@@ -6,7 +8,10 @@
     </h1>
 
     <section class="byline">
-        {% include readtime.html content=content %} - {{ page.date | date: "%B %e, %Y" }} -
+        {% include readtime.html content=content %} 
+        -
+        {{ page.date | date: "%B %e, %Y" }}
+        -
         <span class="taglist">[
         {% for tag in page.tags %}
             {% capture tag_name %}{{ tag }}{% endcapture %}
@@ -20,6 +25,7 @@
         If you have questions or want to give feedback feel free to contact me.<br>
         <a href="{{ site.github.owner_url }}" target="_blank"><i class="fa fa-2x fa-github"></i></a>
         <a href="https://twitter.com/{{ site.twitter }}" target="_blank"><i class="fa fa-2x fa-twitter"></i></a>
-        <a href="mailto:oplancelot@gmail.com" class="fa fa-2x fa-envelope-o"></a>
+        <a href="mailto:xam.rennerb@gmail.com" class="fa fa-2x fa-envelope-o"></a>
     </section>
 </section>
+

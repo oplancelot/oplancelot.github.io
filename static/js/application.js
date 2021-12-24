@@ -1,87 +1,64 @@
 const enableDarkModeLabel = "dark mode"
 const enableLightModeLabel = "light mode"
-const zooming = new Zooming({})
 
-document.addEventListener("DOMContentLoaded", function() {
-    console.log(`User prefers color scheme: ${systemInitiatedDark.matches}`)
-    console.log(`Local storage stored theme: ${currentTheme}`)
+let systemInitiatedDark = window.matchMedia("(prefers-color-scheme: dark)");
+let theme = localStorage.getItem('theme');
 
+
+document.addEventListener("DOMContentLoaded", function(){
     if (systemInitiatedDark.matches) {
-        enableDarkMode(true)
-    } else if (currentTheme === "dark") {
-        enableDarkMode()
-    } else if (currentTheme === "light") {
-        enableLightMode()
+        document.getElementById("theme-toggle").innerHTML = enableLightModeLabel;
     } else {
-        enableLightMode()
+        document.getElementById("theme-toggle").innerHTML = enableDarkModeLabel;
     }
 
     function prefersColorTest(systemInitiatedDark) {
-        console.log("prefers-color-scheme change detected")
         if (systemInitiatedDark.matches) {
-            enableDarkMode(true)
+            document.documentElement.setAttribute('data-theme', 'dark');
+            document.getElementById("theme-toggle").innerHTML = enableLightModeLabel;
+            // this clears the session storage
+            localStorage.setItem('theme', '');
         } else {
-            enableLightMode(true)
+            document.documentElement.setAttribute('data-theme', 'light');
+            document.getElementById("theme-toggle").innerHTML = enableDarkModeLabel;
+            localStorage.setItem('theme', '');
         }
     }
+    systemInitiatedDark.addListener(prefersColorTest);
 
-    systemInitiatedDark.addEventListener("change", listener = prefersColorTest)
-    zooming.listen('.img-zoomable')
-    zooming.config({ bgColor: 'var(--main-background-color)' })
+    if (theme === "dark") {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+        document.getElementById("theme-toggle").innerHTML = enableLightModeLabel;
+    } else if (theme === "light") {
+        document.documentElement.setAttribute('data-theme', 'light');
+        localStorage.setItem('theme', 'light');
+        document.getElementById("theme-toggle").innerHTML = enableDarkModeLabel;
+    }
 })
 
 function switchMode() {
-    let currentTheme = localStorage.getItem('theme');
-    if (currentTheme === "dark") {
-        enableLightMode()
-    } else if (currentTheme === "light") {
-        enableDarkMode()
-    } else if (systemInitiatedDark.matches) {
-        enableLightMode()
-    } else {
-        enableLightMode()
-    }
-}
-
-function enableLightMode(clearCache = false) {
-    console.log("Enabling light mode")
-    document.documentElement.setAttribute('data-theme', 'light');
-    document.getElementById("theme-toggle").innerHTML = enableDarkModeLabel;
-    loadUtterances(false)
-
-    if (clearCache) {
-        localStorage.removeItem('theme');
-    } else {
+// it's important to check for overrides again
+    let theme = localStorage.getItem('theme');
+    // checks if reader selected dark mode
+    if (theme === "dark") {
+        document.documentElement.setAttribute('data-theme', 'light');
         localStorage.setItem('theme', 'light');
-    }
-}
-
-function enableDarkMode(clearCache = false) {
-    console.log("Enabling dark mode")
-    document.documentElement.setAttribute('data-theme', 'dark');
-    document.getElementById("theme-toggle").innerHTML = enableLightModeLabel;
-    loadUtterances(true)
-
-    if (clearCache) {
-        localStorage.removeItem('theme');
-    } else {
+        document.getElementById("theme-toggle").innerHTML = enableDarkModeLabel;
+        // checks if reader selected light mode
+    }	else if (theme === "light") {
+        document.documentElement.setAttribute('data-theme', 'dark');
         localStorage.setItem('theme', 'dark');
-    }
-}
-
-function loadUtterances(darkMode = false) {
-    const commentsContainer = document.getElementById("comments");
-    if (commentsContainer !== null) {
-        commentsContainer.innerHTML = ''
-        const utterancesScript = document.createElement("script");
-        utterancesScript.setAttribute("id", "utterances");
-        utterancesScript.setAttribute("src", "https://utteranc.es/client.js");
-        utterancesScript.setAttribute("repo", "brennerm/brennerm.github.io-comments");
-        utterancesScript.setAttribute("issue-term", "pathname");
-        utterancesScript.setAttribute("theme", darkMode ? "github-dark" : "github-light");
-        utterancesScript.setAttribute("crossorigin", "anonymous");
-        utterancesScript.setAttribute("async", "true");
-
-        commentsContainer.appendChild(utterancesScript);
+        document.getElementById("theme-toggle").innerHTML = enableLightModeLabel;
+        // checks if system set dark mode
+    } else if (systemInitiatedDark.matches) {
+        document.documentElement.setAttribute('data-theme', 'light');
+        localStorage.setItem('theme', 'light');
+        document.getElementById("theme-toggle").innerHTML = enableDarkModeLabel;
+        // the only option left is system set light mode
+    } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+        document.getElementById("theme-toggle").innerHTML = enableLightModeLabel;
     }
 }

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 markdown: kramdown
 permalink: /:categories/:title.html
 highlighter: rouge
@@ -7,6 +6,3 @@ url: https://oplancelot.github.io
 twitter: __brennerm
 sass:
   style: compressed
-=======
-theme: jekyll-theme-cayman
->>>>>>> a8592db0ec027533648cd63263896132bb1e69ff

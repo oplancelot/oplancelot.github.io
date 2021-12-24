@@ -1,0 +1,112 @@
+I"�5<p>After I got used to <a href="https://brennerm.github.io/posts/cdk8s-the-future-of-k8s-application-deployments.html">cdk8s</a> I was curious how well it integrates with some current continuous delivery tools for Kubernetes. Therefore I sat down for a quick session for integrating it with <a href="https://docs.fluxcd.io">Flux</a>. I will give you a short introduction for both tools to make sure you understand everything when we put them together. If you are already familiar with cdk8s and Flux you can probably skip the next two sections.</p>
+
+<h2 id="flux">Flux</h2>
+
+<p>Flux is a tool for deploying Kubernetes manifests to your cluster. It does so by following the GitOps paradigm which essentially says that one or more Git repositories are the single source of truth for the configuration of your system (in this case being Kubernetes). So in its simplest form imagine a Git repository with a single YAML file that contains a basic Kubernetes manifest (e.g. Deployment + Service). Flux will take care of applying this to your cluster. If you push more changes into this repository Flux will take care of keeping your cluster in the desired state.</p>
+
+<p>Now one could say: “Alright, so what’s the benefit over executing <code class="language-plaintext highlighter-rouge">kubectl apply -f *.yml</code> on every code change through my CI/CD system?” The answer is very straightforward… Flux simply doesn’t need such a system. Instead of running on any infrastructure that you or someone else has to manage Flux lives in the Kubernetes cluster itself. If the cluster is down, Flux can and will be down as well. If the cluster is up, Flux should be running.</p>
+
+<h2 id="cdk8s">cdk8s</h2>
+
+<p>AWS Labs’ cdk8s is a framework that allows you to define Kubernetes deployments with object oriented programming languages like TypeScript or Python. It provides you with predefined classes, so called structs, for each Kubernetes resource. Below you can find a part of some example code defining a single Deployment.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">k8s</span><span class="p">.</span><span class="n">Deployment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">'deployment'</span><span class="p">,</span>
+               <span class="n">spec</span><span class="o">=</span><span class="n">k8s</span><span class="p">.</span><span class="n">DeploymentSpec</span><span class="p">(</span>
+                 <span class="n">selector</span><span class="o">=</span><span class="n">k8s</span><span class="p">.</span><span class="n">LabelSelector</span><span class="p">(</span><span class="n">match_labels</span><span class="o">=</span><span class="s">"my-app"</span><span class="p">),</span>
+                 <span class="n">template</span><span class="o">=</span><span class="n">k8s</span><span class="p">.</span><span class="n">PodTemplateSpec</span><span class="p">(</span>
+                   <span class="n">metadata</span><span class="o">=</span><span class="n">k8s</span><span class="p">.</span><span class="n">ObjectMeta</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="s">"my-app"</span><span class="p">),</span>
+                   <span class="n">spec</span><span class="o">=</span><span class="n">k8s</span><span class="p">.</span><span class="n">PodSpec</span><span class="p">(</span><span class="n">containers</span><span class="o">=</span><span class="p">[</span>
+                     <span class="n">k8s</span><span class="p">.</span><span class="n">Container</span><span class="p">(</span>
+                       <span class="n">name</span><span class="o">=</span><span class="s">'hello-kubernetes'</span><span class="p">,</span>
+                       <span class="n">image</span><span class="o">=</span><span class="s">'paulbouwer/hello-kubernetes:1.7'</span><span class="p">,</span>
+                       <span class="n">ports</span><span class="o">=</span><span class="p">[</span><span class="n">k8s</span><span class="p">.</span><span class="n">ContainerPort</span><span class="p">(</span><span class="n">container_port</span><span class="o">=</span><span class="mi">8080</span><span class="p">)])]))))</span>
+</code></pre></div></div>
+
+<p>Out of this code cdk8s is able to generate valid manifest file(s).</p>
+
+<p>If you wanna get a more detailed introduction feel free to check out <a href="https://brennerm.github.io/posts/cdk8s-the-future-of-k8s-application-deployments.html">my last blog post</a>.</p>
+
+<h2 id="putting-them-together">Putting them together</h2>
+
+<p>After getting to know the purpose of our two tools one could ask how to put them together. How can I deploy my K8s manifests that I define and generate with cdk8s using Flux? As Flux only understands plain manifest files the main step that we have to automate is their generation. I came up with two possible solutions that you will find below. If you know of any better or different ways feel free to let me know.</p>
+
+<h2 id="the-obvious-way">the obvious way</h2>
+
+<p>What’s the first thing to do after celebrating that we don’t need a CI system when using Flux? Correct, introducing a CI system. ;) The idea is to put our cdk8s code into a repository and setting up a CI job that generates the Kubernetes manifests and pushes them to a separate branch. Afterwards we setup Flux to use this branch as its configuration source.</p>
+
+<p>The bash script for our CI job could look like this.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cdk8s synth <span class="c"># `cdk8s synth` generates the K8s manifests and by default puts them in a folder called dist</span>
+git checkout <span class="nt">--orphan</span> manifests <span class="o">||</span> git checkout manifests
+git add dist
+git commit <span class="nt">-m</span> <span class="s2">"Update K8s manifests"</span>
+git push origin manifests
+</code></pre></div></div>
+
+<p>Be aware that the above script assumes that a valid cdk8s installation is already available. After putting this script into a CI pipeline that is being triggered on every code change the only thing that is left to do is correctly configuring Flux. We’ll use the following <code class="language-plaintext highlighter-rouge">fluxctl</code> command.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>fluxctl <span class="nb">install</span> <span class="se">\</span>
+  <span class="nt">--git-user</span><span class="o">=</span><span class="k">${</span><span class="nv">USER</span><span class="k">}</span> <span class="se">\</span>
+  <span class="nt">--git-email</span><span class="o">=</span><span class="k">${</span><span class="nv">USER</span><span class="k">}</span>@mycompany.com <span class="se">\</span>
+  <span class="nt">--git-url</span><span class="o">=</span>git@git.mycompany.com:<span class="k">${</span><span class="nv">USER</span><span class="k">}</span>/k8s-deployments <span class="se">\ </span><span class="c"># the URL of the Git repository containing the cdk8s code and the generated K8s manifests</span>
+  <span class="nt">--git-branch</span><span class="o">=</span>manifests <span class="se">\ </span><span class="c"># the branch that contains the K8s manifests</span>
+  <span class="nt">--git-path</span><span class="o">=</span>dist <span class="se">\ </span><span class="c"># the folder that contains the K8s manifests</span>
+  <span class="nt">--namespace</span><span class="o">=</span>flux | kubectl apply <span class="nt">-f</span> -
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">fluxctl</code> works very similar to other CLI tools in the Kubernetes ecosystem. It generates K8s manifests that you can directly pipe into <code class="language-plaintext highlighter-rouge">kubectl apply -f -</code> and that take care of setting up the Flux controller with the desired parameters.</p>
+
+<p>After having configured everything correctly the complete flow will look like this:</p>
+
+<ol>
+  <li>some developer makes changes to the cdk8s code, e.g. in the <em>master</em> branch</li>
+  <li>the CI pipeline is triggered by the new commit</li>
+  <li>the bash script is being executed within the context of the <em>master</em> branch</li>
+  <li>the K8s manifests are being generated</li>
+  <li>the output is being pushed to the <em>manifests</em> branch</li>
+  <li>Flux syncs its copy of the <em>manifests</em> branch</li>
+  <li>Flux detects changes and applies them to the cluster</li>
+</ol>
+
+<h2 id="the-not-yet-elegant-way">the (not yet) elegant way</h2>
+
+<p>If you are someone that is familiar with Flux I already hear you shouting at me: “Max, just use Flux’s generators!” and that’s exactly what my second solution is based on. Initially I thought this approach is better than the first one due to the fact that we don’t need a CI system. Though while implementing it a big issue came up. But first things first, what is a Flux generator?</p>
+
+<p>Generators allow you to produce new or modify existing Kubernetes manifests on the fly before applying them on your cluster. So instead of your manifests you place a simple <code class="language-plaintext highlighter-rouge">.flux.yaml</code> file along with your cdk8s code into your repository that could look like this.</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="m">1</span>
+<span class="na">commandUpdated</span><span class="pi">:</span>
+  <span class="na">generators</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">command</span><span class="pi">:</span> <span class="s">cdk8s synth &gt; /dev/null &amp;&amp; cat dist/*</span>
+</code></pre></div></div>
+
+<p>Flux will take of care of executing the command(s), capture the output, which should be valid K8s manifests and apply them on the cluster. Be aware that you have to mute every command that does generate output not containing K8s manifests. Otherwise you’re gonna run into problems.</p>
+
+<p>To enable the generators feature we have to pass the <code class="language-plaintext highlighter-rouge">--manifest-generation=true</code> parameters when setting up Flux.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>fluxctl <span class="nb">install</span> <span class="se">\</span>
+<span class="nt">--git-user</span><span class="o">=</span><span class="k">${</span><span class="nv">USER</span><span class="k">}</span> <span class="se">\</span>
+<span class="nt">--git-email</span><span class="o">=</span><span class="k">${</span><span class="nv">USER</span><span class="k">}</span>@mycompany.com <span class="se">\</span>
+<span class="nt">--git-url</span><span class="o">=</span>git@git.mycompany.com:<span class="k">${</span><span class="nv">GHUSER</span><span class="k">}</span>/k8s-deployments <span class="se">\ </span><span class="c"># the URL of the Git repository containing the cdk8s code and the .flux.yaml file</span>
+<span class="nt">--manifest-generation</span><span class="o">=</span><span class="nb">true</span> <span class="se">\ </span><span class="c"># enable generators</span>
+<span class="nt">--namespace</span><span class="o">=</span>flux | kubectl apply <span class="nt">-f</span> -
+</code></pre></div></div>
+
+<p>So afterwards we simply put the above <code class="language-plaintext highlighter-rouge">.flux.yaml</code> file next to our cdk8s code, push everything to a repo and we should be good to go, right? Of course not as here comes the big bummer. The execution of generators happen within the fluxd, the controller of Flux, container. This essentially means that we need to install the whole node/yarn- and Python/pip-stack into it to be able to execute cdk8s. For me, blowing up a container that needs to have full control over at least one K8s namespace to this extent is not acceptable. Anyway I checked if this approach is actually realizable so below you can find the working <code class="language-plaintext highlighter-rouge">.flux.yaml</code>.</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="m">1</span>
+<span class="na">commandUpdated</span><span class="pi">:</span>
+  <span class="na">generators</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">command</span><span class="pi">:</span> <span class="s">(/sbin/apk add yarn python3 npm &amp;&amp; pip3 install pipenv &amp;&amp; pipenv run pip install constructs cdk8s &amp;&amp; yarn global add cdk8s-cli &amp;&amp; cdk8s import &amp;&amp; cdk8s synth) &gt; /dev/null &amp;&amp; cat dist/*</span>
+</code></pre></div></div>
+
+<p>According to Flux’s documentation the developers are planning to allow executing generators in a separate container but for now this is not possible.</p>
+
+<h2 id="conclusion">conclusion</h2>
+
+<p>So there you have it. Two options of setting up a GitOps process using cdk8s and Flux. For a productive setup I’d accept the additional effort of setting up / managing a CI system (which one already has in most cases anyway) and prefer the first option for now. As soon as Flux supports the execution of generators in a separate container the second option becomes more viable in my opinion.</p>
+
+<p>All in all I was surprised how well both tools work together. As cdk8s becomes more mature I’ll definitely take the two into consideration for setting up my next K8s delivery pipeline.</p>
+
+<hr />
+:ET

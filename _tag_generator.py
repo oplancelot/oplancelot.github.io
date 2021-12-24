@@ -12,15 +12,17 @@ No plugins required.
 
 import glob
 import os
+import io
 
 post_dir = '_posts/'
 tag_dir = 'tag/'
 
-filenames = glob.glob(post_dir + '**/*markdown')
+filenames = glob.glob(post_dir + '*.md')
 
 total_tags = []
 for filename in filenames:
-    f = open(filename, 'r', encoding='utf8')
+    #f = open(filename, 'r', encoding='utf8')
+    f = open(filename, 'r')
     crawl = False
     for line in f:
         if crawl:

@@ -1,64 +1,87 @@
 const enableDarkModeLabel = "dark mode"
 const enableLightModeLabel = "light mode"
+const zooming = new Zooming({})
 
-let systemInitiatedDark = window.matchMedia("(prefers-color-scheme: dark)");
-let theme = localStorage.getItem('theme');
+document.addEventListener("DOMContentLoaded", function() {
+    console.log(`User prefers color scheme: ${systemInitiatedDark.matches}`)
+    console.log(`Local storage stored theme: ${currentTheme}`)
 
-
-document.addEventListener("DOMContentLoaded", function(){
     if (systemInitiatedDark.matches) {
-        document.getElementById("theme-toggle").innerHTML = enableLightModeLabel;
+        enableDarkMode(true)
+    } else if (currentTheme === "dark") {
+        enableDarkMode()
+    } else if (currentTheme === "light") {
+        enableLightMode()
     } else {
-        document.getElementById("theme-toggle").innerHTML = enableDarkModeLabel;
+        enableLightMode()
     }
 
     function prefersColorTest(systemInitiatedDark) {
+        console.log("prefers-color-scheme change detected")
         if (systemInitiatedDark.matches) {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            document.getElementById("theme-toggle").innerHTML = enableLightModeLabel;
-            // this clears the session storage
-            localStorage.setItem('theme', '');
+            enableDarkMode(true)
         } else {
-            document.documentElement.setAttribute('data-theme', 'light');
-            document.getElementById("theme-toggle").innerHTML = enableDarkModeLabel;
-            localStorage.setItem('theme', '');
+            enableLightMode(true)
         }
     }
-    systemInitiatedDark.addListener(prefersColorTest);
 
-    if (theme === "dark") {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        localStorage.setItem('theme', 'dark');
-        document.getElementById("theme-toggle").innerHTML = enableLightModeLabel;
-    } else if (theme === "light") {
-        document.documentElement.setAttribute('data-theme', 'light');
-        localStorage.setItem('theme', 'light');
-        document.getElementById("theme-toggle").innerHTML = enableDarkModeLabel;
-    }
+    systemInitiatedDark.addEventListener("change", listener = prefersColorTest)
+    zooming.listen('.img-zoomable')
+    zooming.config({ bgColor: 'var(--main-background-color)' })
 })
 
 function switchMode() {
-// it's important to check for overrides again
-    let theme = localStorage.getItem('theme');
-    // checks if reader selected dark mode
-    if (theme === "dark") {
-        document.documentElement.setAttribute('data-theme', 'light');
-        localStorage.setItem('theme', 'light');
-        document.getElementById("theme-toggle").innerHTML = enableDarkModeLabel;
-        // checks if reader selected light mode
-    }	else if (theme === "light") {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        localStorage.setItem('theme', 'dark');
-        document.getElementById("theme-toggle").innerHTML = enableLightModeLabel;
-        // checks if system set dark mode
+    let currentTheme = localStorage.getItem('theme');
+    if (currentTheme === "dark") {
+        enableLightMode()
+    } else if (currentTheme === "light") {
+        enableDarkMode()
     } else if (systemInitiatedDark.matches) {
-        document.documentElement.setAttribute('data-theme', 'light');
-        localStorage.setItem('theme', 'light');
-        document.getElementById("theme-toggle").innerHTML = enableDarkModeLabel;
-        // the only option left is system set light mode
+        enableLightMode()
     } else {
-        document.documentElement.setAttribute('data-theme', 'dark');
+        enableLightMode()
+    }
+}
+
+function enableLightMode(clearCache = false) {
+    console.log("Enabling light mode")
+    document.documentElement.setAttribute('data-theme', 'light');
+    document.getElementById("theme-toggle").innerHTML = enableDarkModeLabel;
+    loadUtterances(false)
+
+    if (clearCache) {
+        localStorage.removeItem('theme');
+    } else {
+        localStorage.setItem('theme', 'light');
+    }
+}
+
+function enableDarkMode(clearCache = false) {
+    console.log("Enabling dark mode")
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.getElementById("theme-toggle").innerHTML = enableLightModeLabel;
+    loadUtterances(true)
+
+    if (clearCache) {
+        localStorage.removeItem('theme');
+    } else {
         localStorage.setItem('theme', 'dark');
-        document.getElementById("theme-toggle").innerHTML = enableLightModeLabel;
+    }
+}
+
+function loadUtterances(darkMode = false) {
+    const commentsContainer = document.getElementById("comments");
+    if (commentsContainer !== null) {
+        commentsContainer.innerHTML = ''
+        const utterancesScript = document.createElement("script");
+        utterancesScript.setAttribute("id", "utterances");
+        utterancesScript.setAttribute("src", "https://utteranc.es/client.js");
+        // utterancesScript.setAttribute("repo", "brennerm/brennerm.github.io-comments");
+        utterancesScript.setAttribute("issue-term", "pathname");
+        utterancesScript.setAttribute("theme", darkMode ? "github-dark" : "github-light");
+        utterancesScript.setAttribute("crossorigin", "anonymous");
+        utterancesScript.setAttribute("async", "true");
+
+        commentsContainer.appendChild(utterancesScript);
     }
 }

@@ -13,7 +13,8 @@ No plugins required.
 import glob
 import os
 import io
-
+import re
+import datetime
 post_dir = '_posts/'
 tag_dir = 'tag/'
 
@@ -21,7 +22,7 @@ filenames = glob.glob(post_dir + '*.md')
 
 total_tags = []
 for filename in filenames:
-    #f = open(filename, 'r', encoding='utf8')
+    
     f = open(filename, 'r')
     crawl = False
     for line in f:
@@ -38,6 +39,17 @@ for filename in filenames:
                 crawl = False
                 break
     f.close()
+    
+    dirname, filetemp = os.path.split(filename)     
+    if re.match('^\d{4}-\d{1,2}-\d{1,2}', filetemp, flags=0) == None:
+        # new_file=os.path.join(dirname, "6.jpg")
+        date = datetime.date.today()
+        strDate = str(date)
+        newFileName = os.path.join(dirname, strDate + '-' +filetemp)
+        print "now rename file: " + filetemp + " to: " + newFileName
+        os.rename(filename, newFileName)
+       
+
 total_tags = set(total_tags)
 
 old_tags = glob.glob(tag_dir + '*.md')
@@ -55,3 +67,5 @@ for tag in total_tags:
     f.write(write_str)
     f.close()
 print("Tags generated, count", total_tags.__len__())
+
+

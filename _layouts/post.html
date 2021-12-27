@@ -19,7 +19,7 @@ layout: layout
     </section>
 
     <!-- mermaid -->
-    <!-- { % if page.mermaid % } -->
+    {% if page.mermaid %}
     <script>
         function initMermaid() {
             var config = {
@@ -37,7 +37,7 @@ layout: layout
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/mermaid/8.6.0/mermaid.min.js" async onload="initMermaid()">
     </script>
-    <!-- { % endif % } -->
+    {% endif %}
 
 
 

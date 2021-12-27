@@ -5,7 +5,7 @@ description: FBuild a Jekyll development environment with VS Code & Remote linux
 category: posts
 tags: jekyll linux2 vscode
 draft: false
-
+mermaid: true
 ---
 
 jekyll 需要框架编译才能生成静态网页，如果每次都提交github，调试过程很痛苦。我想充分利用hyper-v里运行的linux2，所以以这个架构来处理

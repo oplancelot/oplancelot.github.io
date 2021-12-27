@@ -76,7 +76,7 @@ function loadUtterances(darkMode = false) {
         const utterancesScript = document.createElement("script");
         utterancesScript.setAttribute("id", "utterances");
         utterancesScript.setAttribute("src", "https://utteranc.es/client.js");
-        // utterancesScript.setAttribute("repo", "brennerm/brennerm.github.io-comments");
+        utterancesScript.setAttribute("repo", "oplancelot/contact");
         utterancesScript.setAttribute("issue-term", "pathname");
         utterancesScript.setAttribute("theme", darkMode ? "github-dark" : "github-light");
         utterancesScript.setAttribute("crossorigin", "anonymous");

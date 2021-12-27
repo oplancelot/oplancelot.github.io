@@ -1,6 +1,5 @@
-I"�<h2 id="build-a-jekyll-development-environment-with-vs-code--remote">Build a Jekyll development environment with VS Code &amp; Remote</h2>
-
-<p>jekyll 需要框架编译才能生成静态网页，如果每次都提交github，调试过程很痛苦。我想充分利用hyper-v里运行的linux2，所以以这个架构来处理</p>
+I"�<p>jekyll 需要框架编译才能生成静态网页，如果每次都提交github，调试过程很痛苦。我想充分利用hyper-v里运行的linux2，所以以这个架构来处理
+mermaid: true</p>
 
 <pre><code class="language-mermaid">graph TB
  subgraph win10
@@ -28,10 +27,10 @@
 
 <h2 id="1win10-设置key-pair">1.win10 设置key pair</h2>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh-keygen -t rsa -b 4096 -f "d:\yidawin10"
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh-keygen -t rsa -b 4096 -f "d:\win10"
 </code></pre></div></div>
 
-<p>yidawin10.pub添加到/root/.ssh/authorized_keys</p>
+<p>win10.pub添加到/root/.ssh/authorized_keys</p>
 
 <h2 id="2vs-code-添加插件-remote---sshremote-development-略">2.vs code 添加插件 Remote - SSH、Remote Development (略)</h2>
 
@@ -74,8 +73,7 @@ gem install jekyll bundler
 
 <p>jekyll 绑定到0.0.0.0而不是127.0.0.1</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>jekyll serve --host=0.0.0.0
-bundle exec jekyll serve -w -H 0.0.0.0 -P 80 
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bundle exec jekyll serve -w -H 0.0.0.0 -P 80 
 </code></pre></div></div>
 
 <p>参数参考https://jekyllrb.com/docs/configuration/options/</p>
@@ -88,5 +86,5 @@ bundle exec jekyll serve -w -H 0.0.0.0 -P 80
 
 <p>https://insujang.github.io/2019-09-28/jekyll-vscode/</p>
 
-<h2 id="httpspowers-hellcom20210725build-a-jekyll-development-environment-with-vs-code-remote-containers">https://powers-hell.com/2021/07/25/build-a-jekyll-development-environment-with-vs-code-remote-containers/</h2>
+<p>https://powers-hell.com/2021/07/25/build-a-jekyll-development-environment-with-vs-code-remote-containers/</p>
 :ET

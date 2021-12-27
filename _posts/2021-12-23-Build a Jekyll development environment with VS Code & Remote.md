@@ -5,12 +5,11 @@ description: FBuild a Jekyll development environment with VS Code & Remote linux
 category: posts
 tags: jekyll linux2 vscode
 draft: false
+
 ---
 
-## Build a Jekyll development environment with VS Code & Remote
-
-
 jekyll 需要框架编译才能生成静态网页，如果每次都提交github，调试过程很痛苦。我想充分利用hyper-v里运行的linux2，所以以这个架构来处理
+
 
 ```mermaid
 graph TB
@@ -42,10 +41,10 @@ graph TB
 ## 1.win10 设置key pair
 
 ```
-ssh-keygen -t rsa -b 4096 -f "d:\yidawin10"
+ssh-keygen -t rsa -b 4096 -f "d:\win10"
 ```
 
-yidawin10.pub添加到/root/.ssh/authorized_keys
+win10.pub添加到/root/.ssh/authorized_keys
 
 ## 2.vs code 添加插件 Remote - SSH、Remote Development (略)
 
@@ -94,7 +93,6 @@ git clone 源项目，然后在这个目录[/root/blog/oplancelot.github.io]#下
 jekyll 绑定到0.0.0.0而不是127.0.0.1
 
 ```
-jekyll serve --host=0.0.0.0
 bundle exec jekyll serve -w -H 0.0.0.0 -P 80 
 ```
 
@@ -109,4 +107,3 @@ https://shipit.dev/posts/kubernetes-overview-diagrams.html
 https://insujang.github.io/2019-09-28/jekyll-vscode/
 
 https://powers-hell.com/2021/07/25/build-a-jekyll-development-environment-with-vs-code-remote-containers/
----

@@ -3,6 +3,7 @@ layout: layout
 ---
 
 <section class="content">
+
     <h1>
         <a href="{{ page.url }}">{{ page.title }}</a>
     </h1>
@@ -10,12 +11,36 @@ layout: layout
     <section class="byline">
         {% include readtime.html content=content %} - {{ page.date | date: "%B %e, %Y" }} -
         <span class="taglist">[
-        {% for tag in page.tags %}
+            {% for tag in page.tags %}
             {% capture tag_name %}{{ tag }}{% endcapture %}
-                <a href="/tag/{{ tag_name }}"><code>{{ tag_name }}</code></a>
-        {% endfor %}
-        ]</span>
+            <a href="/tag/{{ tag_name }}"><code>{{ tag_name }}</code></a>
+            {% endfor %}
+            ]</span>
     </section>
+
+    <!-- mermaid -->
+    <!-- { % if page.mermaid % } -->
+    <script>
+        function initMermaid() {
+            var config = {
+                startOnLoad: true,
+                theme: "forest",
+                flowchart: {
+                    useMaxWidth: true,
+                    htmlLabels: true
+                }
+            };
+            mermaid.initialize(config);
+            window.mermaid.init(undefined, document.querySelectorAll('.language-mermaid'));
+        }
+    </script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/mermaid/8.6.0/mermaid.min.js" async onload="initMermaid()">
+    </script>
+    <!-- { % endif % } -->
+
+
+
 
     {% include anchor_headings.html html=content anchorBody="%heading%" %}
     <section class="contact">

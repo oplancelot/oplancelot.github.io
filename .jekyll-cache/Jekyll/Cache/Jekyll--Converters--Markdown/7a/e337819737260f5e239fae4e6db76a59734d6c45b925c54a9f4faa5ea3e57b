@@ -1,0 +1,89 @@
+I"t<p>jekyll 需要框架编译才能生成静态网页，如果每次都提交github，调试过程很痛苦。我想充分利用hyper-v里运行的linux2，所以以这个架构来处理</p>
+
+<pre><code class="language-mermaid">graph TB
+ subgraph win10
+ vs;
+ browse;
+ end
+ subgraph linux2
+ path
+ port
+ js
+ end
+ vs[VS Code]--SSH edit--&gt;path["/root/blog"];
+ browse[chrome]--Http preview--&gt;port[Port 80];
+ path--Build--&gt;js[jekyll serve];
+ port--Listen--&gt;js;
+
+ 
+ classDef plain fill:#ddd,stroke:#fff,stroke-width:4px,color:#000;
+ classDef blue fill:#326ce5,stroke:#fff,stroke-width:4px,color:#fff;
+ classDef cluster fill:#fff,stroke:#bbb,stroke-width:2px,color:#326ce5;
+ class vs,path,port,js,browse blue;
+ class client plain;
+ class works cluster;
+</code></pre>
+
+<h2 id="1win10-设置key-pair">1.win10 设置key pair</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh-keygen -t rsa -b 4096 -f "d:\win10"
+</code></pre></div></div>
+
+<p>win10.pub添加到/root/.ssh/authorized_keys</p>
+
+<h2 id="2vs-code-添加插件-remote---sshremote-development-略">2.vs code 添加插件 Remote - SSH、Remote Development (略)</h2>
+
+<p>然后设置连接</p>
+
+<p><img src="../static/images/1640328152541.png" alt="1640328152541" /></p>
+
+<p>sshconfig内容如下,sshconfig和密钥在同一个文件夹，没有指定IdentityFile</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Host linux2
+	HostName 192.168.176.120 
+	User     root
+	
+</code></pre></div></div>
+
+<p>格式</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Host remotehost.yourcompany.com
+    User yourname
+    HostName another-host-fqdn-or-ip-goes-here
+    IdentityFile ~/.ssh/id_rsa-remote-ssh
+</code></pre></div></div>
+
+<h2 id="3linux2上安装rubyjkyll">3.linux2上安装ruby,jkyll</h2>
+
+<p>具体参考https://jekyllrb.com/docs/step-by-step/01-setup/</p>
+
+<p>主要命令</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>amazon-linux-extras #使用的是linux2 
+amazon-linux-extras enable 39#要求安装ruby2.6以上
+yum install ruby ruby-irb rubygem-rake rubygem-json rubygems ruby-devel 
+yum group install "Development Tools"
+gem install jekyll bundler
+</code></pre></div></div>
+
+<h3 id="4运行jekylll">4.运行jekylll</h3>
+
+<p>git clone 源项目，然后在这个目录[/root/blog/oplancelot.github.io]#下执行</p>
+
+<p>jekyll 绑定到0.0.0.0而不是127.0.0.1</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bundle exec jekyll serve -w -H 0.0.0.0 -P 80 
+</code></pre></div></div>
+
+<p>参数参考https://jekyllrb.com/docs/configuration/options/</p>
+
+<p>然后就可以从vscode调试了,文件变更后立刻反映，提高了效率</p>
+
+<h2 id="5参考鸣谢">5.参考鸣谢</h2>
+
+<p>https://shipit.dev/posts/kubernetes-overview-diagrams.html</p>
+
+<p>https://insujang.github.io/2019-09-28/jekyll-vscode/</p>
+
+<p>https://powers-hell.com/2021/07/25/build-a-jekyll-development-environment-with-vs-code-remote-containers/</p>
+:ET

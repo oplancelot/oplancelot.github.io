@@ -1,6 +1,6 @@
 ---
 layout: post
-title: samba-efs-sys_get_nfs4_quota()调查
+title: speed up mapped efs share in windows 
 description: samba-efs-sys_get_nfs4_quota()调查
 category: posts
 tags: samba efs 
@@ -81,7 +81,7 @@ Save the config file. Restart SAMBA and the delay should go away. Hope this help
 
 ## 参考
 
-https://serverfault.com/questions/811957/any-way-to-speed-up-mapped-efs-share-in-windows英文问答
+https://serverfault.com/questions/811957/any-way-to-speed-up-mapped-efs-share-in-windows 英文问答
 
 [WindowsでマップされたEFS共有を高速化する方法はありますか](https://www.webdevqa.jp.net/ja/windows/windows%E3%81%A7%E3%83%9E%E3%83%83%E3%83%97%E3%81%95%E3%82%8C%E3%81%9Fefs%E5%85%B1%E6%9C%89%E3%82%92%E9%AB%98%E9%80%9F%E5%8C%96%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95%E3%81%AF%E3%81%82%E3%82%8A%E3%81%BE%E3%81%99%E3%81%8B%EF%BC%9F/960035193/)日语问答
 

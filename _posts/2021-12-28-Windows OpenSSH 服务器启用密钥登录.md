@@ -9,9 +9,6 @@ mermaid: false
 
 ---
 
-
-# Windows OpenSSH 服务器启用密钥登录
-
 使用jenkins发布程序到windows server ec2 ，需要在win server 上部署ssh server。
 由于win servers 2019 原生支持openssh (实测2016就原生支持），记录一下部署的过程。
 

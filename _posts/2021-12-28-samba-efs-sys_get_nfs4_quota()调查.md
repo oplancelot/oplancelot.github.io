@@ -8,7 +8,7 @@ draft: false
 mermaid: false
 
 ---
-## 背景
+### 1.背景
 AWS efs mount 在linux ，linux 搭建 samba服务，提供给win server 访问。
 
 使用windows ec2 直接访问 samba服务，有时文件打开会有延迟，这个例子是延迟了两分钟。
@@ -57,7 +57,7 @@ https://download.samba.org/pub/unpacked/samba_master/source3/lib/sysquotas_nfs.c
 
 
 
-## 解决方案如下
+### 2.解决方案如下
 
 We had similar issues and found a solution for it. We were able to narrow the issue down to SAMBA failing to report EFS size in time. More specifically, samba fails to execute sys_get_nfs4_quota(), timing out in about 60 sec.
 
@@ -79,7 +79,7 @@ dfree cache time = 60
 
 Save the config file. Restart SAMBA and the delay should go away. Hope this helps.
 
-## 参考
+### 3.参考
 
 https://serverfault.com/questions/811957/any-way-to-speed-up-mapped-efs-share-in-windows 英文问答
 

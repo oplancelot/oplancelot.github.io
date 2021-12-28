@@ -5,7 +5,7 @@ description: Kubernetes Architecture mermaid code
 category: posts
 tags: k8s mermaid 
 draft: false
-mermaid: false
+mermaid: true
 
 ---
 

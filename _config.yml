@@ -6,3 +6,5 @@ url: https://oplancelot.github.io
 twitter: 
 sass:
   style: compressed
+plugins:
+  - jekyll-sitemap

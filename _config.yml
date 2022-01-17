@@ -2,7 +2,8 @@ markdown: kramdown
 permalink: /:categories/:title.html
 highlighter: rouge
 name: Geralt Luo
-url: https://oplancelot.github.io
+# url: https://oplancelot.github.io
+url: https://cloud-architecture.online
 twitter: 
 sass:
   style: compressed

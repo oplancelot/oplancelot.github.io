@@ -13,7 +13,7 @@ mermaid: false
 
 
 
-### 架构图
+### terraform架构图
 
  ![图：Terraform 如何使用插件](https://mktg-content-api-hashicorp.vercel.app/api/assets?product=terraform-cdk&version=v0.10.4&asset=website%2Fdocs%2Fcdktf%2Fconcepts%2Fimages%2Fterraform-plugin-overview.png) 
 
@@ -191,13 +191,13 @@ directory; this is a bug in Terraform.
 
 此时可以把这个providers当成从`https://releases.hashicorp.com/`官方下载的providers一样处理，如何处理呢？
 
-**### 如何存放从`https://releases.hashicorp.com/`下载的providers**
+### 如何存放从`https://releases.hashicorp.com/`下载的providers
 
 ### How to install terraform providers locally?
 
 
 
-处理方法是可以把`roviders` 放在默认的位置，`main.tf` 定义`source`时`hostname`不再需要`example.com`，不屑的话默认就是`registry.terraform.io`，所以目录是如下结构
+处理方法是把`roviders` 放在默认的位置，`main.tf` 定义`source`时`hostname`不再需要`example.com` 省略的话就是默认`registry.terraform.io`，所以目录是如下结构
 
 ```
 registry.terraform.io

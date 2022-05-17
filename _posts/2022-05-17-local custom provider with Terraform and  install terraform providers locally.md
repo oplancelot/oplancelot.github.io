@@ -8,11 +8,6 @@ draft: false
 mermaid: false
 
 ---
-
-##  local custom provider with Terraform & install terraform providers locally
-
-
-
 ### terraform架构图
 
  ![图：Terraform 如何使用插件](https://mktg-content-api-hashicorp.vercel.app/api/assets?product=terraform-cdk&version=v0.10.4&asset=website%2Fdocs%2Fcdktf%2Fconcepts%2Fimages%2Fterraform-plugin-overview.png) 

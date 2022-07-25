@@ -7,7 +7,7 @@ trigger:
 - main
 
 pool:
-  name: dp-blog
+  name: azfreepool
 
 
 # Note: github_pat should be configured as an environment variable in devops

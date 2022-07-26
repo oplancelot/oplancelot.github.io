@@ -43,7 +43,9 @@ steps:
   path: source # path to check out source code, relative to the agent's build directory (e.g. \_work\1)
   # persistCredentials: boolean  # set to 'true' to leave the OAuth token in the Git config after the initial fetch
 
-- script:   git remote add github  https://$(github_pat)@github.com/$(gh_user)/$(gh_repo).git
+- script: | 
+   git remote rm github
+   git remote add github  https://$(github_pat)@github.com/$(gh_user)/$(gh_repo).git
   workingDirectory: $(Agent.BuildDirectory)/source
   displayName: "[Git] add GitHub Pages Repository"
 

@@ -54,16 +54,17 @@ steps:
   displayName: '[Git] Configure User'
 
 - script: |
+    pwd;
     ls -la;
   workingDirectory: $(Agent.BuildDirectory)/source
-  displayName: '[Jekyll] ls'
+  displayName: '[Shell] ls'
 
 # 2. add/update tag
 # default dir $(System.DefaultWorkingDirectory) 
 - task: PythonScript@0
   inputs:
-    scriptSource: 'filePath'
-    scriptPath: '$(Agent.BuildDirectory)/source/_tag_generator.py'
+    scriptSource: '_tag_generator.py'
+    scriptPath: '$(Agent.BuildDirectory)/source'
 
 
 # 3. Create our commit, merge into master, delete draft branch and push it

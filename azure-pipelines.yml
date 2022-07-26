@@ -74,6 +74,7 @@ steps:
   displayName: '[Git] Creating commit'
 
 - script: |
+    git pull github main;
     git push github HEAD:main;
   workingDirectory: $(Agent.BuildDirectory)/source
   displayName: '[Git] Push changes to remote'

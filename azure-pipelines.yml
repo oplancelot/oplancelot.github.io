@@ -40,22 +40,22 @@ steps:
   # fetchDepth: number  # the depth of commits to ask Git to fetch
   # lfs: boolean  # whether to download Git-LFS files
   # submodules: true | recursive  # set to 'true' for a single level of submodules or 'recursive' to get submodules of submodules
-  path: $(Agent.BuildDirectory) # path to check out source code, relative to the agent's build directory (e.g. \_work\1)
+  path: $(Agent.BuildDirectory)/source # path to check out source code, relative to the agent's build directory (e.g. \_work\1)
   # persistCredentials: boolean  # set to 'true' to leave the OAuth token in the Git config after the initial fetch
 
 - script:   git remote add github  https://$(github_pat)@github.com/$(gh_user)/$(gh_repo).git
-  workingDirectory: $(Agent.BuildDirectory)
+  workingDirectory: $(Agent.BuildDirectory)/source
   displayName: "[Git] add GitHub Pages Repository"
 
 - script: |
     git config user.email $(gh_email)
     git config user.name $(gh_user)
-  workingDirectory: $(Agent.BuildDirectory)
+  workingDirectory: $(Agent.BuildDirectory)/source
   displayName: '[Git] Configure User'
 
 - script: |
     ls -la;
-  workingDirectory: $(Agent.BuildDirectory)
+  workingDirectory: $(Agent.BuildDirectory)/source
   displayName: '[Jekyll] ls'
 
 # 2. add/update tag
@@ -63,19 +63,19 @@ steps:
 - task: PythonScript@0
   inputs:
     scriptSource: 'filePath'
-    scriptPath: '$(Agent.BuildDirectory)/_tag_generator.py'
+    scriptPath: '$(Agent.BuildDirectory)/source/_tag_generator.py'
 
 
 # 3. Create our commit, merge into master, delete draft branch and push it
 - script: |
     git add --all;
     git commit -m "Pipelines-Bot: Updated site via $(Build.SourceVersion)";
-  workingDirectory: $(Agent.BuildDirectory)
+  workingDirectory: $(Agent.BuildDirectory)/source
   displayName: '[Git] Creating commit'
 
 - script: |
     git push github main;
-  workingDirectory: $(Agent.BuildDirectory)
+  workingDirectory: $(Agent.BuildDirectory)/source
   displayName: '[Git] Push changes to remote'
 
 # 4. Get GitHub Pages build status

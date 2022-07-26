@@ -65,8 +65,8 @@ steps:
 # default dir $(System.DefaultWorkingDirectory) 
 - task: PythonScript@0
   inputs:
-    scriptSource: '_tag_generator.py'
-    scriptPath: '$(Agent.BuildDirectory)/source'
+    # scriptSource: '_tag_generator.py'
+    scriptPath: '$(Agent.BuildDirectory)/source/_tag_generator.py'
 
 
 # 3. Create our commit, merge into master, delete draft branch and push it

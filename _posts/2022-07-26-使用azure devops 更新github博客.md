@@ -16,7 +16,8 @@ mermaid: false
 3. vs执行脚本
 4. remote host 预览
 5. vs提交到github
-也算方便。
+   
+
 
 使用pipeline后，只需要
 1. md文字编辑
@@ -27,7 +28,9 @@ pipeline 处理
 2. push github
 
 
-如果哪天需要迁移blog到其他只支持静态页面的环境，比如S3，pipeline里添加jekyll的build步骤再上传即可。
+如果哪天需要迁移blog到其他只支持静态页面的环境，比如S3，
+pipeline里添加jekyll的build步骤再上传即可。
+
 azure-pipeline.ymal
 
 ```
@@ -107,6 +110,7 @@ steps:
   displayName: '[Git] Creating commit'
 
 - script: |
+    git pull github main;
     git push github HEAD:main;
   workingDirectory: $(Agent.BuildDirectory)/source
   displayName: '[Git] Push changes to remote'

@@ -1,0 +1,339 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>白云雁水 – 博客</title>
+    <link>/</link>
+    <description>Recent content in 博客 on 白云雁水</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    
+	  <atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+      
+    
+    
+    <item>
+      <title>Blog: openssh host certificate</title>
+      <link>/blog/2023/06/16/openssh-host-certificate/</link>
+      <pubDate>Fri, 16 Jun 2023 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2023/06/16/openssh-host-certificate/</guid>
+      <description>
+        
+        
+        &lt;h1 id=&#34;client信任ca的同时就信任所有它签名过的host-certificate&#34;&gt;&lt;code&gt;Client&lt;/code&gt;信任&lt;code&gt;CA&lt;/code&gt;的同时就信任所有它签名过的&lt;code&gt;host certificate&lt;/code&gt;.&lt;/h1&gt;
+&lt;h2 id=&#34;0the-sequence-diagram-of-ssh-host-certificates&#34;&gt;0.the sequence diagram of SSH host certificates.&lt;/h2&gt;
+&lt;h2 id=&#34;ssh主机证书的时序图&#34;&gt;SSH主机证书的时序图。&lt;/h2&gt;
+&lt;p&gt;The process of using SSH host certificates is as follows.
+使用SSH主机证书的过程如下。&lt;/p&gt;
+&lt;pre class=&#34;mermaid&#34;&gt;sequenceDiagram
+Note over  Host: ssh_host_rsa_key
+Note over Host: sh_host_rsa_key.pub
+
+Note over  Ca: host_ca 
+Note over  Ca: host_ca.pub
+
+
+rect rgb(0, 140, 0)
+Host -&amp;gt;&amp;gt; Ca: ssh_host_rsa_key.pub
+Ca -&amp;gt;&amp;gt; Ca: sign the sh_host_rsa_key.pub
+Ca -&amp;gt;&amp;gt; Host: ssh_host_rsa_key-cert.pub
+Note over  Host: ssh_host_rsa_key-cert.pub
+end
+
+rect rgb(100, 140, 100)
+Ca -&amp;gt;&amp;gt; Client: host_ca.pub
+Client --&amp;gt;&amp;gt; Client: Add the contents of host_ca.pub to the ssh_known_hosts
+Note over  Client: ssh_know_hosts
+end
+
+rect rgb(0, 140, 100)
+Client --&amp;gt;&amp;gt; Host: ssh connect request
+Host --&amp;gt;&amp;gt; Client: Do you know my host certificate?
+Client --&amp;gt;&amp;gt; Client: Check CA pubkey 
+alt Found CA key
+Client --&amp;gt;&amp;gt; Host: Found CA key in /etc/ssh/ssh_known_hosts.Continue...
+else No matching CA found
+Client --&amp;gt;&amp;gt; Host: No matching CA found. Retry with plain key
+end 
+end
+   &lt;/pre&gt;
+&lt;p&gt;实现效果&lt;/p&gt;
+&lt;p&gt;1.初次登陆时不会再出现&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;The authenticity of host &#39;host1.550w.dev&#39; can&#39;t be established. RSA key fingerprint is SHA256:GAGcmnsWDI8sGinhB5W1PZmGnILkl6tWck9mMjLlpyw. Are you sure you want to continue connecting (yes/no/[fingerprint])? &lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;这个提示会打断自动交互的脚本或者ansible 等。&lt;/p&gt;
+&lt;p&gt;2.不会出现&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED! &lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;这个提示对普通用户来说是比较难判断的。&lt;/p&gt;
+&lt;h2 id=&#34;1建立host-ca证书&#34;&gt;1.建立HOST CA证书&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;注意：&lt;/strong&gt;&lt;code&gt;在CA服务器上操作，建立强密码，每次颁发时需要&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;CA 证书建立时，host和user没有什么不同&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#host和user分开建立，主要考虑管理方面。比如host更为稳定，轮换时间更长点？&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ssh-keygen -t rsa -b &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;4096&lt;/span&gt; -f host_ca -C host_ca
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#存在/root/.ssh/host_ca&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;2issuing-host-certificates&#34;&gt;2.Issuing host certificates&lt;/h2&gt;
+&lt;p&gt;颁发主机证书&lt;/p&gt;
+&lt;p&gt;将&lt;code&gt;Host&lt;/code&gt;里的&lt;code&gt;/etc/ssh/ssh_host_rsa_key.pub&lt;/code&gt; ，发送给&lt;code&gt;CA&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;然后&lt;code&gt;Ca&lt;/code&gt;签名,生成&lt;code&gt;ssh_host_rsa_key-cert.pub&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;注意：&lt;/strong&gt;&lt;code&gt;在Ca签名&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# ssh-keygen -s host_ca -I host1.550w.dev -h -n host1.550w.dev -V +52w ssh_host_rsa_key.pub&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Enter passphrase: 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Signed host key ssh_host_rsa_key-cert.pub: id &lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;host1.550w.dev&amp;#34;&lt;/span&gt; serial &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;for&lt;/span&gt; host1.550w.dev valid from 2023-06-15T16:03:00 to 2024-06-13T16:04:56
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# ll ssh*&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rw-r--r-- &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;1&lt;/span&gt; root root &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;2385&lt;/span&gt;  6月 &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;15&lt;/span&gt; 16:05 ssh_host_rsa_key-cert.pub
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rw-r--r-- &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;1&lt;/span&gt; root root  &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;748&lt;/span&gt;  6月 &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;15&lt;/span&gt; 16:02 ssh_host_rsa_key.pub
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# ssh-keygen -Lf ssh_host_rsa_key-cert.pub &lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ssh_host_rsa_key-cert.pub:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        Type: ssh-rsa-cert-v01@openssh.com host certificate
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        Public key: RSA-CERT SHA256:7OzXj+yLh1C99qFL3qwp6ZRnppBkjlI+tuLd6JzBD1Q
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        Signing CA: RSA SHA256:vsZ/Qf6gHrLnRBJiPh7DtEiSs8DSSjvgtEmWvSijtEg &lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;(&lt;/span&gt;using rsa-sha2-512&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        Key ID: &lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;host1.550w.dev&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        Serial: &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        Valid: from 2023-06-15T16:03:00 to 2024-06-13T16:04:56
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        Principals: 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                host1.550w.dev
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        Critical Options: &lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;(&lt;/span&gt;none&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        Extensions: &lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;(&lt;/span&gt;none&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;然后&lt;code&gt;Ca&lt;/code&gt;将&lt;code&gt;user-key-cert.pub&lt;/code&gt;返回给&lt;code&gt;Host&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;3host配置sshd-config&#34;&gt;3.Host配置sshd-config&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;注意：&lt;/strong&gt;&lt;code&gt;在Host操作&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;host&lt;/code&gt;此时必须存在
+&lt;code&gt;/etc/ssh/ssh_host_rsa_key-cert.pub&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;编辑sshd_config，添加&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-content&#34; data-lang=&#34;content&#34;&gt;HostCertificate /etc/ssh/ssh_host_rsa_key-cert.pub
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;重启服务生效&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;systemctl restart sshd
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;4client连接host&#34;&gt;4.Client连接Host&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;注意：&lt;/strong&gt;&lt;code&gt;在Client操作&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;将主机证书公开密钥&lt;code&gt;host_ca.pub&lt;/code&gt;放在 &lt;code&gt;～/.ssh/know_hosts&lt;/code&gt;（当前用户）或者&lt;code&gt;/etc/ssh/ssh_know_hossts&lt;/code&gt;（全局）&lt;/p&gt;
+&lt;p&gt;前面添加 &lt;code&gt;@cert-authority *.550w.dev&lt;/code&gt;，注意不要换行。&lt;/p&gt;
+&lt;p&gt;类似下面&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-content&#34; data-lang=&#34;content&#34;&gt;
+@cert-authority *.550w.dev ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDAYcV+iyah8UbNCDaSDxtDzOk2j7XOMW3DOzQGBXPfzvqbA64C4LRgiMeHxjiw/qM5P2qQqdmTM0USEpr2jQezW5P2G78hfc13XWDajoIFvy4hufiKgSj/1KwGy/aoGs+R8u1wLv+gMjyRhlXRH137XFZLmtqGpoOb3My7ulo3CizWIQELTf0WZfuFR3LEVHMvv+/PhGuuwYRIvJSvnlUGVFphvwjKi7/YkMrw3ZpWJA2THCM+fjsoGCCzjt2h25ny6okbeqDi/6M4NAsUJY+8L90BuZE7jNRHifr3+abBaCKjwCGEvT9pc4T2pumjgJ4nXlyiPd1ANF0nxg/TjAEwfgHYPOw1QWxVrCl8FRTzuY88axI0kshqlewDgtZCDxR+uz+1no7ZxebVThKhYo64amvNyFtKmVsuDmU+BjIjVPKWy4ZAJ+z84soFHVO+q2eyGJrZjgrRQznWekwDbUcHDcQ4NtH4o6VTf01iAtX709uR7mMXC1S/baAinHyUEXkS3ybSuw4ZCuUVIZrwIigKhYHGgzl7Tj80jfF3uUljZ5tM08wYGjxYpfI+8KvT1KBihkWKfG0UzMU+P4OyefiBkm9zy5DP7U+Uculg/Rgvkisf/8+CuezwatQwbvodorW9vbeIMCfRNXh5iV8OPIojLNafkyJ+ZygnJ7Xp30YO0w== host_ca
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;这样只需要添加过一次，所有在这个&lt;code&gt;Client&lt;/code&gt; 机器上登陆发行过证书的&lt;code&gt;Host&lt;/code&gt;时，都不会再有提示了。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ssh root@host1.550w.dev
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;不要连接&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ssh root@11.22.33.44
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;因为发行证书时指定&amp;quot;FQDN&amp;quot; &lt;code&gt;host1.550w.dev&lt;/code&gt;，这样host cerificate不会生效。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;注意：&lt;/strong&gt; 需要设置dns解析，或者添加到&lt;code&gt;/etc/hosts&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;&amp;ldquo;FQDN&amp;rdquo; 是 &amp;ldquo;Fully Qualified Domain Name&amp;rdquo; 的缩写，指的是完全合格域名&lt;/p&gt;
+&lt;details&gt;&lt;summary&gt;使用ssh certificate 登陆过程debug&lt;/summary&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; &lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# ssh -i ~/certificate/user/clien-root root@host1.550w.dev -v&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;OpenSSH_8.4p1 Debian-5+deb11u1, OpenSSL 1.1.1n  &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;15&lt;/span&gt; Mar &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;2022&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Reading configuration data /etc/ssh/ssh_config
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: /etc/ssh/ssh_config line 19: include /etc/ssh/ssh_config.d/*.conf matched no files
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: /etc/ssh/ssh_config line 21: Applying options &lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;for&lt;/span&gt; *
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Connecting to host1.550w.dev &lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;[&lt;/span&gt;11.22.33.44&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;]&lt;/span&gt; port 22.
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Connection established.
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: identity file /root/certificate/user/clien-root &lt;span style=&#34;color:#204a87&#34;&gt;type&lt;/span&gt; &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: identity file /root/certificate/user/clien-root-cert &lt;span style=&#34;color:#204a87&#34;&gt;type&lt;/span&gt; &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;4&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Local version string SSH-2.0-OpenSSH_8.4p1 Debian-5+deb11u1
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Remote protocol version 2.0, remote software version OpenSSH_8.2p1 Ubuntu-4
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: match: OpenSSH_8.2p1 Ubuntu-4 pat OpenSSH* compat 0x04000000
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Authenticating to host1.550w.dev:22 as &lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#39;root&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: SSH2_MSG_KEXINIT sent
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: SSH2_MSG_KEXINIT received
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: kex: algorithm: curve25519-sha256
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: kex: host key algorithm: rsa-sha2-512-cert-v01@openssh.com
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: kex: server-&amp;gt;client cipher: chacha20-poly1305@openssh.com MAC: &amp;lt;implicit&amp;gt; compression: none
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: kex: client-&amp;gt;server cipher: chacha20-poly1305@openssh.com MAC: &amp;lt;implicit&amp;gt; compression: none
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: expecting SSH2_MSG_KEX_ECDH_REPLY
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Server host certificate: ssh-rsa-cert-v01@openssh.com SHA256:GAGcmnsWDI8sGinhB5W1PZmGnILkl6tWck9mMjLlpyw, serial &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;0&lt;/span&gt; ID &lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;host1.550w.dev&amp;#34;&lt;/span&gt; CA ssh-rsa SHA256:vsZ/Qf6gHrLnRBJiPh7DtEiSs8DSSjvgtEmWvSijtEg valid from 2023-06-16T09:45:00 to 2024-06-14T09:46:58
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Host &lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#39;host1.550w.dev&amp;#39;&lt;/span&gt; is known and matches the RSA-CERT host certificate.
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Found CA key in /etc/ssh/ssh_known_hosts:1
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: rekey out after &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;134217728&lt;/span&gt; blocks
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: SSH2_MSG_NEWKEYS sent
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: expecting SSH2_MSG_NEWKEYS
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: SSH2_MSG_NEWKEYS received
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: rekey in after &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;134217728&lt;/span&gt; blocks
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Will attempt key: /root/certificate/user/clien-root RSA SHA256:0eJKkr5yTdaJKKbT0eF5P8p+HPaoY8d9aDGgsP85qmk explicit
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Will attempt key: /root/certificate/user/clien-root RSA-CERT SHA256:0eJKkr5yTdaJKKbT0eF5P8p+HPaoY8d9aDGgsP85qmk explicit
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: SSH2_MSG_EXT_INFO received
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: kex_input_ext_info: server-sig-algs&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;&amp;lt;ssh-ed25519,sk-ssh-ed25519@openssh.com,ssh-rsa,rsa-sha2-256,rsa-sha2-512,ssh-dss,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,sk-ecdsa-sha2-nistp256@openssh.com&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: SSH2_MSG_SERVICE_ACCEPT received
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Authentications that can &lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;continue&lt;/span&gt;: publickey
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Next authentication method: publickey
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Offering public key: /root/certificate/user/clien-root RSA SHA256:0eJKkr5yTdaJKKbT0eF5P8p+HPaoY8d9aDGgsP85qmk explicit
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Authentications that can &lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;continue&lt;/span&gt;: publickey
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Offering public key: /root/certificate/user/clien-root RSA-CERT SHA256:0eJKkr5yTdaJKKbT0eF5P8p+HPaoY8d9aDGgsP85qmk explicit
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Server accepts key: /root/certificate/user/clien-root RSA-CERT SHA256:0eJKkr5yTdaJKKbT0eF5P8p+HPaoY8d9aDGgsP85qmk explicit
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Authentication succeeded &lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;(&lt;/span&gt;publickey&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;)&lt;/span&gt;.
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Authenticated to host1.550w.dev &lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;([&lt;/span&gt;11.22.33.44&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;]&lt;/span&gt;:22&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;)&lt;/span&gt;.
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: channel 0: new &lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;[&lt;/span&gt;client-session&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Requesting no-more-sessions@openssh.com
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Entering interactive session.
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: pledge: network
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: client_input_global_request: rtype hostkeys-00@openssh.com want_reply &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Remote: cert: key options: agent-forwarding port-forwarding pty user-rc x11-forwarding
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Remote: cert: key options: agent-forwarding port-forwarding pty user-rc x11-forwarding
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Sending environment.
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Sending env &lt;span style=&#34;color:#000&#34;&gt;LANG&lt;/span&gt; &lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt; zh_CN.UTF-8
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Welcome to Ubuntu 20.04 LTS &lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;(&lt;/span&gt;GNU/Linux 5.4.0-48-generic x86_64&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/details&gt;
+&lt;h2 id=&#34;5checking-logs-检查日志&#34;&gt;5.Checking logs 检查日志&lt;/h2&gt;
+&lt;p&gt;If you look in your server&amp;rsquo;s sshd log (for example, by running journalctl -u sshd), you will see the name of the certificate being used for authentication, along with the fingerprint of the signing CA:
+如果查看服务器的 sshd 日志（例如，通过运行 journalctl -u sshd ），您将看到用于身份验证的证书的名称以及签名 CA 的指纹：&lt;/p&gt;
+&lt;h2 id=&#34;useful-websites&#34;&gt;Useful Websites&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://en.wikibooks.org/wiki/OpenSSH/Cookbook/Certificate-based_Authentication&#34;&gt;https://en.wikibooks.org/wiki/OpenSSH/Cookbook/Certificate-based_Authentication&lt;/a&gt;
+清楚说明了用途和操作步骤的文档。
+&lt;a href=&#34;https://www.ssh.com/blog/what-are-ssh-host-keys&#34;&gt;SSH host keys&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;http://www.openssh.com/&#34;&gt;http://www.openssh.com/&lt;/a&gt;
+The OpenSSH home page containing further documentation, frequently asked questions, links to the mailing lists, bug reports, and other useful resources.
+&lt;a href=&#34;http://www.openssl.org/&#34;&gt;http://www.openssl.org/&lt;/a&gt;
+The OpenSSL home page containing further documentation, frequently asked questions, links to the mailing lists, and other useful resources.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/deployment_guide/sec-distributing_and_trusting_ssh_ca_public_keys&#34;&gt;https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/deployment_guide/sec-distributing_and_trusting_ssh_ca_public_keys&lt;/a&gt;&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Blog: openssh user certificate</title>
+      <link>/blog/2023/06/16/openssh-user-certificate/</link>
+      <pubDate>Fri, 16 Jun 2023 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2023/06/16/openssh-user-certificate/</guid>
+      <description>
+        
+        
+        &lt;h1 id=&#34;host信任ca的同时就信任所有它签名过的client-certificate&#34;&gt;&lt;code&gt;Host&lt;/code&gt;信任&lt;code&gt;CA&lt;/code&gt;的同时就信任所有它签名过的&lt;code&gt;client certificate&lt;/code&gt;.&lt;/h1&gt;
+&lt;h2 id=&#34;0use-ssh-user-certificates&#34;&gt;0.Use SSH user certificates&lt;/h2&gt;
+&lt;p&gt;使用ssh user certificate 的过程如图&lt;/p&gt;
+&lt;pre class=&#34;mermaid&#34;&gt;sequenceDiagram
+
+Note over  Ca: user_ca 
+Note over  Ca: user_ca.pub
+
+Note over  Client: user_key
+Note over  Client: user_key.pub
+
+rect rgb(100, 0, 255)
+Ca -&amp;gt;&amp;gt; Host: user_ca.pub
+Note over  Host: user_ca.pub
+end
+
+rect rgb(150, 0, 200)
+Client -&amp;gt;&amp;gt; Ca: user-key.pub
+Ca -&amp;gt;&amp;gt; Ca:  sign the user-key.pub 
+Ca -&amp;gt;&amp;gt; Client: user-key-cert.pub
+Note over  Client: user-key-cert.pub
+end
+
+rect rgb(0, 140, 100)
+
+Client --&amp;gt;&amp;gt; Host: ssh connect request with user-key
+Host --&amp;gt;&amp;gt; Client: ask for user-key-cert.pub
+Client --&amp;gt;&amp;gt; Host: offer user-key-cert.pub
+Host--&amp;gt;&amp;gt; Host: Match user_ca.pub
+Host --&amp;gt;&amp;gt; Client: authentication succeeded
+Client --x Host:  connect.
+
+end
+   &lt;/pre&gt;
+&lt;p&gt;实现效果&lt;/p&gt;
+&lt;p&gt;1.用户证书设计很巧妙，&lt;code&gt;Host&lt;/code&gt;只保存一次&lt;code&gt;user_ca.pub&lt;/code&gt; ，后续不再需要在这个&lt;code&gt;Host&lt;/code&gt; 像传统的密钥对认证一样，再添加其他的&lt;code&gt;user-key.pub&lt;/code&gt;。所以在AWS、AZURE,GCP里只需要在&lt;code&gt;userdata&lt;/code&gt;初始化做一次即可，还可以直接做成image批量应用。&lt;/p&gt;
+&lt;p&gt;2.每个user 需求不同，而证书可以添加&lt;code&gt;metadata&lt;/code&gt;，比如有效期，限制命令等，所以方便运维处理在需求提出阶段发行相应的证书即可;不用登陆每个&lt;code&gt;Host&lt;/code&gt;吊销&lt;code&gt;user-key.pub&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;3.证书+Token认证，使用LAMBDA可以扩展成自动化处理。&lt;/p&gt;
+&lt;p&gt;4.对用户来说是认证过程透明的，认证时自动会寻找&lt;code&gt;user-key-cert.pub&lt;/code&gt;（如果在～/.ssh下）.但是仅限于&lt;code&gt;openssh client&lt;/code&gt;，&lt;code&gt;putty&lt;/code&gt;等支持的不好，这一点限制了用户证书方案的使用。&lt;/p&gt;
+&lt;h2 id=&#34;1建立user-ca证书&#34;&gt;1.建立USER CA证书&lt;/h2&gt;
+&lt;p&gt;注意：&lt;code&gt;在CA服务器上操作，建立强密码，每次颁发时需要&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;CA 证书建立时，host和user没有什么不同&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#host和user分开建立，主要考虑管理方面。比如host更为稳定，轮换时间更长点？&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ssh-keygen -t rsa -b &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;4096&lt;/span&gt; -f user_ca -C user_ca
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#存在/root/.ssh/user_ca&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;user_ca&lt;/code&gt;应妥善保存比如放在&lt;code&gt;KMS&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;2configuring-ssh-for-user-certificate-authentication&#34;&gt;2.Configuring SSH for user certificate authentication&lt;/h2&gt;
+&lt;p&gt;为用户证书认证 配置 SSH&lt;/p&gt;
+&lt;p&gt;注意：&lt;code&gt;在targaet host上操作&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Copy the three files you just generated to the server, store them under the /etc/ssh directory
+使用&lt;code&gt;scp&lt;/code&gt;或者&lt;code&gt;userdata&lt;/code&gt;阶段拷贝这个文件到/etc/ssh都可以.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;user_ca.pub&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;scp -p root@ca.host:/root/.ssh/user_ca.pub /etc/ssh/user_ca.pub
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;set the permissions to match the other files there, then add this line to your/etc/ssh/sshd_config file:&lt;/p&gt;
+&lt;p&gt;编辑sshd_config&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-content&#34; data-lang=&#34;content&#34;&gt;TrustedUserCAKeys /etc/ssh/user_ca.pub
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;重启服务生效&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;systemctl restart sshd
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;3issuing-user-certificates-to-authenticate-users-to-hosts&#34;&gt;3.Issuing user certificates (to authenticate users to hosts)&lt;/h2&gt;
+&lt;p&gt;颁发用户证书（以向主机验证用户身份）&lt;/p&gt;
+&lt;p&gt;注意：&lt;code&gt;在client操作，一般不用再设置密码&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;$ ssh-keygen -f user-key -b &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;4096&lt;/span&gt; -t rsa
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;$ ls -l ~/.ssh
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rw-------. &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;1&lt;/span&gt; lance lance &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;3369&lt;/span&gt; Mar &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;19&lt;/span&gt; 16:33 user-key
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rw-r--r--. &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;1&lt;/span&gt; lance lance  &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;737&lt;/span&gt; Mar &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;19&lt;/span&gt; 16:33 user-key.pub
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;将&lt;code&gt;user-key.pub&lt;/code&gt;发送给&lt;code&gt;CA&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;然后&lt;code&gt;Ca&lt;/code&gt;签名,生成user-key-cert.pub&lt;/p&gt;
+&lt;p&gt;注意：&lt;code&gt;在Ca操作&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ssh-keygen -s /root/.ssh/user_ca -I  client-root -n root -V +1d user-key.pub
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;$ ls -l
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rw-r--r--. &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;1&lt;/span&gt; lance lance  &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;737&lt;/span&gt; Mar &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;19&lt;/span&gt; 16:33 user-key-cert.pub
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;Ca&lt;/code&gt;将&lt;code&gt;user-key-cert.pub&lt;/code&gt;返回给&lt;code&gt;Client&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;4client-使用cert-连接到host&#34;&gt;4.Client 使用cert 连接到host&lt;/h2&gt;
+&lt;p&gt;注意：&lt;code&gt;在Clientc操作&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;user-key-cert.pub&lt;/code&gt; 放在 &lt;code&gt;～/.ssh&lt;/code&gt;，可以删除&lt;code&gt;user-key.pub&lt;/code&gt;，会发现依然可以登陆。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ssh root@host1.550w.dev
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;details&gt;&lt;summary&gt;使用ssh certificate 登陆过程debug&lt;/summary&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; ssh -v -i client-root root@host1.550w.dev
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;OpenSSH_8.4p1 Debian-5+deb11u1, OpenSSL 1.1.1n  &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;15&lt;/span&gt; Mar &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;2022&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Reading configuration data /etc/ssh/ssh_config
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: /etc/ssh/ssh_config line 19: include /etc/ssh/ssh_config.d/*.conf matched no files
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: /etc/ssh/ssh_config line 21: Applying options &lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;for&lt;/span&gt; *
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Connecting to host1.550w.dev &lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;[&lt;/span&gt;host1.550w.dev&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;]&lt;/span&gt; port 22.
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Connection established.
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: identity file client-root &lt;span style=&#34;color:#204a87&#34;&gt;type&lt;/span&gt; &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: identity file client-root-cert &lt;span style=&#34;color:#204a87&#34;&gt;type&lt;/span&gt; &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;4&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Local version string SSH-2.0-OpenSSH_8.4p1 Debian-5+deb11u1
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Remote protocol version 2.0, remote software version OpenSSH_8.2p1 Ubuntu-4
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: match: OpenSSH_8.2p1 Ubuntu-4 pat OpenSSH* compat 0x04000000
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Authenticating to host1.550w.dev:22 as &lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#39;root&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: SSH2_MSG_KEXINIT sent
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: SSH2_MSG_KEXINIT received
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: kex: algorithm: curve25519-sha256
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: kex: host key algorithm: ecdsa-sha2-nistp256
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: kex: server-&amp;gt;client cipher: chacha20-poly1305@openssh.com MAC: &amp;lt;implicit&amp;gt; compression: none
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: kex: client-&amp;gt;server cipher: chacha20-poly1305@openssh.com MAC: &amp;lt;implicit&amp;gt; compression: none
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: expecting SSH2_MSG_KEX_ECDH_REPLY
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Server host key: ecdsa-sha2-nistp256 SHA256:K/AfVqzkE28xMvXpaCwYJPVTX6knS3hDBPD3/4p8ek8
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Host &lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#39;host1.550w.dev&amp;#39;&lt;/span&gt; is known and matches the ECDSA host key.
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Found key in /root/.ssh/known_hosts:1
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: rekey out after &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;134217728&lt;/span&gt; blocks
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: SSH2_MSG_NEWKEYS sent
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: expecting SSH2_MSG_NEWKEYS
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: SSH2_MSG_NEWKEYS received
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: rekey in after &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;134217728&lt;/span&gt; blocks
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Will attempt key: client-root RSA SHA256:0eJKkr5yTdaJKKbT0eF5P8p+HPaoY8d9aDGgsP85qmk explicit
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Will attempt key: client-root RSA-CERT SHA256:0eJKkr5yTdaJKKbT0eF5P8p+HPaoY8d9aDGgsP85qmk explicit
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: SSH2_MSG_EXT_INFO received
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: kex_input_ext_info: server-sig-algs&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;&amp;lt;ssh-ed25519,sk-ssh-ed25519@openssh.com,ssh-rsa,rsa-sha2-256,rsa-sha2-512,ssh-dss,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,sk-ecdsa-sha2-nistp256@openssh.com&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: SSH2_MSG_SERVICE_ACCEPT received
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Authentications that can &lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;continue&lt;/span&gt;: publickey
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Next authentication method: publickey
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Offering public key: client-root RSA SHA256:0eJKkr5yTdaJKKbT0eF5P8p+HPaoY8d9aDGgsP85qmk explicit
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Authentications that can &lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;continue&lt;/span&gt;: publickey
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Offering public key: client-root RSA-CERT SHA256:0eJKkr5yTdaJKKbT0eF5P8p+HPaoY8d9aDGgsP85qmk explicit
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Server accepts key: client-root RSA-CERT SHA256:0eJKkr5yTdaJKKbT0eF5P8p+HPaoY8d9aDGgsP85qmk explicit
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Authentication succeeded &lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;(&lt;/span&gt;publickey&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;)&lt;/span&gt;.
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Authenticated to host1.550w.dev &lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;([&lt;/span&gt;host1.550w.dev&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;]&lt;/span&gt;:22&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;)&lt;/span&gt;.
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: channel 0: new &lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;[&lt;/span&gt;client-session&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Requesting no-more-sessions@openssh.com
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Entering interactive session.
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: pledge: network
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: client_input_global_request: rtype hostkeys-00@openssh.com want_reply &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Remote: cert: key options: agent-forwarding port-forwarding pty user-rc x11-forwarding
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Remote: cert: key options: agent-forwarding port-forwarding pty user-rc x11-forwarding
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Sending environment.
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;debug1: Sending env &lt;span style=&#34;color:#000&#34;&gt;LANG&lt;/span&gt; &lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt; zh_CN.UTF-8
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Welcome to Ubuntu 20.04 LTS &lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;(&lt;/span&gt;GNU/Linux 5.4.0-48-generic x86_64&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/details&gt;
+&lt;h2 id=&#34;5checking-logs-检查日志&#34;&gt;5.Checking logs 检查日志&lt;/h2&gt;
+&lt;p&gt;If you look in your server&amp;rsquo;s sshd log (for example, by running journalctl -u sshd), you will see the name of the certificate being used for authentication, along with the fingerprint of the signing CA:&lt;/p&gt;
+&lt;p&gt;如果查看服务器的 sshd 日志（例如，通过运行 journalctl -u sshd ），您将看到用于身份验证的证书的名称以及签名 CA 的指纹：&lt;/p&gt;
+
+      </description>
+    </item>
+    
+  </channel>
+</rss>

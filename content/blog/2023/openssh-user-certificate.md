@@ -3,6 +3,7 @@ title: openssh user certificate
 weight: 5
 date: 2023-06-16
 description: 介绍了openssh用户证书部署序列图和具体过程
+draft: true
 categories: [linux]
 tags: [linux,openssh,ssh,certificate]
 ---

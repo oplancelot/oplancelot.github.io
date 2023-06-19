@@ -3,7 +3,7 @@ title: openssh host certificate
 weight: 3
 date: 2023-06-16
 description: 介绍了openssh主机证书部署序列图和具体过程
-tag: linux ssh
+draft: true
 categories: [linux]
 tags: [linux,openssh,ssh,certificate]
 ---

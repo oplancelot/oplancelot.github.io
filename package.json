@@ -33,6 +33,10 @@
   "devDependencies": {
     "autoprefixer": "^10.4.14",
     "hugo-extended": "0.113.0",
+    "postcss": "^8.4.24",
     "postcss-cli": "^10.1.0"
+  },
+  "dependencies": {
+    "caniuse-lite": "^1.0.30001281"
   }
 }

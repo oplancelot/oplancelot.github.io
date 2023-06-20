@@ -4,7 +4,7 @@ title = ""
 # Language settings
 contentDir = "content/zh-cn"
 defaultContentLanguage = "zh-cn"
-defaultContentLanguageInSubdir = true
+defaultContentLanguageInSubdir = false
 # Useful when translating.
 enableMissingTranslationPlaceholders = true
 
@@ -61,7 +61,7 @@ id = "387501436"
 [languages]
 [languages.zh-cn]
 languageName ="中文"
-contentDir = "content" 
+contentDir = "content/zh-cn" 
 # Weight used for sorting.
 weight = 1
 [languages.zh-cn.params]

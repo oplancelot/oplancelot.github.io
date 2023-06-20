@@ -1,10 +1,10 @@
 baseURL = "/"
-title = "白云雁水"
+title = ""
 
 # Language settings
 contentDir = "content"
 defaultContentLanguage = "zh-cn"
-defaultContentLanguageInSubdir = false
+defaultContentLanguageInSubdir = true
 # Useful when translating.
 enableMissingTranslationPlaceholders = true
 
@@ -153,10 +153,10 @@ github_branch= "main"
 gcs_engine_id = "477b1d34f0f9b4eb8"
 
 # Enable Algolia DocSearch
-algolia_docsearch = true
+algolia_docsearch = false
 
 # Enable Lunr.js offline search
-offlineSearch = true
+offlineSearch = false
 
 # Enable syntax highlighting and copy buttons on code blocks with Prism
 prism_syntax_highlighting = true

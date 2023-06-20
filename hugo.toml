@@ -140,7 +140,7 @@ url_latest_version = "https://blog.550w.dev"
 # Repository configuration (URLs for in-page links to opening issues and suggesting changes)
 github_repo = "https://github.com/oplancelot/oplancelot.github.io"
 # An optional link to a related project repo. For example, the sibling repository where your product code lives.
-github_project_repo = "https://github.com/google/docsy"
+github_project_repo = "https://github.com/oplancelot/oplancelot.github.io"
 
 # Specify a value here if your content directory is not in your repo's root directory
 # github_subdir = ""

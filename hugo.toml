@@ -2,7 +2,7 @@ baseURL = "/"
 title = ""
 
 # Language settings
-contentDir = "content"
+contentDir = "content/zh-cn"
 defaultContentLanguage = "zh-cn"
 defaultContentLanguageInSubdir = true
 # Useful when translating.

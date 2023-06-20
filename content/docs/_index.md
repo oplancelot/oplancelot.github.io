@@ -28,13 +28,12 @@ Guide](https://docsy.dev/docs/). You can learn more about how to organize your
 documentation (and how we organized this site) in [Organizing Your
 Content](https://docsy.dev/docs/best-practices/organizing-content/).
 
-
 <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z9KSWMG2TB"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MJFCJQTQ0G"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
-  gtag('config', 'G-Z9KSWMG2TB');
+  gtag('config', 'G-MJFCJQTQ0G');
 </script>

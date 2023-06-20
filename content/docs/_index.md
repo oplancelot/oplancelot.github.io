@@ -27,3 +27,14 @@ Find out how to use the Docsy theme in the [Docsy User
 Guide](https://docsy.dev/docs/). You can learn more about how to organize your
 documentation (and how we organized this site) in [Organizing Your
 Content](https://docsy.dev/docs/best-practices/organizing-content/).
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z9KSWMG2TB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-Z9KSWMG2TB');
+</script>

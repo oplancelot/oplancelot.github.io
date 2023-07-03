@@ -140,6 +140,19 @@ dns解析
 
 然后就可以浏览器登陆 `gitlab.550w.dev` 
 
+5.ingress 提供外部访问的入口
+
+```bash
+$ kubectl get ingress -n gitlab
++ kubectl get ingress -n gitlab
+NAME                        CLASS   HOSTS               ADDRESS        PORTS     AGE
+gitlab-kas                  nginx   kas.550w.dev        192.168.49.2   80, 443   3d3h
+gitlab-minio                nginx   minio.550w.dev      192.168.49.2   80, 443   3d3h
+gitlab-registry             nginx   registry.550w.dev   192.168.49.2   80, 443   3d3h
+gitlab-webservice-default   nginx   gitlab.550w.dev     192.168.49.2   80, 443   3d3h
+[lance@lance-workstation ~/gitlab]
+$ 
+```
 
 
 主要参考

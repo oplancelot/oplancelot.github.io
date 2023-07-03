@@ -29,19 +29,7 @@ NAME                                  TYPE                 DATA   AGE
 
 2.编辑values-minikube.yaml
 
-
-
-```bash
-helm dependency update
-helm upgrade --install gitlab . \
-  --timeout 600s \
-  -f https://gitlab.com/gitlab-org/charts/gitlab/raw/master/examples/values-minikube.yaml  \
-  --set global.hosts.domain=$(minikube ip).nip.io \
-  --set global.hosts.externalIP=$(minikube ip)
-
-helm upgrade --install gitlab . --timeout 6000s -f values-minikube.yaml -n gitlab
-
-  ```
+注意tls
 
 ```yaml
 # values-minikube.yaml

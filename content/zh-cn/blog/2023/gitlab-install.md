@@ -102,21 +102,6 @@ helm upgrade --install gitlab . \
 $ minikube ip
 192.168.49.2
 
-$ minikube tunnel
-
-Status: 
- machine: minikube
- pid: 1743956
- route: 10.96.0.0/12 -> 192.168.49.2
- minikube: Running
- services: [balanced]
-    errors:
-  minikube: no errors
-  router: no errors
-  loadbalancer emulator: no errors
-
-```
-
 4.登陆gitlab
 ```bash
 #取得root 密码
@@ -154,6 +139,201 @@ gitlab-webservice-default   nginx   gitlab.550w.dev     192.168.49.2   80, 443  
 $ 
 ```
 
+
+
+<details >  <summary>ingress.yaml</summary>
+
+```yaml
+apiVersion: v1
+items:
+- apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    annotations:
+      kubernetes.io/ingress.provider: nginx
+      meta.helm.sh/release-name: gitlab
+      meta.helm.sh/release-namespace: gitlab
+      nginx.ingress.kubernetes.io/custom-http-errors: ""
+      nginx.ingress.kubernetes.io/proxy-buffering: "off"
+    creationTimestamp: "2023-06-30T05:50:34Z"
+    generation: 2
+    labels:
+      app: kas
+      app.kubernetes.io/managed-by: Helm
+      chart: kas-7.1.0
+      heritage: Helm
+      release: gitlab
+    name: gitlab-kas
+    namespace: gitlab
+    resourceVersion: "411937"
+    uid: a5311462-410d-4b00-9e46-20c45edc7a26
+  spec:
+    ingressClassName: nginx
+    rules:
+    - host: kas.550w.dev
+      http:
+        paths:
+        - backend:
+            service:
+              name: gitlab-kas
+              port:
+                number: 8154
+          path: /k8s-proxy/
+          pathType: Prefix
+        - backend:
+            service:
+              name: gitlab-kas
+              port:
+                number: 8150
+          path: /
+          pathType: Prefix
+    tls:
+    - hosts:
+      - kas.550w.dev
+      secretName: 550w.dev
+  status:
+    loadBalancer:
+      ingress:
+      - ip: 192.168.49.2
+- apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    annotations:
+      kubernetes.io/ingress.provider: nginx
+      meta.helm.sh/release-name: gitlab
+      meta.helm.sh/release-namespace: gitlab
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
+      nginx.ingress.kubernetes.io/proxy-buffering: "off"
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "900"
+      nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+    creationTimestamp: "2023-06-30T05:50:34Z"
+    generation: 2
+    labels:
+      app: minio
+      app.kubernetes.io/managed-by: Helm
+      chart: minio-0.4.3
+      heritage: Helm
+      release: gitlab
+    name: gitlab-minio
+    namespace: gitlab
+    resourceVersion: "411935"
+    uid: 72c53ada-c0c9-40e0-bd0d-167b5cd7f46c
+  spec:
+    ingressClassName: nginx
+    rules:
+    - host: minio.550w.dev
+      http:
+        paths:
+        - backend:
+            service:
+              name: gitlab-minio-svc
+              port:
+                number: 9000
+          path: /
+          pathType: Prefix
+    tls:
+    - hosts:
+      - minio.550w.dev
+      secretName: 550w.dev
+  status:
+    loadBalancer:
+      ingress:
+      - ip: 192.168.49.2
+- apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    annotations:
+      kubernetes.io/ingress.provider: nginx
+      meta.helm.sh/release-name: gitlab
+      meta.helm.sh/release-namespace: gitlab
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
+      nginx.ingress.kubernetes.io/proxy-buffering: "off"
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "900"
+      nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+    creationTimestamp: "2023-06-30T05:50:34Z"
+    generation: 2
+    labels:
+      app: registry
+      app.kubernetes.io/managed-by: Helm
+      chart: registry-0.7.0
+      heritage: Helm
+      release: gitlab
+    name: gitlab-registry
+    namespace: gitlab
+    resourceVersion: "411938"
+    uid: 3be5512f-bc9a-4997-8c4a-8d7c06d3b8c6
+  spec:
+    ingressClassName: nginx
+    rules:
+    - host: registry.550w.dev
+      http:
+        paths:
+        - backend:
+            service:
+              name: gitlab-registry
+              port:
+                number: 5000
+          path: /
+          pathType: Prefix
+    tls:
+    - hosts:
+      - registry.550w.dev
+      secretName: 550w.dev
+  status:
+    loadBalancer:
+      ingress:
+      - ip: 192.168.49.2
+- apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    annotations:
+      kubernetes.io/ingress.provider: nginx
+      meta.helm.sh/release-name: gitlab
+      meta.helm.sh/release-namespace: gitlab
+      nginx.ingress.kubernetes.io/proxy-body-size: 512m
+      nginx.ingress.kubernetes.io/proxy-connect-timeout: "15"
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+      nginx.ingress.kubernetes.io/service-upstream: "true"
+    creationTimestamp: "2023-06-30T05:50:34Z"
+    generation: 2
+    labels:
+      app: webservice
+      app.kubernetes.io/managed-by: Helm
+      chart: webservice-7.1.0
+      gitlab.com/webservice-name: default
+      heritage: Helm
+      release: gitlab
+    name: gitlab-webservice-default
+    namespace: gitlab
+    resourceVersion: "411936"
+    uid: 95fe82c6-06fd-4606-9d81-e79e11b27de1
+  spec:
+    ingressClassName: nginx
+    rules:
+    - host: gitlab.550w.dev
+      http:
+        paths:
+        - backend:
+            service:
+              name: gitlab-webservice-default
+              port:
+                number: 8181
+          path: /
+          pathType: Prefix
+    tls:
+    - hosts:
+      - gitlab.550w.dev
+      secretName: 550w.dev
+  status:
+    loadBalancer:
+      ingress:
+      - ip: 192.168.49.2
+kind: List
+metadata:
+  resourceVersion: ""
+
+```
+</details>
 
 主要参考
 

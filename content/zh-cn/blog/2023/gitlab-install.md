@@ -162,3 +162,5 @@ $
 [Configure TLS for the GitLab chart ](https://docs.gitlab.com/charts/installation/tls.html#option-2-use-your-own-wildcard-certificate)
 
 [minikube star](https://minikube.sigs.k8s.io/docs/start/)
+
+[ingress-minikube](https://kubernetes.io/zh-cn/docs/tasks/access-application-cluster/ingress-minikube/)

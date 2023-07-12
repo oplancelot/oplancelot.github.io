@@ -5,6 +5,7 @@ You can find detailed theme instructions in the [Docsy user guide][].
 
 
 
+
 [alternate dashboard]: https://app.netlify.com/sites/goldydocs/deploys
 [deploys]: https://app.netlify.com/sites/docsy-example/deploys
 [Docsy user guide]: https://docsy.dev/docs

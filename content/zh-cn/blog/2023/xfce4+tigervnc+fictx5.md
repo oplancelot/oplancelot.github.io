@@ -379,7 +379,7 @@ I2023-07-31 23:25:39.539315 xcbmodule.cpp:58] Disconnected from X11 Display :1.0
 ## install 
 
 ```
-sudo apt install tigervnc-standalone-server tigervnc-common tightvncserver
+sudo apt install tigervnc-standalone-server tigervnc-common 
 ```
 
 ## config

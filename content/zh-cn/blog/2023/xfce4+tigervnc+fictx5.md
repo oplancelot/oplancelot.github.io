@@ -479,4 +479,4 @@ cp /lib/systemd/system/tigervncserver@.service  /etc/systemd/system/
 
 
 
-然后就可以愉快的继续使用Debian11了。
+然后就可以使用`vncviewer`愉快的继续使用Debian11了。

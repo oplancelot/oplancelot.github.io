@@ -19,7 +19,12 @@ tags: [fcitx5,tigervnc,xfce,vnc,debian11]
 + vnc :`Xvnc TigerVNC 1.11.0 - built 2022-01-26 17:59`
 +  Fcitx 版本: `5.0.5`
 
-![Alt text](../2023/img/workstation.png)
+![workstation](../2023/img/workstation.png)
+
+{{< imgproc workstation Fill "600x300" >}}
+workstation{{< /imgproc >}}
+
+
 
 <details><summary>详细配置信息</summary>
 
